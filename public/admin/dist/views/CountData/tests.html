@@ -1,0 +1,159 @@
+<title>开奖检测</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">开奖检测</div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="CountTestsList" lay-filter="CountTestsList"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    //    获取图片路径
+    layui.use(['admin','table','laydate','form','layer'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form ,layer = layui.layer;
+
+        //载入表格数据
+        table.render({
+            elem: '#CountTestsList'
+            ,url: layui.setter.URL_ADMIN+'/CountData/tests'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'wjorderId',align:'center', title: '单号', width: 200},
+                {field:'typename',align:'center', title: '彩种', width: 150},
+                {field:'actionNo',align:'center', title: '期号', width: 100},
+                {field:'Playedname',align:'center', title: '玩法', width: 150},
+                {field:'actionData',align:'center', title: '投注号码', width: 180},
+                {field:'lotteryNo',align:'center', title: '开奖号码', width: 100,templet: function(d){
+                    return d.lotteryNo ? d.lotteryNo : "无"  ;
+                }},
+                {field:'bonusProp',align:'center', title: '倍数', width: 100,templet: function(d){
+                    return d.bonusProp ? d.bonusProp+'倍' : "无"  ;
+                }},
+                {field:'amount__',align:'center', title: '金额', width: 100},
+                //{field:'bonus',align:'center', title: '奖金', width: 100},
+//                {field:'zjCount',align:'center', title: '隐藏', width: 1,display:'none'},
+                //{field:'isDelete',align:'center', title: '状态', width: 100,templet: function(d){
+                //    if(d.isDelete == 1){return '<font color="#999999">已撤单</font>'}else if(!d.lotteryNo){return '<font color="#009900">未开奖</font>'}else if(d.zjCount){return '<font color="red">已派奖</font>'}else {return '<font color="#00CC00">未中奖</font>'}
+                //}},
+                {field:'actionTime',align:'center', title: '投注时间', width: 190,templet: function(d){return admin.formatDate(d.actionTime); }},
+                {field:'regTime',align:'center', title: '开奖',templet: function(d){
+                    return '<button class="layui-btn layui-btn-danger layui-btn-sm btn_kj" kj="'+d.data+'" types="'+d.type+'" number="'+d.actionNo+'" time="'+d.kjTime+'">开奖</button>'
+                },width:70,fixed: 'right'},
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+                form.render(null, 'component-form-element');
+
+
+                $('.btn_kj').on('click',function () {
+                    var data = $(this).attr('kj');
+                    var time = admin.formatDate($(this).attr('time'));
+                    var number = $(this).attr('number');
+                    var type = $(this).attr('types');
+                    layer.confirm('重新对没有开奖的投注开奖？', {
+                        btn: ['确定开奖','取消'] //按钮
+                    }, function(){
+                       $.ajax({
+                           type: "POST",//方法类型
+                           dataType: "json",//预期服务器返回的数据类型
+                           url: layui.setter.URL_ADMIN+"/CountData/kj",//url
+                           data: {
+                               data:data,
+                               time:time,
+                               number:number,
+                               type:type
+                           },
+                           success: function (data) {
+                                   layer.msg('开奖成功', {time: 1000});
+                                   table.reload('CountTestsList',{});
+                           }
+                       });
+                    }, function(){
+                        //layer.msg('已取消开奖操作', {time: 1000});
+                    });
+
+                });
+
+
+            }
+        });
+
+
+        //获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-receive-start').attr('value', startDate);
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-member-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-member-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(CountTestsList)', function(data){
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this,username, fromTime, toTime);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username,fromTime, toTime){
+                //执行重载
+                table.reload('CountTestsList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username:username,
+                        fromTime: fromTime,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+
+
+    });
+
+
+</script>
+

@@ -1,0 +1,202 @@
+
+<title>好友列表</title>
+
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					<div style="float:left;">好友列表</div>
+				</div>
+				<div class="layui-card-body">
+					<div class="layui-form">
+						<div class=" layui-form" style="margin-bottom: 10px;">
+
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:50px;"> ID：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="friend-index-id" name="id" autocomplete="off" placeholder="用户ID">
+                </div>
+              </div>
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width:50px;"> 用户：</label>
+								<div class="layui-input-inline" style="width: 120px;">
+									<input class="layui-input" id="friend-index-username" name="username" autocomplete="off" placeholder="用户名">
+								</div>
+							</div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:80px;"> 手机号：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="friend-index-phone" name="phone" autocomplete="off" placeholder="手机号">
+                </div>
+              </div>
+							<div class="layui-inline">
+								<button class="layui-btn"  lay-submit="" lay-filter="friend_index_searching" style="float:float;">搜索</button>
+							</div>
+              </br>
+
+						</div>
+					</div>
+					<table class="layui-hide" id="friend_index_list" lay-data="{id:'friendlist'}"  lay-filter="friend_index_list"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/html" id="friend_userinfo">
+  <a class="layui-btn layui-btn-sm" lay-event="friend_views">查看</a>
+</script>
+<script type="text/html" id="friend_single_userinfo">
+  <div class="layui-fluid" style="height: 430px;">
+    <div class="layui-row layui-col-space15" style="height: 430px;">
+      <div class="layui-col-md12  layui-form" style="height: 430px;">
+        <div class="layui-form-item" style="height: 430px;">
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width: 120px;"> 用户名：</label>
+            <div class="layui-input-inline" style="width: 120px;">
+              <label class="layui-form-label" id="friend-userinfo-username" style="width:120px;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width:120px;"> 手机号：</label>
+            <div class="layui-input-inline"  style="width: 120px;">
+              <label class="layui-form-label" id="friend-userinfo-phone" style="width:120px;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width:120px;"> 昵称：</label>
+            <div class="layui-input-inline" style="width: 120px;">
+              <label class="layui-form-label" id="friend-userinfo-nickname" style="width:120px;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width:120px;"> 余额：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="friend-userinfo-wallet" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width:120px;"> 状态：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="friend-userinfo-black-to" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width:120px;"> 性别：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="friend-userinfo-sex" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width:120px;"> 关系：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="friend-userinfo-status" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" >
+            <label class="layui-form-label" style="width:120px;"> 添加时间：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="friend-userinfo-create-time" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <br/>
+          <br/>
+          <div class="inline" style="text-align: center;clear: both;">
+            <button class="layui-btn layui-btn-danger layui-layer-close layui-layer-close1" >
+              <i class="layui-icon">&#xe67c;</i>关闭
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table','laydate','layer','form','laytpl','layedit','upload'], function(){
+        var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, upload = layui.upload;
+
+		  var friend_aaa = function (data) {
+			table.render({
+        id: 'friendlist'
+				,elem: '#friend_index_list'
+				,url: '/interface/friendList' //数据接口
+				,where: {data:data}
+				,page: true //开启分页
+				,limit:10
+				,method: 'post'
+				,cols: [[ //表头
+          {type:'checkbox', fixed: 'left'}
+					,{field: 'username', title: '用户名'}
+          ,{field: 'friendName', title: '好友用户名'}
+					,{field: 'phone', title: '手机号'}
+					,{field: 'wallet', title: '余额'}
+          ,{field: 'userInfo', title: '查看好友信息',templet:$('#friend_userinfo')}
+          ,{field: 'black_to', title: '状态',templet:function (d) {
+              return d.black_to == 1 ? '正常' : '被拉黑';
+          }}
+          ,{field: 'status', title: '关系',templet:function (d) {
+                  return d.status == 1 ? '好友' : d.status == 2 ? '陌生人' : d.status == 3 ? "拉黑" : "未知" ;
+              }}
+
+          ,{field:'sex',title:'性别',templet:function (d) {
+                      return d.sex == 1 ? '男' : '女';
+                  }}
+					,{field: 'create_time', title: '添加时间', templet: function(d){return admin.formatDate(d.create_time); }}
+				]]
+          ,parseData: function(res){ //res 即为原始返回的数据
+            var friend_aaa_res = {};
+            $.each(res.where, function (keys, val) {
+                friend_aaa_res.key = keys;
+                friend_aaa_res.value = val;
+                layui.data('friend_aaa_res', friend_aaa_res);
+            });
+          }
+			});
+
+
+		}
+
+
+
+    friend_aaa();
+		//监听搜索提交按钮
+		form.on('submit(friend_index_searching)', function(data){
+			var data = data.field;
+        friend_aaa(data);
+		})
+
+    table.on('tool(friend_index_list)', function(obj) {
+        var data = obj.data.friendInfo;
+        console.log(data);
+        if(obj.event === 'friend_views') {
+            layer.open({
+                title: '用户信息'
+                , type: 1
+                , area: ['450px', '50%']
+                ,content: $('#friend_single_userinfo').html()
+            })
+            var sex = data.sex==1 ? "男" : "女";
+            var black_to = data.black_to==1 ? "正常" : "拉黑";
+            var status = data.status==1 ? "好友" : data.status == 2 ? "陌生人" : data.status ==3 ? "拉黑" : "未知";
+            $('#friend-userinfo-username').html(data.username);
+            $('#friend-userinfo-phone').html(data.phone);
+            $('#friend-userinfo-nickname').html(data.remarks_name);
+            $('#friend-userinfo-wallet').html(data.wallet);
+            $('#friend-userinfo-black-to').html(black_to);
+            $('#friend-userinfo-sex').html(sex);
+            $('#friend-userinfo-status').html(status);
+            $('#friend-userinfo-create-time').html(admin.formatDate(data.create_time));
+        }
+    });
+
+	});
+</script>

@@ -1,0 +1,104 @@
+<title>打码反水</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">每日打码反水活动设置</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;" lay-filter="component-form-element">
+
+                <div class="layui-form-item" id="">
+                    <div class="layui-input-block" style="margin:0;">
+                        每日反水赠送方案：
+                    </div>
+                    <div class="layui-input-block" style="margin:0;" id="layui-add-pa">
+                        <button class="layui-btn  layui-btn-sm" id="layui-dama-add">
+                            增加<i class="layui-icon">&#xe654;</i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="submit" lay-submit lay-filter="damasettingsForm" class="layui-btn layui-bg-blue">
+                            保存修改配置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //    获取已存在的数据
+    layui.use(['admin'], function(){
+
+        var $ = layui.jquery, admin = layui.admin;
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Activity/get_info',
+            done: function(res){
+                var _data = res.data;
+                var da = _data.mrfs;
+                obj1 = JSON.parse(da);
+                var _dom = "";
+                for(var obj in obj1)
+                {
+                    _dom +='<div class="layui-input-block layui-czzs" style="margin:0;"> <div class="layui-inline">当天打码大于等于：</div> <div class="layui-inline">'+
+                    '<input type="text" name="mrfs[]" autocomplete="off" placeholder="" value="'+obj+'" class="layui-input">'+
+                    '</div> <div class="layui-inline">送</div> <div class="layui-inline">'+
+                    '<input type="text" name="mrfs_amount[]" autocomplete="off" placeholder="" value="'+obj1[obj]+'" class="layui-input">'+
+                    '</div><div class="layui-inline">%</div> <div class="layui-inline"> <button  class="layui-del layui-btn layui-btn-danger"> 删除 </button> </div> </div>';
+
+                }
+                $('#layui-dama-add').parent('div').before(_dom);
+                $('.layui-del').on('click',function(){
+                    $(this).parents('.layui-czzs').remove();
+                });
+
+            }
+        })
+    });
+
+//    生成新的方案输入框
+    layui.use(['jquery',], function(){
+        var $= layui.jquery;
+        $(function(){
+            var _czzs = "";
+            $('#layui-dama-add').click(function(){
+                    _czzs += '<div class="layui-input-block layui-czzs" style="margin:0;"> <div class="layui-inline">当天打码大于等于：</div> <div class="layui-inline">'+
+                        '<input type="text" name="mrfs[]" autocomplete="off" placeholder="" value="" class="layui-input">'+
+                        '</div> <div class="layui-inline">送</div> <div class="layui-inline">'+
+                        '<input type="text" name="mrfs_amount[]" autocomplete="off" placeholder="" value="" class="layui-input">'+
+                        '</div><div class="layui-inline">%</div> <div class="layui-inline"> <button  class="layui-del layui-btn layui-btn-danger"> 删除 </button> </div> </div>';
+                $(this).parent('div').before(_czzs);
+                _czzs = "";
+                $('.layui-del').on('click',function(){
+                    $(this).parents('.layui-czzs').remove();
+                });
+            });
+        });
+//        提交方案信息
+        layui.use(['form'], function(){
+            var $ = layui.$, form = layui.form;
+            form.on('submit(damasettingsForm)', function(data){
+                $.post(layui.setter.URL_ADMIN+"/Activity/mrfs",data.field,function(res){
+                    var _obj = JSON.parse(res);
+                    if(_obj.code == 0){
+                        layer.msg(_obj.msg, {time: 2000});
+                    }else{
+                        layer.msg(_obj.msg, {time: 2000});
+                    }
+                });
+            })
+        });
+
+    });
+
+
+
+
+
+
+
+
+</script>

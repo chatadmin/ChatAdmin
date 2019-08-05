@@ -1,0 +1,136 @@
+<title>生成充值卷</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">生成充值卷</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;">
+                <form enctype="multipart/form-data" id="addForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">充值卷说明</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="title" autocomplete="off" placeholder="请输入说明" class="layui-input" style="width: 20%;">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单个券金额</label>
+                        <div class="layui-input-block">
+                            <div class="layui-inline"><input type="text" name="coin"  placeholder="请输入金额" autocomplete="off" class="layui-input" > </div>
+                            <div class="layui-inline">元  *最小金额0.01</div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">生成数量</label>
+                        <div class="layui-input-block">
+                            <input type="text" id=""  name="number"   placeholder="数量" autocomplete="off" class="layui-input" lay-key="98" style="width: 10%;">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">过期时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="layui-endtime-add-conaaaas" readonly="readonly" name="expTime"   placeholder="过期时间" autocomplete="off" class="layui-input" style="width: 10%;">
+                        </div>
+                    </div>
+
+                </form>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="bannerForm" lay-submit lay-filter="bannerForm"  class="layui-btn">立即提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="test">
+        <p>s</p>
+</div>
+
+
+<script>
+
+    //    获取图片路径
+    layui.use(['form','admin','table','laydate'], function(){
+        var $ = layui.jquery, admin = layui.admin,laydate = layui.laydate ,form =layui.form;
+        var router = layui.router();
+        $('input[name="typeid"]').val(router.search.typeid);
+
+
+        //结束日期
+        laydate.render({
+            elem: '#layui-endtime-add-conaaaas'
+        });
+
+    });
+    //上传新增文件
+    layui.use(['jquery'], function(){
+        var $ = layui.jquery;
+        var router = layui.router();
+        $("#bannerForm").click(function(){
+            var coin = $('input[name="coin"]').val();
+            if(coin >= 0.01){
+                var data = new FormData($( "#addForm" )[0]);
+                data.typeid = router.search.typeid;
+                $.ajax({
+                    type:'post',
+                    url:layui.setter.URL_ADMIN+'/Coupon/added',
+                    cache: false,    //上传文件不需缓存
+                    processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
+                    contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                    data:data,
+                    dataType:'json',
+                    success:function(res){
+                        if(res.code == 0 ){
+                            self.location.href="#/Coupon/coupons";
+                        }else {
+                            layer.msg(res.msg, {time: 2000});
+                        }
+                    }
+                })
+            }else {
+                layer.msg('金额不能小于0.01元，请重新输入',{time: 2000});
+            }
+        })
+    });
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

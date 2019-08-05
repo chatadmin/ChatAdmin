@@ -1,0 +1,144 @@
+
+<title>账户明细列表</title>
+
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					<div style="float:left;">账户明细列表</div>
+				</div>
+				<div class="layui-card-body">
+					<div class="layui-form">
+						<div class=" layui-form" style="margin-bottom: 10px;">
+
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:50px;"> ID：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="account-index-id" name="id" autocomplete="off" placeholder="用户ID">
+                </div>
+              </div>
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width:50px;"> 用户：</label>
+								<div class="layui-input-inline" style="width: 120px;">
+									<input class="layui-input" id="account-index-username" name="username" autocomplete="off" placeholder="用户名">
+								</div>
+							</div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:80px;"> 手机号：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="account-index-phone" name="phone" autocomplete="off" placeholder="手机号">
+                </div>
+              </div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:120px;"> 群组名称：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="account-index-group-name" name="group_name" autocomplete="off" placeholder="群组名称">
+                </div>
+              </div>
+              <div class="layui-inline">
+                <label class="layui-form-label">注册时间：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input type="text" name="fromtime" class="layui-input" id="account_search_starttime" placeholder="开始日期">
+                </div>
+                -
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input type="text" name="totime" class="layui-input" id="account_search_endtime" placeholder="结束日期">
+                </div>
+              </div>
+							<div class="layui-inline">
+								<button class="layui-btn"  lay-submit="" lay-filter="account_index_searching" style="float:float;">搜索</button>
+							</div>
+              </br>
+
+						</div>
+					</div>
+					<table class="layui-hide" id="account_index_list" lay-data="{id:'accountlist'}"  lay-filter="account_index_list"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+    layui.use(['admin', 'table','laydate','layer','form','laytpl','layedit','upload'], function(){
+        var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, upload = layui.upload;
+
+        var insStart = laydate.render({
+            elem: '#account_search_starttime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+
+                //自动弹出结束日期的选择器
+                insEnd.config.elem[0].focus();
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#account_search_endtime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+		  var account_aaa = function (data) {
+			table.render({
+        id: 'accountlist'
+				,elem: '#account_index_list'
+				,url: '/interface/accountList' //数据接口
+				,where: {data:data}
+				,page: true //开启分页
+				,limit:10
+				,method: 'post'
+				,cols: [[ //表头
+          {type:'checkbox', fixed: 'left'}
+					,{field: 'username', title: '用户名'}
+					,{field: 'phone', title: '手机号'}
+					,{field: 'amount_count', title: '金额'}
+          ,{field: 'group_vname', title: '群组名称'}
+          ,{field: 'create_time', title: '时间',templet:function (d) {
+              return admin.formatDate(d.create_time);
+          }}
+          ,{field: 'status', title: '类型',templet:function (d) {
+                  return d.status == 1 ? '个人红包领取' : d.status == 2 ? '发个人红包' : d.status == 3 ? "群组领取红包" : d.status == 4 ? "群组发红包" : d.status == 5 ? "群组退还红包" : d.status==6 ? "个人退还红包" : d.status==7 ? "系统充值":"未知" ;
+              }}
+
+          ,{field:'amount_count',title:'出 / 入账',templet:function (d) {
+                      return d.amount_count < 0 ? '出账' : '入账';
+                  }}
+				]]
+          ,parseData: function(res){ //res 即为原始返回的数据
+            var friend_aaa_res = {};
+            $.each(res.where, function (keys, val) {
+                friend_aaa_res.key = keys;
+                friend_aaa_res.value = val;
+                layui.data('friend_aaa_res', friend_aaa_res);
+            });
+          }
+			});
+
+
+		}
+
+
+
+    account_aaa();
+		//监听搜索提交按钮
+		form.on('submit(account_index_searching)', function(data){
+			var data = data.field;
+        account_aaa(data);
+		})
+
+	});
+</script>

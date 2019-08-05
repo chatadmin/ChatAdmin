@@ -1,0 +1,148 @@
+<title>登陆日志</title>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>管理人员</cite></a>
+      <a><cite>登陆日志</cite></a>
+    </div>
+  </div>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+	          <div class="layui-tab layui-tab-brief">
+	            <div class="layui-tab-content" style="padding:10px 0;">
+	              <div class="layui-card-body layui-col-space10 layui-form" lay-filter="component-form-element">
+		            <div class="layui-inline">
+		            	<input type="text" name="username" id="username" placeholder="管理员" autocomplete="off" class="layui-input">
+		            </div>
+		            <div class="layui-inline">
+		            	<input type="text" name="ip" id="loginIP" placeholder="IP" autocomplete="off" class="layui-input">
+		            </div>
+                	<div class="layui-inline">
+	                  <div class="layui-input-inline">
+	                    <input type="text" class="layui-input" id="manage-loginlog-start" name="fromTime" placeholder="开始日期">
+	                </div>
+	                </div>
+	                <div class="layui-inline">
+	                  <div class="layui-input-inline">
+	                    <input type="text" class="layui-input" id="manage-loginlog-end" name="toTime" placeholder="结束日期">
+	                  </div>
+	                </div>
+	                <div class="layui-inline">
+	                	<button class="layui-btn" lay-submit lay-filter="logForm">查询</button>
+	                </div>
+	                <div class="layui-inline">
+	                	<button class="layui-btn" type="reset">重置</button>
+	                </div>
+	                </div>
+	                <div class="layui-card-body">
+	                <table class="layui-hide" id="loginLogList" lay-filter="loginLogList"></table>
+					<script type="text/html" id="manage-loginlog-operate-bar">
+						<a class="layui-btn layui-btn-sm" lay-event="seeSome">只看此人</a>	
+					</script>					
+	            </div>
+	          </div>
+	        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+  layui.use(['admin', 'table', 'laydate', 'form', 'laytpl'], function(){
+    var $ = layui.$, admin = layui.admin, table = layui.table, laydate = layui.laydate, form = layui.form, laytpl = layui.laytpl;
+  
+    //载入表格数据
+    table.render({
+      elem: '#loginLogList'
+      ,url: layui.setter.URL_ADMIN+'/manage/loginlog'
+      ,where:{
+		access_token: layui.data('layuiAdmin').access_token
+      }
+	  ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      ,cols: [[
+        {field:'username', title: '用户名'}
+        ,{field:'loginIP', title: '登陆IP'}
+        ,{field:'country', title: '地区'}
+        ,{field:'area', title: '网络'}
+        ,{field:'browser', title: '浏览器'}
+        ,{field:'os', title: '操作系统'}
+        ,{field:'loginTime', title: '时间', sort: true}
+        ,{width:100, title: '操作', fixed: 'right', toolbar: '#manage-loginlog-operate-bar'}
+      ]]
+      ,page: {
+    	  layout: ['count', 'prev', 'page', 'next', 'skip']
+      }
+    });
+    
+    //获取当前日期
+    var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+((nowDate.getDate())<10?'0'+(nowDate.getDate()):nowDate.getDate());
+    //防止开始日期被重置为空
+    $('#manage-loginlog-start').attr('value', startDate);
+    
+    //开始日期
+    var insStart = laydate.render({
+      elem: '#manage-loginlog-start'
+      ,done: function(value, date){
+        //更新结束日期的最小日期
+        insEnd.config.min = lay.extend({}, date, {
+          month: date.month - 1
+        });
+      }
+      ,value: startDate 	//赋值当前日期
+    });
+    
+    //结束日期
+    var insEnd = laydate.render({
+      elem: '#manage-loginlog-end'
+      ,done: function(value, date){
+        //更新开始日期的最大日期
+        insStart.config.max = lay.extend({}, date, {
+          month: date.month - 1
+        });
+      }
+    });
+	
+     //监听列表查询
+    form.on('submit(logForm)', function(data){
+    	var username = data.field.username.trim()
+    	,ip = data.field.ip.trim()
+    	,fromTime = data.field.fromTime.trim()
+    	,toTime = data.field.toTime.trim();
+    	active['reloadList'].call(this, username, ip, fromTime, toTime);
+    	return false;
+    });
+    
+	//执行列表重载(查询)
+    var active = {
+		reloadList: function(username, ip, fromTime, toTime){
+ 	        //执行重载
+ 	        table.reload('loginLogList', {
+ 	          page: {
+ 	            curr: 1 //重新从第 1 页开始
+ 	          }
+ 	          ,where: {
+ 	              username: username,
+ 	              ip: ip,
+ 	              fromTime: fromTime,
+ 	              toTime: toTime
+ 	          }
+ 	          ,loading:true
+ 	        });
+		}
+	};   
+	table.on('tool(loginLogList)', function(obj){
+	      var data = obj.data;
+		 if(obj.event === 'seeSome'){
+			var username = data.username,ip = $('#loginIP').val()
+			,fromTime = $('#manage-loginlog-start').val()
+			,toTime = $('#manage-loginlog-end').val();
+			$('#username').val(username);
+			active['reloadList'].call(this, username, ip, fromTime, toTime);
+		 }
+	}) 
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});
+  });
+  </script>

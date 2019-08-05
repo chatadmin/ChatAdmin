@@ -1,0 +1,197 @@
+<style>
+#totalRecharge { margin-left:20px;color:#888;display:inline-block; }
+#totalRecharge i { font-style:normal;color:red;margin-right:3px; }
+</style>
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md12">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<!--<div class="layui-card-header">存款/提款</div>-->
+						<div class="layui-card-body">
+							<div id="layui-index-water" style="height:250px;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<!--<div class="layui-card-header">投注/中奖a <i class="layui-icon layui-icon-tips" lay-tips="最近30天投注/中奖数据分析" lay-offset="5"></i></div>-->
+						<div class="layui-card-body">
+							<div id="layui-index-game" style="height:250px;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<div class="layui-card-header">盈亏统计</div>
+						<div class="layui-card-body">
+							<div class="layui-carousel layadmin-backlog" style="height:125px;background-color:#FFF;">
+								<!--<table id="LAY-CountData-mainLeftReports">-->
+								<!--</table>-->
+
+								<table class="layui-table" id="LAY-CountData-mainLeftReports">
+									
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-md6">
+					<div class="layui-card">
+						<div class="layui-card-header">月份统计</div>
+						<div class="layui-card-body">
+							<div class="layui-carousel layadmin-backlog" style="height:125px;background-color:#FFF;">
+								<table class="layui-table" id="LAY-CountData-mainRightReports">
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-md12">
+					<div class="layui-card">
+						<div class="layui-card-header">
+							报表<div id="totalRecharge">总入款金额：<i>0.00</i>元</div>
+						</div>
+						<div class="layui-card-body">
+							<form class="layui-form">
+								<center>
+								<div class="layui-inline">
+									<label class="layui-form-label">时间</label>
+									<div class="layui-input-block" style="margin-left:85px;">
+										<input id="orderStartTime" type="text" name="orderStartTime" placeholder="" autocomplete="off" class="layui-input time1" style="width: 45%;display: inline-block;">
+										<input id="orderEndTime" type="text" name="orderEndTime" placeholder="" autocomplete="off" class="layui-input time2" style="width: 45%; display: inline-block;">
+									</div>
+								</div>
+								<div class="layui-inline">
+									<label class="layui-form-label" style="width:50px;">用户名</label>
+									<div class="layui-input-block" style="margin-left:80px;">
+										<input id="orderUserID" type="text" name="orderUserID" placeholder="" autocomplete="off" class="layui-input" >
+									</div>
+								</div>
+								<div class="layui-inline" style="margin-top:-5px;">
+									<button class="layui-btn" lay-submit lay-filter="countDataForm">搜索</button>
+								</div>
+								<div class="layui-inline" style="margin-top:-5px;">
+									<button class="layui-btn" lay-submit lay-filter="countDataForm">数据检查</button>
+								</div>
+								</center>
+							</form>
+							<table class="layui-table" lay-skin="line" style="margin:15px 0">
+								<thead>
+								<tr>
+									<th>在线充值</th>
+									<th>人工入款</th>
+									<th>管理员入款</th>
+									<th>人工扣款</th>
+									<th>提现</th>
+									<th>投注金额</th>
+									<th>中奖金额</th>
+									<th>优惠金额</th>
+									<th>充值盈亏</th>
+									<th>投注盈亏</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr>
+									<td id="layui-data-0">0</td>
+									<td id="layui-data-1">0</td>
+									<td id="layui-data-2">0</td>
+									<td id="layui-data-3">0</td>
+									<td id="layui-data-4">0</td>
+									<td id="layui-data-5">0</td>
+									<td id="layui-data-6">0</td>
+									<td id="layui-data-7">0</td>
+									<td id="layui-data-8">0</td>
+									<td id="layui-data-9">0</td>
+								</tr>
+								</tbody>
+							</table>
+							<table class="layui-table" lay-skin="line" style="margin:15px 0">
+								<thead>
+								<tr>
+									<th>用户总数</th>
+									<th>充值用户数</th>
+									<th>今日注册人数</th>
+									<th>代理人数</th>
+									<th>会员人数</th>
+									<th>当前在线人数</th>
+									<th>测试号在线人数</th>
+									<th>余额总数</th>
+									<th>今日访问人数</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr>
+									<td id="layui-data-10">0</td>
+									<td id="layui-data-11">0</td>
+									<td id="layui-data-12">0</td>
+									<td id="layui-data-13">0</td>
+									<td id="layui-data-14">0</td>
+									<td id="layui-data-15">0</td>
+									<td id="layui-data-16">0</td>
+									<td id="layui-data-17">0</td>
+									<td id="layui-data-18">0</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-md12">
+					<div class="layui-card">
+						<div class="layui-card-header">
+							彩种投注金额统计
+						</div>
+
+						<!-- <div class="layui-tab layui-tab-brief" lay-filter="component-tabs-brief">
+							<ul class="layui-tab-title">
+								<li class="layui-this">快三</li>
+								<li>PK10</li>
+								<li>时时彩</li>
+								<li>PC蛋蛋</li>
+								<li>六合彩</li>
+								<li>11选5</li>
+								<li>快乐10分</li>
+								<li>福彩3D</li>
+								<li>快乐8</li>
+							</ul>
+							<div class="layui-tab-content"></div>
+						</div>
+ 						-->
+
+						<div class="layui-card-body">
+							<div class="layui-carousel layadmin-backlog" style="background-color:#FFFFFF;">
+								<div id="gamecount" style="height: 300px;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+
+</style>
+
+<script>
+	//加载 controller 目录下的对应模块
+	/*
+
+	 小贴士：
+	 这里 console 模块对应 的 console.js 并不会重复加载，
+	 然而该页面的视图则是重新插入到容器，那如何保证能重新来控制视图？有两种方式：
+	 1): 借助 layui.factory 方法获取 console 模块的工厂（回调函数）给 layui.use
+	 2): 直接在 layui.use 方法的回调中书写业务代码，即:
+	 layui.use('console', function(){
+	 //同 console.js 中的 layui.define 回调中的代码
+	 });
+
+	 这里我们采用的是方式1。其它很多视图中采用的其实都是方式2，因为更简单些，也减少了一个请求数。
+
+	 */
+	layui.use('countData', layui.factory('countData'));
+</script>
+

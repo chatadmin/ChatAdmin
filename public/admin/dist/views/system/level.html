@@ -1,0 +1,131 @@
+
+<title>等级设置</title>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+        		<div class="layui-card-header layui-inline" style="width: 100%">
+					<div style="font-size: 20px;float: left">等级设置</div>
+					<div class="member-level-operate-btn" style="float:right;margin-right:30px;" >
+					用户等级： 
+		            <div class="layui-inline layui-form" id="member_level_userLevelFrom">
+		            </div>					
+					  <button class="layui-btn">保存设置</button>
+					</div>
+				</div>
+				
+	            <div class="layui-tab-content" style="padding:10px 0;">
+				  <div class="layui-card-body">
+										
+					<table class="layui-hide" id="member_level_table" lay-filter="member_level_table"></table>
+				  	<script type="text/html" id="member_level_levelName">
+					  <input type="text" name="id" value="{{ d.id }}" autocomplete="off" class="layui-input id">
+					  <input type="hidden" class="lottery_played_id" value="{{ d.id }}" />"
+					</script>		
+				  	<script type="text/html" id="member_level_minBets">
+					  <input type="text" name="minBets" value="{{ d.minBets }}" autocomplete="off" class="layui-input minBets">
+					</script>	
+				  	<script type="text/html" id="member_level_maxBets">
+					  <input type="text" name="maxBets" value="{{ d.maxBets }}" autocomplete="off" class="layui-input maxBets">
+					</script>
+				  	<script type="text/html" id="member_level_minScore">
+					  <input type="text" name="minScore" value="{{ d.minScore }}" autocomplete="off" class="layui-input minScore">
+					</script>					
+					<script type="text/html" id="member_level_maxToCashCount">
+					  <input type="text" name="maxToCashCount" value="{{ d.maxToCashCount }}" autocomplete="off" class="layui-input maxToCashCount">
+					</script>
+					<script type="text/html" id="member_level_fee">
+					  <input type="text" name="fee" value="{{ d.fee }}" autocomplete="off" class="layui-input fee">%
+					</script>				
+				  </div>
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" id="member_level_submit">保存修改</button>
+				</div>
+			  </div>
+			</div>	
+	          </div>			  
+      </div>
+    </div>
+  </div>
+  </div>
+	<script type="text/html" id="userLevelFrom_script">
+	<div class="layui-form" lay-filter="member_level_userLevelFrom">
+	<select id="userLevelFrom" name="userLevelFrom" lay-verify="">
+		<option value="" {{#  if(d.userLevelFrom!='bet'&&d.userLevelFrom!='recharge'){ }} selected {{#  } }}>不启用</option>
+		<option value="bet" {{#  if(d.userLevelFrom=='bet'){ }} selected {{#  } }}>按投注量</option>
+		<option value="recharge" {{#  if(d.userLevelFrom=='recharge'){ }} selected {{#  } }}>按充值量</option>
+	</select>  
+	</div>
+  </script>
+  <script>
+  layui.use(['admin', 'table', 'form', 'laytpl'], function(){
+    var $ = layui.$, admin = layui.admin, table = layui.table,form = layui.form, laytpl = layui.laytpl;
+	var iii = layer.msg('loading');
+	table.render({
+	  elem: '#member_level_table'
+	  ,url: layui.setter.URL_ADMIN+'/member/level'
+	  ,where:{
+		access_token: layui.data('layuiAdmin').access_token
+	  }
+	  ,cols: [[
+		{field:'level', title: '级别',width:50}
+		,{field:'levelName', title: '级别名称', templet: '#member_level_levelName',width:120}
+		,{field:'minScore', title: '投注量/充值量', templet: '#member_level_minScore'}
+		,{field:'minBets', title: '当期单玩法最低投注额', templet: '#member_level_minBets'}
+		,{field:'maxBets', title: '当期单玩法最高投注额', templet: '#member_level_maxBets'}
+		,{field:'maxToCashCount', title: '每日提现次数', templet: '#member_level_maxToCashCount'}
+		,{field:'fee', title: '超过提现次数手续费(百分比)', templet: '#member_level_fee'}
+	  ]]
+	  ,loading:true
+	  ,id:'lottery_played_data'
+	  ,done: function(res){
+			layer.close(iii);
+			$('#member_level_userLevelFrom').html(laytpl($('#userLevelFrom_script').html()).render(res));
+			form.render(null, 'member_level_userLevelFrom');		
+	   }
+	});	
+	
+	$('.member-level-operate-btn .layui-btn').on('click',function(){ 
+		var iii = layer.msg('loading');	
+		var userleveset = $(this).parent().find('select').val();	
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/system/updateSettings'
+			,data: {userLevelFrom:userleveset}
+			,type: 'post'
+			,done: function(res){
+				layer.close(iii)
+			}
+		});
+    });
+	
+	$('#member_level_submit').on('click',function(){ 
+		var iii = layer.msg('loading');
+		var mydatas=[],levelName,minBets,maxBets,minScore,maxToCashCount,fee,id;
+		var groupid = $('#lottery_played_groupid').val(),parent = $(this).parent().parent().parent().parent();
+		parent.find('table').eq(2).find('tr').each(function(i){ 
+			 levelName = $(this).find('.levelName').val()
+			 minBets = $(this).find('.minBets').val()
+			 id = $(this).find('.id').val()
+			 maxBets = $(this).find('.maxBets').val()
+			 maxToCashCount = $(this).find('.maxToCashCount').val()
+			 fee = $(this).find('.fee').val()
+			 minScore = $(this).find('.minScore').val()	;		 
+			 mydatas[i] = {"levelName":levelName,"minBets":minBets,"maxBets":maxBets,"maxToCashCount":maxToCashCount,"fee":fee,'minScore':minScore,'id':id};
+	   });
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/member/setlevel'
+			,data: {mydatas}
+			,type: 'post'
+			,done: function(res){
+				layer.close(iii)
+			}
+		});
+    });
+	
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});
+  });
+  </script>

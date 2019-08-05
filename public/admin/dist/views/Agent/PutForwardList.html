@@ -1,0 +1,154 @@
+<title>提现记录</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline">
+                        <div style="float: left"><span class="forward-username" style="color:#FF5722"></span> 的下级用户提现记录</div>
+                    </div>
+                    <div class="layui-card-header layui-inline" style="width: 100%">
+                        <div style="float: left;font-size: 20px;">提现记录</div>
+                        <div style="float: left;color: red;margin-left: 15px;margin-top: 10px"><span>本次统计提款总额：</span> <span id="forward-Total" style="font-size: 18px">0</span> 元 </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-inline layui-col-md-offset3 layui-form" lay-filter="component-form-element">
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="用户名" autocomplete="off" class="layui-input" size="15">
+                            </div>
+
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-Forward-start" autocomplete="off" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-Forward-end" autocomplete="off" name="toTime" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit lay-filter="listForwardForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentListPutForwardList" lay-filter="AgentListPutForwardList"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form','laytpl'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,laytpl= layui.laytpl;
+        var router = layui.router();
+        var username = router.search.username;
+        $('.forward-username').html(username);
+        var fromTimes = router.search.fromTime;
+        var toTimes = router.search.toTime;
+        $('#test-laydate-Forward-start').val(fromTimes);
+        $('#test-laydate-Forward-end').val(toTimes);
+
+
+        //载入表格数据
+        table.render({
+            elem: '#AgentListPutForwardList'
+            ,url: layui.setter.URL_ADMIN+'/Agent/cash?uid='+router.search.uid+'&fromTime='+fromTimes+'&toTime='+toTimes
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'uid',align:'center', title: 'UserID', width: 100},
+                {field:'userAccount',align:'center', title: '用户名', width: 150},
+                {field:'amount',align:'center', title: '实到金额', width: 150},
+                {field:'fee',align:'center', title: '手续费', width: 120},
+                {field:'bankName',align:'center', title: '银行类型', width: 120},
+                {field:'username',align:'center', title: '开户姓名', width: 120},
+                {field:'account',align:'center', title: '银行账号', width: 200},
+                {field:'countname',align:'center', title: '开户行', width: 120},
+                {field:'actionTime',align:'center', title: '时间',templet: function(d){return admin.formatDate(d.actionTime); }},
+                {field:'state',align:'center', title: '状态', width: 120,templet: function(d){
+                    return d.state ? '<font style="color: #00a368;"> '+ d.state +' </font>' :""
+                }},
+                {field:'info',align:'center', title: '备注', width: 120},
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+                var _amount = res.amount;
+//                console.log(_amount);
+                $('#forward-Total').html(_amount);
+                form.render(null, 'component-form-element');
+            }
+        });
+
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-Forward-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-Forward-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(listForwardForm)', function(data){
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime){
+                //执行重载
+                table.reload('AgentListPutForwardList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+
+
+
+    });
+
+
+</script>
+

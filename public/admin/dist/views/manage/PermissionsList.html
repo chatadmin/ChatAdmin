@@ -1,0 +1,133 @@
+<title>角色列表</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline" style="font-size: 20px;width: 100%">
+                        <div style="float: left">角色列表</div>
+                        <div style="float: right;margin-right: 50px;">
+                            <button class="layui-btn layui-btn-sm" >
+                                <a style="color: #fbfbfb" href="javascript:;" lay-href="Manage/addJurisdiction" >添加角色</a>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="PermissionsList" lay-filter="PermissionsList"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    //    获取角色列表
+    layui.use(['admin','table','laydate','form','jquery','layer'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,form = layui.form ,layer = layui.layer;
+
+        //载入表格数据
+        table.render({
+            elem: '#PermissionsList'
+            ,url: layui.setter.URL_ADMIN+'/Menu/rolelist'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'id',align:'center', title: 'ID', width: 200},
+                {field:'name',align:'center', title: '角色名称'},
+                {field:'state',align:'center', title: '是否启用', width: 250,templet: function(d){
+                    if(d.state == 1){return '<font color="#009900">已启用</font>'}else {return '<font color="red">已禁用</font>'}
+                }},
+                {field:'update',align:'center', title: '修改时间', width: 250,templet: function(d){return admin.formatDates(d.update); }}
+                ,{field:'regTime',align:'center', title: '操作',templet: function(d){
+                    var str = '';
+                    if(d.state == 1){
+                        str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_dis" state="0" dis="'+d.id+'">禁用</button>';
+                    }else {
+                        str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-normal layui-btn-sm btn_dis" state="1" dis="'+d.id+'">启用</button>';
+                    }
+                    str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-sm"  style="color: #fbfbfb" href="javascript:;" lay-href="Manage/updateJurisdiction/id='+d.id+'/type=1">修改权限</a>';
+                    str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_del" del="'+d.id+'">删除</button>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+                form.render(null, 'component-form-element');
+
+
+                //禁用
+                $('.btn_dis').on('click',function(){
+                    var id = $(this).attr('dis');
+                    var state = $(this).attr('state');
+                    var aaa = $(this).text();
+                    layer.confirm('确定'+aaa+'此角色吗？', {
+                        btn: ['确定','取消'] //按钮
+                    }, function(){
+                        $.ajax({
+                            type: "POST",//方法类型
+                            dataType: "json",//预期服务器返回的数据类型
+                            url: layui.setter.URL_ADMIN+"/Menu/disable",//url
+                            data: {
+                                id:id,
+                                state:state
+                            },
+                            success: function (data) {
+                                if (data.code == 0) {
+                                    layer.msg(data.msg, {time: 1000});
+                                    table.reload('PermissionsList',{});
+                                }else {
+                                    layer.msg(data.msg, {time: 1000});
+                                }
+                            }
+                        });
+                    }, function(){
+                        layer.msg('已取消禁用操作', {time: 1000});
+                    });
+                });
+
+                //删除
+                $('.btn_del').on('click',function(){
+                    var id = $(this).attr('del');
+                    layer.confirm('确定删除此角色吗？', {
+                        btn: ['确定','取消'] //按钮
+                    }, function(){
+                        $.post(layui.setter.URL_ADMIN+"/Menu/delete_role?id="+id,function(res){
+                            var _obj = JSON.parse(res);
+                            if(_obj.code == 0){
+                                layer.msg(_obj.msg, {time: 1000});
+                                table.reload('PermissionsList',{});
+                            }else{
+                                layer.msg(_obj.msg, {time: 1000});
+                            }
+                        });
+                    }, function(){
+                        layer.msg('已取消删除操作', {time: 1000});
+                    });
+                });
+
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+        });
+
+
+
+</script>

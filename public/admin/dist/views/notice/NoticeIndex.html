@@ -1,0 +1,253 @@
+<title>系统公告</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div style="float: left">系统公告</div>
+                        <div style="float: right;">
+                            <button class="layui-btn layui-btn-sm addNoticeIndexs layui-btn-normal" >
+                                添加系统公告
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="NoticeIndex" lay-filter="NoticeIndex"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="ListNoticeIndex1" lay-filter="NoticeIndex-table-element1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input" style="width: 80%;">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-input-block">
+                        <textarea name="content" placeholder="请输入内容" lay-verify="required" class="layui-textarea" style="width: 80%;"></textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="display: none">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="nodeId" value="1"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="NoticeIndexForm" lay-submit lay-filter="NoticeIndexForm"  class="layui-btn layui-btn-normal">立即新增</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="update-ListNoticeIndex2" lay-filter="update-NoticeIndex-table-element2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                        <input type="text"  name="title" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input" style="width: 80%;">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-input-block">
+                        <textarea name="content" id="notice-content" placeholder="请输入内容" lay-verify="required" class="layui-textarea" style="width: 80%;"></textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">添加时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="layui-addTime" readonly="readonly" name="addTime" placeholder="开始时间" autocomplete="off" class="layui-input" lay-key="98" style="width: 30%;">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">是否显示</label>
+                    <div class="layui-input-block enable">
+                        <input type="radio" name="enable" value="1" title="显示" id="notice-display">
+                        <input type="radio" name="enable" value="0" title="隐藏" id="notice-none">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="update-NoticeIndexForm" lay-submit lay-filter="update-NoticeIndexForm"  class="layui-btn layui-btn-normal">提交修改</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+
+    layui.use(['admin','table','form'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,form = layui.form;
+
+        //载入表格数据
+        table.render({
+            elem: '#NoticeIndex'
+            ,url: layui.setter.URL_ADMIN+'/Information/get_notice?nodeId=1'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'title', title: '标题'},
+                {field:'enable', title: '是否显示', width: 130,templet: function(d){
+                    return d.enable == 0 ? '隐藏':'显示';
+                }}
+                ,{field:'addTime',align:'center', title: '添加时间', width: 130 ,templet: function(d){return admin.formatDates(d.addTime); }}
+                ,{align:'center', title: '操作',width: 200,  fixed: 'right',templet: function(d){
+                    var str = '';
+                    str += '<a class="layui-btn layui-btn-sm noticeIndex-update"  style="color: #fbfbfb" href="javascript:;" update="'+d.id+'">修改</a>';
+                    str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_del" del="'+d.id+'">删除</button>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data >0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+(res.data).length+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                //删除操作
+                layui.use(['jquery',], function(){
+                    var $= layui.jquery;
+                    $(function(){
+                        $('.btn_del').on('click',function(){
+                            var id = $(this).attr('del');
+                            layer.confirm('确定删除所选项吗？', {
+                                btn: ['确定删除','取消'] //按钮
+                            }, function(){
+                                $.post(layui.setter.URL_ADMIN+"/Information/deleteBanner?id="+id,function(res){
+                                    var _obj = JSON.parse(res);
+                                    if(_obj.code == 0){
+                                        layer.msg(_obj.msg, {time: 1000});
+                                        table.reload('NoticeIndex',{});
+                                    }else{
+                                        layer.msg(_obj.msg, {time: 1000});
+                                    }
+                                });
+                            }, function(){
+                                //layer.msg('已取消操作', {time: 1000});
+                            });
+                        });
+                    });
+                });
+
+                //修改
+                $('.noticeIndex-update').click(function () {
+                    var id = $(this).attr('update');
+                    admin.req({
+                        url: layui.setter.URL_ADMIN+'/Information/get_info?id='+id,
+                        done: function(res){
+                            var data = res.data;
+                            $('input[name="title"]').val(data[0]['title']);
+                            $('#notice-content').html(data[0]['content']);
+                            $('input[name="addTime"]').val(admin.formatDates(data[0]['addTime']));
+                            if(data[0]['enable'] == 1){
+                                $('#notice-display').attr('checked',true);
+                            }else {
+                                $('#notice-none').attr('checked',true);
+                            }
+                            form.render('radio')
+                        }
+                    });
+
+                    layer.open({
+                        title:'修改公告'
+                        ,type: 1
+                        ,shadeClose: true
+                        ,area: ['800px', '500px']
+                        ,content: $('#update-ListNoticeIndex2').html()
+                    });
+                    form.render(null, 'update-NoticeIndex-table-element2');
+
+
+                    //上传修改文件
+                    layui.use(['jquery'], function(){
+                        var $ = layui.jquery;
+                        form.on('submit(update-NoticeIndexForm)', function(data){
+                            data.field.nodeId = 1;
+                            $.post(layui.setter.URL_ADMIN+"/Information/doAddNotice?id="+id, data.field, function (res) {
+                                var _obj = JSON.parse(res);
+                                if (_obj.code == 0) {
+                                    layer.msg(_obj.msg, {time: 1000}, function () {
+                                        layer.closeAll();
+                                        table.reload('NoticeIndex',{});
+                                    });
+                                } else {
+                                    layer.msg(_obj.msg, {time: 1000});
+                                }
+                            });
+                        });
+
+                    });
+                });
+
+
+            }
+        });
+        //增加
+        $('.addNoticeIndexs').click(function () {
+            layer.open({
+                title:'添加公告'
+                ,type: 1
+                ,shadeClose: true
+                ,area: ['800px', '300px']
+                ,content: $('#ListNoticeIndex1').html()
+            });
+            form.render(null, 'NoticeIndex-table-element1');
+
+
+            //上传新增文件
+            layui.use(['jquery'], function(){
+                var $ = layui.jquery;
+                form.on('submit(NoticeIndexForm)', function(data){
+                    data.field.nodeId = 1;
+                    $.post(layui.setter.URL_ADMIN+"/Information/doAddNotice", data.field, function (res) {
+                        var _obj = JSON.parse(res);
+                        if (_obj.code == 0) {
+                            layer.msg(_obj.msg, {time: 1000}, function () {
+                                layer.closeAll();
+                                table.reload('NoticeIndex',{});
+                            });
+                        } else {
+                            layer.msg(_obj.msg, {time: 1000});
+                        }
+                    });
+                });
+
+            });
+        });
+
+
+    });
+
+
+</script>
+

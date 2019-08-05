@@ -1,0 +1,222 @@
+<title>用户盈亏统计</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">用户盈亏统计</div>
+                    <div class="layui-card-body layui-form" lay-filter="component-form-element">
+                        <span>会员名：</span>
+                        <div class="layui-inline">
+                            <input type="text" id="members-username" name="username" placeholder="会员名" autocomplete="off" class="layui-input" size="15">
+                        </div>
+                        <div class="layui-inline">
+                            <span>时间 ：从</span>
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="test-laydate-members-start" autocomplete="off" name="fromTime" placeholder="开始日期">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <span>到</span>
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="test-laydate-members-end" autocomplete="off" name="toTime" placeholder="结束日期">
+                            </div>
+                            <span>排序：</span>
+                        </div>
+                        <div class="layui-inline layui-form" lay-filter="component-form-element1">
+                            <select id="stateList" name="sortBy" lay-verify="">
+                                <option value="">默认</option>
+                                <option value="1">投注量</option>
+                                <option value="2">充值量</option>
+                                <option value="3">提现量</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" id="CountMembersForm" lay-submit lay-filter="CountMembersForm">查询</button>
+                        </div>
+                        <!--<div class="layui-inline">-->
+                            <!--<button class="layui-btn" type="reset">重置</button>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="layui-col-md-space6" id="menber-num">
+                    	<center>
+                        <div class="layui-inline layui-num">
+                            <span>今日首充量：</span>
+                            <span id="todayRechargeUserCount">0</span>
+                        </div>
+                        <div class="layui-inline layui-num">
+                            <span>今日总投注人数：</span>
+                            <span id="todayBetUserCount">0</span>
+                        </div>
+                        <div class="layui-inline layui-num">
+                            <span>充值量：</span>
+                            <span id="rechargeAmount">0.00</span>
+                        </div>
+                        <div class="layui-inline layui-num">
+                            <span>提现量：</span>
+                            <span id="cashAmount">0</span>
+                        </div>
+                        <div class="layui-inline layui-num">
+                            <span>投注量：</span>
+                            <span id="betAmount">0</span>
+                        </div>
+                        <div class="layui-inline layui-num">
+                            <span>派奖量：</span>
+                            <span id="zjAmount">0</span>
+                        </div>
+                        <div class="layui-inline layui-num">
+                            <span>盈亏：</span>
+                            <span id="profit">0</span>
+                        </div>
+                        </center>
+                    </div>
+                    <style>
+                        .layui-num{
+                            margin-left: 20px;
+                            color: #FF5722;
+                        }
+                        .layui-num span:nth-child(2){
+                            font-size: 18px;
+                        }
+                    </style>
+
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="CountMemberList" lay-filter="CountMemberList"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','table','laydate','form'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form;
+
+
+        //获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-members-start').attr('value', startDate);
+        form.render(null,'component-form-element1');
+        //载入表格数据
+        table.render({
+            elem: '#CountMemberList'
+            ,url: layui.setter.URL_ADMIN+'/CountData/member?fromTime='+startDate
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'type',align:'center', title: '类型', width: 60,templet: function(d){
+                    if(d.type == 1){return '代理';}else if(d.type == 9){return '测试'}else {return '会员';}
+                }},
+                {field:'uid',align:'center', title: 'ID', width: 100},
+                {field:'username',align:'center', title: '用户名', width: 150},
+                //{field:'nickname',align:'center', title: '昵称', width: 150},
+                {field:'rechargeAmount',align:'center', title: '存款', width: 100},
+                {field:'cashAmount',align:'center', title: '提现', width: 100},
+                {field:'betAmount',align:'center', title: '投注', width: 100},
+                {field:'zjAmount',align:'center', title: '中奖', width: 100},
+                {field:'discount',align:'center', title: '优惠', width: 100},
+                {field:'coin',align:'center', title: '余额', width: 100},
+                {field:'profit',align:'center', title: '盈亏', width: 100}
+                ,{field:'regTime',align:'center', title: '注册时间',templet: function(d){return admin.formatDate(d.regTime); }},
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+
+                shuju($('#members-username').val(),$('#test-laydate-members-start').val(),$('#test-laydate-members-end').val());
+            }
+        });
+
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-members-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-members-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+        var aaa = '';
+        //监听列表查询
+        form.on('submit(CountMembersForm)', function(data){
+            aaa = layer.msg('loading');
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,sortBy = data.field.sortBy.trim()
+                ,toTime = data.field.toTime.trim();
+            shuju(username,fromTime,toTime);
+            active['reloadList'].call(this,username, fromTime, toTime,sortBy);
+        });
+
+
+        function shuju(username,fromTime,toTime) {
+            $.ajax({
+                type: "POST",
+                url: layui.setter.URL_ADMIN+'/CountData/info',
+                data:{
+                    username:username,
+                    fromTime:fromTime,
+                    toTime:toTime
+                },
+                success: function(res){
+                    var data = JSON.parse(res);
+                    data = data.data;
+                    $('#rechargeAmount').html(data['rechargeAmount']);
+                    $('#cashAmount').html(data['cashAmount']);
+                    $('#betAmount').html(data['betAmount']);
+                    $('#zjAmount').html(data['zjAmount']);
+                    $('#todayRechargeUserCount').html(data['todayRechargeUserCount']);
+                    $('#todayBetUserCount').html(data['todayBetUserCount']);
+                    $('#profit').html(data['profit']);
+                }
+            });
+        }
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username,fromTime, toTime,sortBy){
+                //执行重载
+                layer.close(aaa);
+                table.reload('CountMemberList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username:username,
+                        fromTime: fromTime,
+                        toTime: toTime,
+                        sortBy: sortBy
+                    }
+                    ,loading:true
+                });
+
+            }
+        };
+
+
+    });
+
+
+</script>
+

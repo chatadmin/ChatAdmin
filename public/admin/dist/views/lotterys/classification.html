@@ -1,0 +1,214 @@
+<title>彩种分类</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline" style="font-size: 20px;width: 100%">
+                        <div style="float: left">彩种分类</div>
+                        <div style="float: right;margin-right: 50px;">
+                            <!--<button class="layui-btn layui-btn-sm " id="addClassBtn">-->
+                                <!--添加分类-->
+                            <!--</button>-->
+                        </div>
+                    </div>
+
+                    <div class="layui-card-body layui-form">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="classificationList" lay-filter="classificationList"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="lottery_played_name">
+    <input type="text" title="点击修改" value="{{ d.name }}" autocomplete="off" class="input layui-input className{{ d.id }}">
+</script>
+<script type="text/html" id="lottery_played_paixu">
+    <input type="text" title="点击修改" value="{{ d.sort }}" autocomplete="off" class="input layui-input classSort{{ d.id }}">
+</script>
+
+<script type="text/html" id="ListClass">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12 layui-form"  lay-filter="class-table-element">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">彩种名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入彩种名称" class="layui-input">
+                    </div>
+                    <div style="color: #bbbbbb;margin-left: 120px">*可修改</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">分类名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="hideName" lay-verify="required" autocomplete="off" placeholder="请输入彩种名称" class="layui-input">
+                    </div>
+                    <div style="color: #bbbbbb;margin-left: 120px">*不可修改</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="sort" value="1" autocomplete="off" class="layui-input" >
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="state" value="0" title="禁用" checked>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="state" value="1" title="启用" >
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="add-Class" lay-submit lay-filter="add-Class"  class="layui-btn">确认新增</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','table','form'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table ,form = layui.form;
+        //载入表格数据
+        table.render({
+            elem: '#classificationList'
+            ,url: layui.setter.URL_ADMIN+'/Classification/classList'
+            ,limit:30
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'id',align:'center', title: 'ID', width: 130},
+                {field:'hideName',align:'center', title: '彩种名称', width: 200},
+                {field:'name',align:'center', title: '分类名称',templet: '#lottery_played_name'},
+                {field:'sort',align:'center', title: '排序',templet: '#lottery_played_paixu'},
+                {field:'state',align:'center', title: '状态',templet: function(d){
+                    if(d.state == 1){return '<font style="color: #1694e9">已启用</font>';}else {return '<font style="color: red">已禁止</font>';}
+                }}
+                ,{align:'center', title: '操作',  fixed: 'right',templet: function(d){
+                    var str = '';
+                    str += '<a class="layui-btn layui-btn-sm update-class" update="'+ d.id +'"  style="color: #fbfbfb" href="javascript:;">保存设置</a>';
+                    if(d.state == 1){
+                    str += '&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-sm layui-btn-danger class-state" only="'+ d.id +'" read="'+ d.state +'"  href="javascript:;">禁用</a>';
+                    }else {
+                    str += '&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-sm layui-btn-normal class-state" only="'+ d.id +'" read="'+ d.state +'" href="javascript:;">启用</a>';
+                    }
+//                    str += '&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_del" del="'+d.id+'">删除</button>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+                //修改
+                $('.update-class').on('click',function(){
+                    var id = $(this).attr('update');
+                    var name = $('.className'+id).val();
+                    var sort = $('.classSort'+id).val();
+                    $.ajax({
+                        type: "POST",
+                        url: layui.setter.URL_ADMIN+"/Classification/addClass?id="+id,
+                        async:false,
+                        data : {'name' : name , 'sort' : sort },
+                        success: function(res){
+                            var _obj = JSON.parse(res);
+                            if(_obj.code == 0){
+                                layer.msg(_obj.msg, {time: 1000});
+                                table.reload('classificationList',{});
+                            }else{
+                                layer.msg(_obj.msg, {time: 1000});
+                            }
+                        }
+                    });
+                });
+                //禁用
+                $('.class-state').on('click',function(){
+                    var id = $(this).attr('only');
+                    var state = $(this).attr('read');
+                    if(state == 1){state = 0;}else if(state == 0){state = 1;}
+                    $.ajax({
+                        type: "POST",
+                        url: layui.setter.URL_ADMIN+"/Classification/enable",
+                        async:false,
+                        data : {'id' : id , 'state' : state },
+                        success: function(res){
+                            var _obj = JSON.parse(res);
+                            if(_obj.code == 0){
+                                layer.msg(_obj.msg, {time: 1000});
+                                table.reload('classificationList',{});
+                            }else{
+                                layer.msg(_obj.msg, {time: 1000});
+                            }
+                        }
+                    });
+                });
+
+                $('#addClassBtn').on('click',function(){
+                    layer.open({
+                        title:'新增彩票分类'
+                        ,type: 1
+                        ,shadeClose: true
+                        ,area: admin.screen() < 2 ? ['80%', '350px'] : ['500px', 'auto']
+                        ,content: $('#ListClass').html()
+                    });
+                    form.render(null, 'class-table-element');
+                });
+
+                //删除操作
+                layui.use(['jquery',], function(){
+                    var $= layui.jquery;
+                    $(function(){
+                        $('.btn_del').on('click',function(){
+                            var id = $(this).attr('del');
+                            layer.confirm('确定删除所选项吗？', {
+                                btn: ['确定删除','取消删除'] //按钮
+                            }, function(){
+                                $.post(layui.setter.URL_ADMIN+"/Classification/deleteClass?id="+id,function(res){
+                                    var _obj = JSON.parse(res);
+                                    if(_obj.code == 0){
+                                        layer.msg(_obj.msg, {time: 1000});
+                                        table.reload('classificationList',{});
+                                    }else{
+                                        layer.msg(_obj.msg, {time: 1000});
+                                    }
+                                });
+                            }, function(){
+                                layer.msg('已取消操作', {time: 1000});
+                            });
+                        });
+                    });
+                });
+
+            }
+        });
+        //新增
+        form.on('submit(add-Class)', function(data){
+            $.post(layui.setter.URL_ADMIN+"/Classification/addClass",data.field,function(res){
+                var _obj = JSON.parse(res);
+                if(_obj.code == 0){
+                    table.reload('classificationList',{});
+                    layer.closeAll();
+                    layer.msg(_obj.msg, {time: 2000});
+                }else{
+                    layer.msg(_obj.msg, {time: 2000});
+                }
+            });
+        })
+
+    });
+
+
+</script>
+

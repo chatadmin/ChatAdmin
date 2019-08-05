@@ -1,0 +1,108 @@
+<title>赠送彩金</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">赠送彩金</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">赠送金额</div>
+                    <div class="layui-inline">
+                        <input type="text" id="number" name="sum" value="0" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">赠送条件</div>
+                    <div class="layui-inline">
+                        <select class="access_type" name="sele_mod" lay-filter="sele_mod">
+                            <option value="1">按等级选择</option>
+                            <option value="2">按当月存款选择</option>
+                            <option value="3">按当月投注金额选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline" id="layui-id-dengji">等级限制</div>
+                    <div class="layui-inline" id="layui-username-dengji" lay-filter="layui-username-dengji">
+
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block" style="margin-left:70px;">
+                        <button id="submit" lay-submit lay-filter="sendForm" class="layui-btn layui-bg-blue">
+                            确定赠送
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+//    获取等级信息
+//lay-ignore
+    layui.use(['admin','form' , 'jquery'], function(){
+        var $ = layui.jquery, admin = layui.admin ,form = layui.form;
+        var dengji = "";
+        var optionh = '<select  class="access_type" name="show_value">';
+        var optionw = '</select>';
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Activity/get_level',
+            done: function(res){
+                var _data = res.data;
+                for(var i=0;i<_data.length;i++){
+                    if(_data[i]["levelName"]){
+                        dengji += '<option value="'+_data[i]["level"]+'">'+_data[i]["levelName"]+'</option>';
+                    }else {
+                        dengji += '<option value="'+_data[i]["level"]+'">'+_data[i]["level"]+'</option>';
+                    }
+
+                }
+                $('#layui-username-dengji').append( optionh + dengji + optionw);
+                form.render('select');
+            }
+        });
+
+
+        form.on('select(sele_mod)', function (data) {
+            var _value = data.value;
+            if(_value == 1){
+                $('#layui-id-dengji').html('按等级选择');
+                $('#layui-username-dengji').html('');
+                $('#layui-username-dengji').append( optionh + dengji + optionw);
+                    form.render('select');
+            }else if(_value == 2) {
+                var dom = '<input type="text" id="number" name="show_value" value="0" autocomplete="off" class="layui-input">';
+
+                $('#layui-id-dengji').html('按当月存款选择');
+                $('#layui-username-dengji').html('');
+                $('#layui-username-dengji').append(dom);
+            }else if(_value == 3){
+                var dom = '<input type="text" id="number" name="show_value" value="0" autocomplete="off" class="layui-input">';
+                $('#layui-id-dengji').html('按当月投注金额选择');
+                $('#layui-username-dengji').html('');
+                $('#layui-username-dengji').append(dom);
+            }
+        });
+
+
+    });
+
+    layui.use(['form'], function(){
+        var $ = layui.jquery , form = layui.form;
+        form.on('submit(sendForm)', function(data){
+//            console.log(data.field);
+            $.post(layui.setter.URL_ADMIN+"/Business/sendCaijin",data.field,function(res){
+                console.log(res);
+                var _obj = JSON.parse(res);
+                if(_obj.code == 0){
+                    layer.msg(_obj.msg, {time: 2000});
+                }else{
+                    layer.msg(_obj.msg, {time: 2000});
+                }
+            });
+        })
+    });
+</script>

@@ -1,0 +1,154 @@
+<title>操作日志</title>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>管理人员</cite></a>
+      <a><cite>操作日志</cite></a>	  
+    </div>
+  </div>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+	          <div class="layui-tab layui-tab-brief">
+	            <div class="layui-tab-content" style="padding:10px 0;">
+	              <div class="layui-card-body layui-col-space10 layui-form" lay-filter="component-form-element">
+		            <div class="layui-inline">
+		            	<input type="text" name="username" placeholder="管理员" autocomplete="off" class="layui-input">
+		            </div>
+		            <div class="layui-inline">
+		            	<input type="text" name="ip" placeholder="IP" autocomplete="off" class="layui-input">
+		            </div>
+		            <div class="layui-inline layui-form" lay-filter="component-form-element">
+		            	<select id="typeList" name="type" lay-verify="">
+		            		<option value="">所有类型</option>
+		            	</select>
+		            </div>
+                	<div class="layui-inline">
+	                  <div class="layui-input-inline">
+	                    <input type="text" class="layui-input" id="manage-controllog-start" name="fromTime" placeholder="开始日期">
+	                </div>
+	                </div>
+	                <div class="layui-inline">
+	                  <div class="layui-input-inline">
+	                    <input type="text" class="layui-input" id="manage-controllog-end" name="toTime" placeholder="结束日期">
+	                  </div>
+	                </div>
+	                <div class="layui-inline">
+	                	<button class="layui-btn" lay-submit lay-filter="logForm">查询</button>
+	                </div>
+	                <div class="layui-inline">
+	                	<button class="layui-btn" type="reset">重置</button>
+	                </div>
+	                </div>
+	                <div class="layui-card-body">
+	                <table class="layui-hide" id="controlLogList" lay-filter="controlLogList"></table>
+	            </div>
+	          </div>
+	        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+  layui.use(['admin', 'table', 'laydate', 'form', 'laytpl'], function(){
+    var $ = layui.$, admin = layui.admin, table = layui.table, laydate = layui.laydate, form = layui.form, laytpl = layui.laytpl;
+  
+    //载入表格数据
+    table.render({
+      elem: '#controlLogList'
+      ,url: layui.setter.URL_ADMIN+'/manage/controllog'
+      ,where:{
+		access_token: layui.data('layuiAdmin').access_token
+      }
+	  ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      ,cols: [[
+        {field:'username', title: '用户名'}
+        ,{field:'actionTime', title: '时间', sort: true}
+        ,{field:'type', title: '操作类型'}
+        ,{field:'actionIP', title: '登陆IP'}
+        ,{field:'action', title: '操作描述'}
+        ,{field:'extfield0', title: '对应ID'}
+        ,{field:'extfield1', title: '操作对象'}
+      ]]
+      ,page: {
+    	  layout: ['count', 'prev', 'page', 'next', 'skip']
+      }
+    });
+    
+    //获取当前日期
+    var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+((nowDate.getDate())<10?'0'+(nowDate.getDate()):nowDate.getDate());
+    //防止开始日期被重置为空
+    $('#manage-controllog-start').attr('value', startDate);
+    
+    //开始日期
+    var insStart = laydate.render({
+      elem: '#manage-controllog-start'
+      ,done: function(value, date){
+        //更新结束日期的最小日期
+        insEnd.config.min = lay.extend({}, date, {
+          month: date.month - 1
+        });
+      }
+      ,value: startDate 	//赋值当前日期
+    });
+    
+    //结束日期
+    var insEnd = laydate.render({
+      elem: '#manage-controllog-end'
+      ,done: function(value, date){
+        //更新开始日期的最大日期
+        insStart.config.max = lay.extend({}, date, {
+          month: date.month - 1
+        });
+      }
+    });
+	
+     //监听列表查询
+    form.on('submit(logForm)', function(data){
+    	var username = data.field.username.trim()
+    	,ip = data.field.ip.trim()
+    	,type = data.field.type.trim()
+    	,fromTime = data.field.fromTime.trim()
+    	,toTime = data.field.toTime.trim();
+    	active['reloadList'].call(this, username, ip, type,  fromTime, toTime);
+    	return false;
+    });
+    
+	//执行列表重载(查询)
+    var active = {
+		reloadList: function(username, ip, type, fromTime, toTime){
+ 	        //执行重载
+ 	        table.reload('controlLogList', {
+ 	          page: {
+ 	            curr: 1 //重新从第 1 页开始
+ 	          }
+ 	          ,where: {
+ 	              username: username,
+ 	              ip: ip,
+ 	              type: type,
+ 	              fromTime: fromTime,
+ 	              toTime: toTime
+ 	          }
+ 	          ,loading:true
+ 	        });
+		}
+	};   
+    admin.req({
+        url: layui.setter.URL_ADMIN+'/manage/typelist'
+		,done: function(res){
+    	   var options = '';
+    	   for(val in res.data){
+    		   options += '<option value="'+val+'">'+res.data[val]+'</option>';
+    	   }
+    	   $('#typeList').append(options);
+			//生成下拉框元素
+			form.render(null, 'component-form-element');
+       }
+	});
+  	
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});
+  });
+  </script>

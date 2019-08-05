@@ -1,0 +1,410 @@
+<title>帐变明细</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline">
+                        <div style="float: left"><span class="line-usernames"></span> 的下级用户</div>
+                    </div>
+                    <div class="layui-card-header layui-inline" style="font-size: 20px;width: 100%">
+                        <div style="float: left"><span class="line-user"></span> 的帐变明细</div>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-inline layui-form" lay-filter="component-form-element">
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="会员名" class="layui-input line" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>类型：</span>
+                                <div class="layui-inline layui-form" lay-filter="component-form-element">
+                                    <select id="lineList" empty1="1" name="liqType" lay-verify="">
+                                        <option value="">所有帐变类型</option>
+                                        <option value="1">充值</option>
+                                        <option value="2">返点</option><!--3,分红-->
+                                        <!--<option value="4">抽水金额</option>-->
+                                        <!--<option value="5">停止追号</option>-->
+                                        <option value="6">中奖金额</option>
+                                        <option value="7">撤单</option>
+                                        <option value="8">提现失败返回冻结金额</option>
+                                        <option value="9">管理员充值</option>
+                                        <!--<option value="10">解除抢庄冻结金额</option>-->
+                                        <!--<option value="11">收单金额</option>
+                                        <option value="50">签到赠送</option>-->
+                                        <option value="51">首次绑定银行卡赠送</option>
+                                        <option value="52">充值佣金</option>
+                                        <option value="53">消费佣金</option>
+                                        <!--<option value="100">抢庄冻结金额</option>-->
+                                        <option value="101">投注</option>
+                                        <!--<option value="102">追号投注</option>
+                                        <option value="103">抢庄返点金额</option>-->
+                                        <!--<option value="104">抢庄抽水金额</option>
+                                        <option value="105">抢庄赔付金额</option>-->
+                                        <option value="106">提现冻结</option>
+                                        <option value="107">提现成功扣除冻结金额</option>
+                                        <option value="108">开奖扣除冻结金额</option>
+                                        <option value="109">上级充值金额</option>
+                                        <option value="110">给下级充值扣款金额</option>
+                                    </select>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-line-starts" value="" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-line-ends" value="" name="toTime" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-form" lay-filter="component-form-element">
+                                <select id="lineList2" empty2="1" name="type" lay-verify="">
+
+                                </select>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="LineListForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentLineList" lay-filter="AgentlineList"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="ListLineCash2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="line-table-element2">
+                    <tr>
+                        <td style="text-align: center">用户名</td><td>{{ d.username }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值金额</td><td>{{ d.amount }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值前资金</td><td>{{ d.coin }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值银行</td><td>{{ d.bankName }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">银行账号	</td><td>{{ d.account }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开户名</td><td>{{ d.accountName }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值时间</td><td>{{ d.rechargeTime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="lineCoinCash2"></script>
+
+<script type="text/html" id="ListLineCash1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="line-table-element1">
+                    <tr>
+                        <td style="text-align: center">号码：</td><td>{{ d.number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">单号：</td><td>{{ d.wjorderId }}</td>
+                        <td style="text-align: center">投注数量：</td><td>{{ d.actionNum }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">发起人：</td><td>{{ d.username }}</td>
+                        <td style="text-align: center">模式：</td><td>{{ d.mode }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">倍数：</td><td>{{ d.bonusProp }}</td>
+                        <td style="text-align: center">中奖注数：</td><td>{{ d.multiple }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">彩种：	</td><td>{{ d.species }}</td>
+                        <td style="text-align: center">奖金－返点：	</td><td>{{ d.bonusProp }}-{{ d.fanDian }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">期号：	</td><td>{{ d.actionNo }}</td>
+                        <td style="text-align: center">玩法：</td><td>{{ d.play }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开奖号：</td><td>{{ d.lotteryNo }}</td>
+                        <td style="text-align: center">投注时间：</td><td>{{ d.actionTime }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">订单状态：</td><td>{{ d.status }}</td>
+                        <td style="text-align: center">来源：</td>
+                        {{# if( d.betType == 0 ){ }}
+                        <td>web</td>
+                        {{# }else if( d.betType == 1 ){ }}
+                        <td>手机</td>
+                        {{# }else if( d.betType == 2 ){ }}
+                        <td>未知</td>
+                        {{# } }}
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">投注：</td><td>{{ d.betCont }}</td>
+                        <td style="text-align: center">中奖：</td><td>{{ d.zjbonus }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">上级返点：</td><td>{{ d.fanDianAmount }}</td>
+                        <td style="text-align: center">个人盈亏：</td><td>{{ d.profit }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="lineCoinCash1"></script>
+
+<script type="text/html" id="ListLineCash3">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="line-table-element3">
+                    <tr>
+                        <td style="text-align: center">用户名</td><td>{{ d.username }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">提现金额</td><td>{{ d.amount }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">提现前可用资金</td><td>{{ d.coin }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">银行</td><td>{{ d.bankName }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">账号</td><td>{{ d.account }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开户名</td><td>{{ d.username }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">申请时间</td><td>{{ d.actionTime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="lineCoinCash3"></script>
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form','laytpl'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,laytpl= layui.laytpl;
+        var router = layui.router();
+        var username = router.search.username;
+        $('.line-usernames').html(username);
+        $('.line').val(router.search.user);
+
+        //获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-receive-start').attr('value', startDate);
+
+        //载入表格数据
+        table.render({
+            elem: '#AgentLineList'
+            ,url: layui.setter.URL_ADMIN+'/Agent/coinLog?username='+$('.line').val()+'&fromTime='+startDate
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,loading:true
+            ,cols: [[
+                {field:'username',align:'center', title: '用户名', width: 100},
+                {field:'info',align:'center', title: '帐变类型', width: 200},
+                {field:'order',align:'center', title: '单号', width: 150,templet: function(d){
+                    if(d.order == "--"){
+                        return d.order;
+                    }else {return  '<a href="javascript:;" con="'+ d.extfield0 +'" urltype="'+d.urltype+'" class="line-Statistics" style="color: #1E9FFF">'+d.order+'</a>'}
+                }},
+                {field:'game',align:'center', title: '游戏', width: 100},
+                {field:'play',align:'center', title: '玩法', width: 150},
+                {field:'actionNo',align:'center', title: '期号', width: 150},
+                {field:'pattern',align:'center', title: '模式', width: 150},
+                {field:'coin',align:'center', title: '资金', width: 150},
+                {field:'userCoin',align:'center', title: '余额', width: 150},
+                {field:'actionTime',align:'center', title: '时间',templet: function(d){return admin.formatDate(d.actionTime); }},
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                $('.line-user').html('');
+                $('.line-user').html($('.line').val());
+                var lip = res;
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+
+//                var datas = lip.liqTypeName;
+//                var _type = "";
+//                _type += '<option value="">所有帐变类型</option>';
+//                for(var i in datas){
+//                    _type += '<option value="'+i+'">'+datas[i]+'</option>';
+//                }
+//                if($('#UserCoinList').attr('empty1') == 1){
+//                    $('#UserCoinList').append(_type);
+//                    $('#UserCoinList').attr('empty1','2')
+//                }
+
+
+                var species = lip.types;
+                var _color = "";
+                _color +='<option value="">全部彩种</option>';
+                for(var j in species){
+                    _color += '<option value="'+species[j]["id"]+'">'+species[j]["title"]+'</option>';
+                }
+                if($('#lineList2').attr('empty2') == 1){
+                    $('#lineList2').append(_color);
+                    $('#lineList2').attr('empty2','2')
+                }
+                form.render(null,'component-form-element');
+
+
+                $('.line-Statistics').click(function () {
+                    var id = $(this).attr('con');
+                    var urltype = $(this).attr('urltype');
+                    //充值
+                    if(urltype == 2){
+                        $.post(layui.setter.URL_ADMIN+"/Agent/rechargeInfo?id="+id,function(res){
+                            var ress = JSON.parse(res);
+                            var data = ress.data;
+//                            console.log(ress);
+                            var getTpl = ListLineCash2.innerHTML
+                                ,view = document.getElementById('lineCoinCash2');
+                            laytpl(getTpl).render(data, function(html){
+                                view.innerHTML = html;
+                            });
+                            layer.open({
+                                title:'充值信息'
+                                ,type: 1
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                                ,content: $('#lineCoinCash2').html()
+                            });
+                            form.render(null, 'line-table-element2');
+                        });
+
+                    }else if(urltype == 1){
+                        //投注
+                        $.post(layui.setter.URL_ADMIN+"/Agent/betInfo?id="+id,function(res){
+                            var ress = JSON.parse(res);
+                            var data = ress.data;
+//                            console.log(ress);
+                            var getTpl = ListLineCash1.innerHTML
+                                ,view = document.getElementById('lineCoinCash1');
+                            laytpl(getTpl).render(data, function(html){
+                                view.innerHTML = html;
+                            });
+                            layer.open({
+                                title:'投注信息'
+                                ,type: 1
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['80%', '800px'] : ['800px', 'auto']
+                                ,content: $('#lineCoinCash1').html()
+                            });
+                            form.render(null, 'line-table-element1');
+                        });
+                    }else if(urltype == 3){
+                        //提现
+                        $.post(layui.setter.URL_ADMIN+"/Agent/cashInfo?id="+id,function(res){
+                            var ress = JSON.parse(res);
+                            var data = ress.data;
+                            var getTpl = ListLineCash3.innerHTML
+                                ,view = document.getElementById('lineCoinCash3');
+                            laytpl(getTpl).render(data, function(html){
+                                view.innerHTML = html;
+                            });
+                            layer.open({
+                                title:'提现信息'
+                                ,type: 1
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                                ,content: $('#lineCoinCash3').html()
+                            });
+                            form.render(null, 'line-table-element3');
+                        });
+                    }
+
+
+                });
+            }
+        });
+
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-line-starts'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-line-ends'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(LineListForm)', function(data){
+            var username = data.field.username.trim()
+                ,liqType = data.field.liqType.trim()
+                ,type = data.field.type.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime,liqType,type);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime,liqType,type){
+                //执行重载
+                table.reload('AgentLineList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        liqType: liqType,
+                        type: type,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+    });
+
+
+</script>
+

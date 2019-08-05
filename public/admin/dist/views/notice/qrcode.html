@@ -1,0 +1,67 @@
+<title>APP二维码</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">APP二维码</div>
+                    <div class="layui-card-body">
+
+                        <div class="layui-card-body">
+                            <div class="layui-upload-list">
+                                当前二维码(点击图片更换)：
+                            </div>
+                            <div class="layui-upload-drag" id="test-upload-qrcode">
+                                <i class="layui-icon"></i>
+                                <p>点击上传，或将文件拖拽到此处</p>
+                            </div>
+                            <input class="layui-upload-file" type="file" accept="undefined" name="file">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    layui.use(['admin', 'upload','jquery'], function(){
+        var $ = layui.jquery,upload = layui.upload,admin = layui.admin;
+
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Activity/get_info',
+            done: function(res){
+                var _data = res.data;
+                $('#test-upload-qrcode').html('<img src="'+_data['pcQrcode']+'" >');
+                //拖拽上传
+                upload.render({
+                    elem: '#test-upload-qrcode'
+                    ,url: layui.setter.URL_ADMIN+'/Activity/pcQrcode'
+                    ,before: function(obj){
+                        //预读本地文件示例，不支持ie8
+                        layer.msg('图片上传中。。。');
+                        obj.preview(function(index, file, result){
+                            $('#test-upload-qrcode').html('<img src="'+result+'" >');
+                        });
+                    }
+                    ,done: function(res){
+                        if(res.code == 0 ){
+                            layer.msg(res.msg, {time: 1000},function(){
+                                layer.closeAll();
+                            });
+                        }else {
+                            layer.msg(res.msg, {time: 1000});
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+
+
+</script>
+

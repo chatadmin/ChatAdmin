@@ -1,0 +1,269 @@
+<title>登录，注册，设置中心banner</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div style="float: left">登录，注册，设置中心banner</div>
+                        <div style="float: right;">
+                            <!--<button class="layui-btn layui-btn-sm" >-->
+                                <!--<a style="color: #fbfbfb" href="javascript:;" lay-href="notice/addBannerzzzzzz/typeid=20/type=1" >添加图片</a>-->
+                            <!--</button>-->
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="bannerLogin" lay-filter="bannerLogin"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="ListBannerLogin2" lay-filter="BannerLogin-table-element2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form">
+                <form enctype="multipart/form-data" id="updateBannerLoginForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="update-BannerLogin-title" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input" style="width: 80%">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">链接</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="link"  placeholder="请输入链接" autocomplete="off" class="layui-input" style="width: 80%;">
+                            <span class="layui-inline">*可不填</span>
+                        </div>
+                    </div>
+
+                    <style>
+                        .update-file{cursor: pointer;float: left;  width: 102px;height: 40px;  padding: 10px 5px;  border: 1px dashed #e2e2e2;  background-color: #fff;  text-align: center;  cursor: pointer;  color: #999;  display: inline-block;}
+                        .update-file input{cursor: pointer;display: block;width: 102px;height: 100%;z-index: 9;position:absolute;top: 0;margin-left: 0;opacity: 0}
+                        .update-file img{cursor: pointer;height: 45px;position:relative;top: 0;margin-left: 0;margin-top: -72px;width: 102px;}
+                    </style>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">点击上传</label>
+                        <div class="layui-input-block" style="height: 50px">
+                            <div class="update-file">
+                                <div class="surplus" style="opacity: 0">
+                                    <i class="layui-icon" style="font-size: 30px; color: #009688;"></i>
+                                    <p style="font-size: 10px;">点击上传</p></div>
+                                <input type="file" name="content"  placeholder="" id="update-BannerLogin-img1">
+                                <img src="" alt="" id="update-BannerLogin-img2">
+                            </div>
+                            <div class="layui-inline" style="float: left;height:40px;line-height: 40px;padding: 10px 5px;"> *轮播图片规格：510x225</div>
+
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="update-layui-startime-BannerLogin" readonly="readonly" name="startime"  placeholder="开始时间" class="layui-input" style="width: 50%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="update-layui-endtime-BannerLogin" readonly="readonly" name="endtime"  placeholder="结束时间" class="layui-input" style="width: 50%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">排序</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="sort" value="1"  placeholder="排序" autocomplete="off" class="layui-input" style="width: 30%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="display: none">
+                        <label class="layui-form-label"></label>
+                        <div class="layui-input-block">
+                            <input type="text" name="typeid" value="20"  placeholder="" autocomplete="off" class="layui-input"  style="width: 10%;">
+                        </div>
+                    </div>
+                </form>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="update-NoticeBannerLoginForm" lay-submit lay-filter="update-NoticeBannerLoginForm"  class="layui-btn layui-btn-normal">立即提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','table','form','laydate','jquery'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,form = layui.form ,laydate = layui.laydate,jquery = layui.jquery;
+
+        //载入表格数据
+        table.render({
+            elem: '#bannerLogin'
+            ,url: layui.setter.URL_ADMIN+'/Information/get_all_info?typeid=20&nodeId=3'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'id',align:'center', title: 'ID', width: 130},
+                {field:'title',align:'center', title: '标题', width: 130}
+                ,{field:'startime',align:'center', title: '展示开始时间',  sort: true,templet: function(d){return admin.formatDates(d.startime); }}
+                ,{field:'endtime',align:'center', title: '展示结束时间',templet: function(d){return admin.formatDates(d.endtime); }}
+                ,{field:'addTime',align:'center', title: '添加时间',templet: function(d){return admin.formatDates(d.addTime); }}
+                ,{align:'center', title: '操作',width: 200,  fixed: 'right',templet: function(d){
+                    var str = '';
+                    str += '<a class="layui-btn layui-btn-sm BannerLogin-update"  style="color: #fbfbfb" href="javascript:;" update="'+d.id+'">修改</a>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                //删除操作
+                layui.use(['jquery',], function(){
+                    var $= layui.jquery;
+                    $(function(){
+                        $('.btn_del').on('click',function(){
+                            var id = $(this).attr('del');
+                            $.post(layui.setter.URL_ADMIN+"/Information/deleteBanner?id="+id,function(res){
+                                var _obj = JSON.parse(res);
+                                if(_obj.code == 0){
+                                    layer.msg(_obj.msg, {time: 1000});
+                                    table.reload('bannerLogin',{});
+                                }else{
+                                    layer.msg(_obj.msg, {time: 1000});
+                                }
+                            });
+                        });
+                    });
+                });
+
+
+                //修改
+                $('.BannerLogin-update').on('click',function () {
+                    var id = $(this).attr('update');
+                    admin.req({
+                        url: layui.setter.URL_ADMIN+'/Information/get_info?id='+id,
+                        done: function(res){
+                            var data = res.data;
+                            $('input[name="title"]').val(data[0]['title']);
+                            $('input[name="link"]').val(data[0]['link']);
+                            $('#update-BannerLogin-img2').attr('src',data[0]['content']);
+                            $('input[name="startime"]').val(admin.formatDates(data[0]['startime']));
+                            $('input[name="endtime"]').val(admin.formatDates(data[0]['endtime']));
+                            $('input[name="sort"]').val(data[0]['sort']);
+                        }
+                    });
+
+                    layer.open({
+                        title:'修改登录，注册，设置中心banner'
+                        ,type: 1
+                        ,shadeClose: true
+                        ,area: ['500px', '500px']
+                        ,content: $('#ListBannerLogin2').html()
+                    });
+                    form.render(null, 'BannerLogin-table-element2');
+
+                    //获取当前日期
+                    var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+                    //防止开始日期被重置为空
+                    $('#update-layui-startime-BannerLogin').attr('value', startDate);
+
+                    //开始日期
+                    var insStart = laydate.render({
+                        elem: '#update-layui-startime-BannerLogin'
+                        ,done: function(value, date){
+                            //更新结束日期的最小日期
+                            insEnd.config.min = lay.extend({}, date, {
+                                month: date.month - 1
+                            });
+                        }
+                        ,value: startDate 	//赋值当前日期
+                    });
+
+                    //结束日期
+                    var insEnd = laydate.render({
+                        elem: '#update-layui-endtime-BannerLogin'
+                        ,done: function(value, date){
+                            //更新开始日期的最大日期
+                            insStart.config.max = lay.extend({}, date, {
+                                month: date.month - 1
+                            });
+                        }
+                    });
+
+                    //图片预览
+                    $("#update-BannerLogin-img1").change(function(){
+                        var objUrl = admin.getObjectURL(this.files[0]) ;
+                        if (objUrl)
+                        {
+                            $("#update-BannerLogin-img2").attr("src", objUrl);
+                            $("#update-BannerLogin-img2").removeClass("hide");
+                        }
+                    }) ;
+
+                    //上传修改文件
+                    layui.use(['jquery'], function(){
+                        var $ = layui.jquery;
+                        $("#update-NoticeBannerLoginForm").click(function(){
+                            var data = new FormData($( "#updateBannerLoginForm" )[0]);
+                            if($('#update-BannerLogin-title').val()){
+                                if($('#update-layui-startime-BannerLogin').val()){
+                                    if($('#update-layui-endtime-BannerLogin').val()){
+                                        $("#update-NoticeBannerLoginForm").unbind();
+                                        layer.msg('图片上传中。。。');
+                                        $.ajax({
+                                            type:'post',
+                                            url:layui.setter.URL_ADMIN+'/Information/doAddBanner?id='+id,
+                                            cache: false,    //上传文件不需缓存
+                                            processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
+                                            contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                                            data:data,
+                                            dataType:'json',
+                                            success:function(res){
+                                                if(res.code == 0 ){
+                                                    layer.msg(res.msg, {time: 1000},function(){
+                                                        layer.closeAll();
+                                                        table.reload('bannerLogin',{});
+                                                    });
+                                                }else {
+                                                    layer.msg(res.msg, {time: 1000},function(){
+                                                        layer.closeAll();
+                                                    });
+                                                }
+                                            }
+                                        })
+                                    }else {
+                                        layer.msg('结束时间不能为空', {time: 1000});
+                                    }
+                                }else {
+                                    layer.msg('起始时间不能为空', {time: 1000});
+                                }
+                            }else {
+                                layer.msg('标题不能为空', {time: 1000});
+                            }
+                        })
+                    });
+                });
+
+
+            }
+        });
+
+    });
+
+
+</script>
+

@@ -1,0 +1,313 @@
+
+<title>群组列表</title>
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					<div style="float:left;">群组列表</div>
+
+					<!--<div class="member_index_add_user" style="float:right;margin-left: 20px;">
+						<button class="layui-btn layui-btn-normal" data-type="addUser">添加会员</button>
+					</div>-->
+				</div>
+				<div class="layui-card-body">
+					<div class="layui-form">
+						<div class=" layui-form" style="margin-bottom: 10px;">
+
+              <!--<div class="layui-inline">
+                <label class="layui-form-label" style="width:50px;"> ID：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="group-index-id" name="id" autocomplete="off" placeholder="群组ID">
+                </div>
+              </div>-->
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width:120px;"> 所属用户：</label>
+								<div class="layui-input-inline" style="width: 120px;">
+									<input class="layui-input" id="group-index-username" name="username" autocomplete="off" placeholder="用户名">
+								</div>
+							</div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:120px;"> 群组名称：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="group-index-username" name="group_name" autocomplete="off" placeholder="群组名称">
+                </div>
+              </div>
+
+							<div class="layui-inline">
+								<label class="layui-form-label">创建时间：</label>
+								<div class="layui-input-inline" style="width: 120px;">
+									<input type="text" name="fromtime" class="layui-input" id="group_search_starttime" placeholder="开始日期">
+								</div>
+								-
+								<div class="layui-input-inline" style="width: 120px;">
+									<input type="text" name="totime" class="layui-input" id="group_search_endtime" placeholder="结束日期">
+								</div>
+							</div>
+
+							<div class="layui-inline">
+								<button class="layui-btn"  lay-submit="" lay-filter="group_index_searching" style="float:float;">搜索</button>
+							</div>
+						</div>
+					</div>
+					<table class="layui-hide" id="group_index_list" lay-data="{id:'groupidlist'}"  lay-filter="group_index_list"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/html" id="group_getuserinfo">
+  <a class="layui-btn layui-btn-sm" lay-event="group_get_userinfo">查看</a>
+  <a class="layui-btn layui-btn-sm" lay-event="group_get_userlist">查看成员</a>
+</script>
+<script type="text/html" id="group_getuserlist">
+    <table class="layui-hide" id="group_user_list" lay-data="{id:'groupuserlist'}"  lay-filter="group_user_list"></table>
+</script>
+<script type="text/html" id="group_getinfo_details_input">
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12  layui-form">
+        <div class="layui-form-item">
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> ID：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-id" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 用户名：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-username" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 手机号：</label>
+            <div class="layui-input-inline"  style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-phone" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 昵称：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-nickname" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 余额：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-wallet" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 生日：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-birthday" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 性别：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-sex" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 状态：</label>
+            <div class="layui-input-inline" style="width: auto;">
+              <label class="layui-form-label" id="group-getinfo-status" style="width: auto;text-align: left;"></label>
+            </div>
+          </div>
+          <br/>
+          <br/>
+          <br/>
+          <div class="inline" style="text-align: center;clear: both;">
+              <button class="layui-btn layui-btn-danger layui-layer-close layui-layer-close1" lay-submit="" >
+                <i class="layui-icon">&#xe67c;</i>关闭
+              </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table','laydate','layer','form','laytpl','layedit','upload'], function(){
+        var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, upload = layui.upload;
+
+
+        //开始日期
+        form.render('select');
+        var insStart = laydate.render({
+            elem: '#group_search_starttime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+
+                //自动弹出结束日期的选择器
+                insEnd.config.elem[0].focus();
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#group_search_endtime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+		var group_aaa = function (data) {
+			table.render({
+        id: 'groupidlist'
+				,elem: '#group_index_list'
+				,url: '/interface/groupList' //数据接口
+				,where: {data:data}
+				,page: true //开启分页
+				,limit:10
+				,method: 'post'
+				,cols: [[ //表头
+              {type:'checkbox', fixed: 'left'}
+          ,{field: 'id', title: 'ID', fixed: 'left', unresize: true}
+					,{field: 'username', title: '用户名', unresize: true}
+					,{field: 'group_name', title: '群组名称', unresize: true}
+					,{field: 'describe', title: '群组描述', unresize: true}
+          ,{field: 'create_time', title: '创建时间', unresize: true,templet: function(d){return admin.formatDate(d.create_time); }}
+          ,{field:'owen_uid',title:'查看',unresize:true,width:200,templet:$('#group_getuserinfo')}
+				]]
+          ,parseData: function(res){ //res 即为原始返回的数据
+            var group_aaa_res = {};
+            $.each(res.where, function (keys, val) {
+                group_aaa_res.key = keys;
+                group_aaa_res.value = val;
+                layui.data('group_aaa_res', group_aaa_res);
+            });
+          }
+			});
+
+
+		}
+
+
+		var group_getuserinfo = function(data){
+		    var userinfo;
+        admin.req({
+            async:false,
+            url: layui.setter.URL_ADMIN+'/interface/getUserInfo'
+            ,data: {data}
+            ,type: 'post'
+            ,success: function(res){
+                userinfo = res.userInfo;
+            }
+        });
+        return userinfo;
+    }
+    group_aaa();
+		//监听搜索提交按钮
+		form.on('submit(group_index_searching)', function(data){
+			var data = data.field;
+        group_aaa(data);
+		})
+
+    table.on('tool(group_index_list)', function(obj) {
+        var data = obj.data;
+        if(obj.event === 'group_get_userinfo') {
+            var userInfo = {};
+            userInfo = group_getuserinfo({id:data.owner_uid});
+            console.log(userInfo);
+            layer.open({
+                title: '用户详情'
+                , type: 1
+                , shadeClose: true
+                , area: ['450px', '55%']
+                ,content: $('#group_getinfo_details_input').html()
+            })
+            var sex = '男';
+            if(userInfo.sex==1){
+                var sex = '男';
+            }else{
+                var sex = '女';
+            }
+
+            if(userInfo.isNormal==1){
+                var status = '正常';
+            }else{
+                var status = '已封';
+            }
+            $('#group-getinfo-id').html(userInfo.id);
+            $('#group-getinfo-username').html(userInfo.username);
+            $('#group-getinfo-phone').html(userInfo.phone);
+            $('#group-getinfo-nickname').html(userInfo.nickname);
+            $('#group-getinfo-wallet').html(userInfo.wallet);
+            $('#group-getinfo-birthday').html(admin.formatDate(userInfo.birthday));
+            $('#group-getinfo-sex').html(sex);
+            $('#group-getinfo-status').html(status);
+        }else if(obj.event === 'group_get_userlist') {
+
+            var index = layer.open({
+                title: '用户详情'
+                , type: 1
+                , shadeClose: true
+                , area: ['1300px', '95%']
+                ,content: $('#group_getuserlist').html()
+            });
+
+
+
+            table.render({
+                id: 'groupuserlist'
+                ,elem: '#group_user_list'
+                ,url: '/interface/groupUserList' //数据接口
+                ,where: {data:{id:data.id}}
+                ,page: true //开启分页
+                ,limit:10
+                ,method: 'post'
+                ,cols: [[ //表头
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field: 'id', title: 'ID', fixed: 'left', unresize: true}
+                    ,{field: 'username', title: '用户名', unresize: true}
+                    ,{field: 'user_name', title: '群组昵称', unresize: true}
+                    ,{field: 'phone', title: '手机号', unresize: true}
+                    ,{field: 'region', title: '地区', unresize: true}
+                    ,{field: 'role', title: '角色', unresize: true,templet:function (d) {
+                            return d.role==1 ? "群主" : d.role == 2 ? "管理员" : "普通用户";
+                        }}
+                    ,{field: 'sex', title: '性别', unresize: true,templet:function (d) {
+                            return d.sex == 1 ? "男" : "女";
+                        }}
+                    ,{field: 'is_normal', title: '用户状态', unresize: true,templet:function (d) {
+                            return d.is_normal == 1 ? "可用" : "不可用";
+                        }}
+                    ,{field: 'status', title: '群组状态', unresize: true,templet:function (d) {
+                            return d.status == 1 ? "正常" : "拉黑";
+                        }}
+                    ,{field: 'create_time', title: '入群时间', unresize: true,templet: function(d){return admin.formatDate(d.create_time); }}
+
+                ]]
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    var group_ddd_res = {};
+                    $.each(res.where, function (keys, val) {
+                        group_ddd_res.key = keys;
+                        group_ddd_res.value = val;
+                        layui.data('group_ddd_res', group_ddd_res);
+                    });
+                }
+            });
+
+        }
+    });
+		$('.member_index_add_user').click(function () {
+			layer.open({
+				area: ['600px', '400px'],
+				content: $('#member-user-add').html()
+			});
+		})
+	});
+</script>

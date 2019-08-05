@@ -1,0 +1,159 @@
+<style>
+	.layui-table-cell { overflow:visible; }
+	div[class*="-info"] { overflow:hidden;line-height:23px; }
+	.laytable-cell-enable .layui-input { height:29px; }
+	.laytable-cell-enable .layui-anim-upbit { margin-top:-8px; }
+
+	.typePage .layui-table-main{ overflow: inherit;}
+	.typePage .layui-table-view,.typePage .layui-table-box{ overflow: visible;}
+</style>
+<meta charset="utf-8" />
+<title>彩种设置</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>彩票管理</cite></a>
+      <a><cite>彩种设置</cite></a>
+    </div>
+  </div>
+  <div class="layui-fluid typePage">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+	          <div class="layui-tab layui-tab-brief">
+	            <ul class="layui-tab-title" id="lottery_type_select"  lay-filter="lottery_type_select_tab" >
+	            </ul>
+	            <div class="layui-tab-content" style="padding:10px 0;">
+				  <div class="layui-card-body">
+					<table class="layui-hide" id="lottery-type-list" lay-filter="lottery-type-list"></table>
+				  	<script type="text/html" id="lottery-state-tpl">
+						<div class="layui-form laytable-cell-enable">
+						<select name="enable" lay-verify="" lay-filter="lottery-enable-status">
+						  <option value="1"  title="{{ d.id }}" {{#  if(d.enable == 1){ }} selected {{#  } }} >开启</option>
+						  <option value="2" title="{{ d.id }}" {{#  if(d.enable == 2){ }} selected {{#  } }}>维护</option>
+						  <option value="0" title="{{ d.id }}" {{#  if(d.enable == 0){ }} selected {{#  } }}>关闭</option>
+						</select>
+						</div>
+            		</script>
+				  	<script type="text/html" id="lottery-zhuihao-tpl">
+					<div class="layui-form laytable-cell-enable">
+					<select name="continuity" lay-verify="" lay-filter="lottery-continuity-status">
+					  <option value="1" title="{{ d.id }}" {{#  if(d.continuity == 1){ }} selected {{#  } }} >开启</option>
+					  <option value="0" title="{{ d.id }}" {{#  if(d.continuity == 0){ }} selected {{#  } }}>关闭</option>
+					</select>
+					</div>
+            		</script>
+				  </div>
+	          </div>
+	        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+  layui.use(['admin', 'table', 'laydate', 'form', 'laytpl'], function(){
+    var $ = layui.$, admin = layui.admin, table = layui.table, laydate = layui.laydate, form = layui.form, laytpl = layui.laytpl;
+	
+	 admin.req({
+			url: layui.setter.URL_ADMIN+'/lotterys/getclassification'
+		   ,type:'post'
+		   ,done: function(res){
+			   var options = '';
+			   for(val in res.data){
+				   options += '<li class="lottery_type_changeState" data-state="'+res.data[val].id+'">'+res.data[val].name+'</li>';
+			   }
+			   $('#lottery_type_select').append(options);
+				//生成下拉框元素
+				form.render(null, 'lottery_type_select_tab');		
+				//选项卡切换
+				$('.lottery_type_changeState').on('click', function(){
+					var typec = $(this).data('state');
+					active['reloadList'].call(this, typec);
+				});
+				$('#lottery_type_select').find('li:first').click();
+				form.render(null, 'lottery_played_quick');
+		   }
+	  });	
+	
+    //载入表格数据
+    table.render({
+      elem: '#lottery-type-list'
+      ,url: layui.setter.URL_ADMIN+'/lotterys/type'
+      ,where:{
+		access_token: layui.data('layuiAdmin').access_token
+      }
+      ,cols: [[
+        {field:'title',edit: 'text', title: '彩种名称',width:200}
+        ,{field:'shortName',edit: 'text', title: '彩种简称',width:150}
+        ,{field:'info',edit: 'text', title: '简介'}
+        ,{field:'data_ftime',edit: 'text', title: '停止投注间隔',width:100}
+        ,{field:'profit',edit: 'text',event: 'lottery_type_show', title: '系统彩利润',width:120}
+		,{field:'enable', title: '状态', templet: '#lottery-state-tpl',width:100}
+		,{field:'continuity', title: '追号开关', templet: '#lottery-zhuihao-tpl',width:100}
+        ,{field:'sort',edit: 'text', title: '排序',width:100}
+      ]]
+     // ,page: {
+    //	  layout: ['count', 'prev', 'page', 'next', 'skip']
+     // }
+	  ,loading:true
+    });
+	
+    //监听单元格事件
+    table.on('tool(lottery-type-list)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'lottery_type_show'){
+			layer.tips('仅针对系统彩，例如填写10，即10%利润以上，填写0为随机开奖,PS:容易出长龙', this, {
+				tips: 1
+			});		
+      }
+    });
+	
+    //监听单元格编辑
+    table.on('edit(lottery-type-list)', function(obj){
+      var value = obj.value //得到修改后的值
+      ,data = obj.data //得到所在行所有键值
+      ,field = obj.field; //得到字段
+	  updateType(data.id,field,value,data.shortName);
+    });
+	
+	var updateType = function(id,field,value,shortName){
+		var iii = layer.msg('loading');
+		 admin.req({
+				url: layui.setter.URL_ADMIN+'/lotterys/updateType'
+			   ,data: {id:id,value:value,field:field,shortName:shortName}
+			   ,type:'post'
+			   ,done: function(res){
+				  layer.close(iii)
+			   }
+		  });	
+	}
+	
+	form.on('select(lottery-enable-status)', function(data){
+		var id = data.elem[data.elem.selectedIndex].title;
+		updateType(id,'enable',data.value);
+	});   
+
+	form.on('select(lottery-continuity-status)', function(data){
+		var id = data.elem[data.elem.selectedIndex].title;
+		updateType(id,'continuity',data.value);
+	}); 	
+	//执行列表重载(查询)
+    var active = {
+		reloadList: function(typec){
+ 	        //执行重载
+ 	        table.reload('lottery-type-list', {
+ 	         where: {
+ 	              typec: typec
+ 	          }
+ 	          ,loading:true
+ 	        });
+		}
+	};
+  	
+
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});
+  });
+  </script>

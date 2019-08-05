@@ -1,0 +1,396 @@
+<title>下级用户列表</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline">
+                        <div style="float: left"><span class="OnLine-username" style="color:#FF5722"></span> 的下级在线用户列表</div>
+                    </div>
+                    <div class="layui-card-header layui-inline" style="font-size: 20px;width: 100%">
+                        <div style="float: left">下级用户列表</div>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-inline layui-form" lay-filter="component-form-element">
+                            <div class="layui-inline">
+                                <span>排序：</span>
+                                <button class="layui-btn layui-btn-sm online-sort" con="uid">默认排序</button>
+                                <button class="layui-btn layui-btn-sm online-sort" con="coin">账号金额</button>
+                                <button class="layui-btn layui-btn-sm online-sort" con="fanDian">返点</button>
+                                <button class="layui-btn layui-btn-sm online-sort" con="score">累积积分</button>
+                                <button class="layui-btn layui-btn-sm online-sort" con="zaixian">在线用户</button>
+                                <button class="layui-btn layui-btn-sm online-sort" con="sameip">同IP用户</button>
+                                <span>会员名：</span>
+                            </div>
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="会员名" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-OnLine-start" autocomplete="off" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-OnLine-end" autocomplete="off" name="toTime" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit lay-filter="OnLineForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentOnLineList" lay-filter="AgentOnLineList"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="OnLineCash">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" id="view-cash-table" style="margin:0;" lay-filter="OnLine-table-element">
+                    <tr>
+                        <td>用户名</td><td>{{ d.username }}</td>
+                    </tr>
+                    <tr>
+                        <td>投注金额</td><td>{{ d.betAmount }}</td>
+                    </tr>
+                    <tr>
+                        <td>中奖总额</td><td>{{ d.zjAmount }}</td>
+                    </tr>
+                    <tr>
+                        <td>总返点</td><td>{{ d.fanDianAmount }}</td>
+                    </tr>
+                    <tr>
+                        <td>总佣金</td><td>{{ d.brokerageAmount }}</td>
+                    </tr>
+                    <tr>
+                        <td>充值</td><td>{{ d.rechargeAmount }}</td>
+                    </tr>
+                    <tr>
+                        <td>优惠</td><td>{{ d.discount }}</td>
+                    </tr>
+                    <tr>
+                        <td>提现</td><td>{{ d.cashAmount }}</td>
+                    </tr>
+                    <tr>
+                        <td>余额</td><td>{{ d.coin }}</td>
+                    </tr>
+                    <tr>
+                        <td>个人总结算</td><td>{{ d.settlement }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="OnLinePop"></script>
+
+<script type="text/html" id="OnLinePop1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="OnLine-table-element1">
+                    <tr>
+                        <td style="text-align: center">上级关系：</td><td>{{ d.superior }}</td>
+                        <td style="text-align: center">会员类型：</td>
+                        {{# if( d.type == 0 ){ }}
+                        <td>普通会员</td>
+                        {{# }else if( d.type == 1 ){ }}
+                        <td>代理</td>
+                        {{# }else if( d.type == 9 ){ }}
+                        <td>测试</td>
+                        {{# }else{ }}
+                        <td>未知</td>
+                        {{# } }}
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">用户名：</td><td>{{ d.username }}</td>
+                        <td style="text-align: center">绑定银行：</td><td>{{ d.bankName }}</td>
+                    </tr>
+                    <tr>
+                        <!--<td style="text-align: center">密码：</td><td></td>-->
+                        <td style="text-align: center">户名：</td><td>{{ d.bname }}</td>
+                        <!--<td style="text-align: center">提款密码：</td><td></td>-->
+                        <td style="text-align: center">卡号：</td><td>{{ d.account }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">可用金额：	</td><td>{{ d.coin }}</td>
+                        <td style="text-align: center">冻结金额：	</td><td>{{ d.fcoin }}</td>
+                        <!--<td style="text-align: center">重置银行：</td>-->
+                        <!--<td>-->
+                        <!--<input type="radio" name="resetBank" value="1"/>重置-->
+                        <!--<input type="radio" name="resetBank" value="" checked />不重置-->
+                        <!--</td>-->
+                    </tr>
+                    <!--<tr>-->
+                    <!--<td style="text-align: center">账号冻结：</td>-->
+                    <!--<td>-->
+                    <!--<input type="radio" name="enable" value="1"/>重置-->
+                    <!--<input type="radio" name="enable" value="" checked />不重置-->
+                    <!--</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <td style="text-align: center">积分：</td><td>{{ d.score }}</td>
+                        <td style="text-align: center">注册IP：</td><td>{{ d.regIP }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">返点：</td><td>{{ d.fanDian }}</td>
+                        <td style="text-align: center">加入时间：</td><td>{{ d.regTime }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">最后登录：</td><td>{{ d.updateTime }}</td>
+                    </tr>
+                    <!--<tr>-->
+                    <!--<td style="text-align: center">常用QQ：</td><td>{{ d.qq }}</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<td style="text-align: center">手机号码：</td><td>{{ d.fanDianAmount }}</td>-->
+                    <!--</tr>-->
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="OnLineCash1"></script>
+
+<script type="text/html" id="OnLinePop2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="OnLine-table-element2">
+
+                    <tr>
+                        <td style="text-align: center">持卡人：</td><td>{{ d.username }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">银行：</td><td>{{ d.bankName }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开户网点：</td><td>{{ d.countname }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">银行卡号：</td><td>{{ d.account }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="OnLineCash2"></script>
+
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form','laytpl'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,laytpl= layui.laytpl;
+        var router = layui.router();
+        var username = router.search.username;
+        $('.OnLine-username').html(username);
+        var fromTimes = router.search.fromTime;
+        var toTimes = router.search.toTime;
+        $('#test-laydate-OnLine-start').val(fromTimes);
+        $('#test-laydate-OnLine-end').val(toTimes);
+
+        //载入表格数据
+        table.render({
+            elem: '#AgentOnLineList'
+            ,url: layui.setter.URL_ADMIN+'/Agent/agent_sub?uid='+router.search.uid+'&paixu=zaixian&type=3&fromTime='+fromTimes+'&toTime='+toTimes
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'source',align:'center', title: '来源', width: 90,templet: function(d){
+                    if(d.source == 1){return '代理添加'}else if(d.source == 2){return '后台添加'}else if(d.source == 3){return '微信推广'}else {return '未知来源'}
+                }},
+                {field:'type',align:'center', title: '类型', width: 60,templet: function(d){
+                    if(d.type == 1){return '代理'}else if(d.type == 9){return '测试'}else if(d.type == ""){return '-'}else {return '微信'}
+                }},
+                {field:'uid',align:'center', title: 'ID', width: 40},
+                {field:'username',align:'center', title: '用户名', width: 100},
+                {field:'nickname',align:'center', title: '昵称', width: 70},
+                {field:'bankName',align:'center', title: '姓名', width: 70},
+                {field:'parentName',align:'center', title: '上级', width: 100},
+                {field:'coin',align:'center', title: '余额', width: 70},
+                {field:'xm_coin',align:'center', title: '洗码', width: 70},
+                {field:'score',align:'center', title: '积分', width: 60},
+                {field:'recharge',align:'center', title: '总充值', width: 70},
+                {field:'discount',align:'center', title: '总优惠', width: 70},
+                {field:'cash',align:'center', title: '总提现', width: 70},
+                {field:'profit',align:'center', title: '总盈亏', width: 120},
+                {field:'regTime',align:'center', title: '注册时间',width: 160,templet: function(d){return admin.formatDate(d.regTime); }},
+                {field:'lastLoginFrom',align:'center', title: '登录来源', width: 100,templet: function(d){
+                    if(d.lastLoginFrom == 1){return 'pc'}else if(d.lastLoginFrom == 2){return '手机'}else if(d.lastLoginFrom == ""){return '-'}else {return '微信'}
+                }},
+                {field:'line',align:'center', title: '状态', width: 80,templet: function(d){
+                    if(d.line == 1){return '在线'}else {return '离线'}
+                }},
+                {align:'center',fixed: 'right', width: 250,title: '操作', templet: function(d){
+                    var str = "";
+                    str += '<a href="javascript:;" con="'+d.uid+'" class="OnLine-Statistics" style="color: #1E9FFF">统计</a>'
+                        + '&nbsp;&nbsp;<a href="javascript:;" lay-href="Agent/OnlineUserCoinLog/uid='+d.uid+'/username='+d.parentName+'/user='+d.username+'/type=1" style="color: #1E9FFF">帐变</a>'
+                        + '&nbsp;&nbsp;<a href="javascript:;" con="'+d.uid+'" class="OnLine-user" style="color: #1E9FFF">用户信息</a>'
+                        + '&nbsp;&nbsp;<a href="javascript:;" con="'+d.uid+'" class="OnLine-bank" style="color: #1E9FFF">银行</a>' ;
+                    return str;
+                }}
+
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                //统计
+                $('.OnLine-Statistics').click(function () {
+                    var uid = $(this).attr('con');
+                    $.post(layui.setter.URL_ADMIN+"/Agent/user_amount?uid="+uid,function(res){
+                        var ress = JSON.parse(res);
+                        var data = ress.data;
+                        var getTpl = OnLineCash.innerHTML
+                            ,view = document.getElementById('OnLinePop');
+                        laytpl(getTpl).render(data, function(html){
+                            view.innerHTML = html;
+                        });
+                        layer.open({
+                            title:'用户统计'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                            ,content: $('#OnLinePop').html()
+                        });
+                        form.render(null, 'OnLine-table-element');
+                    });
+                });
+
+                //用户信息
+                $('.OnLine-user').click(function () {
+                    var uid = $(this).attr('con');
+                    $.post(layui.setter.URL_ADMIN+"/Agent/memberInfo?id="+uid,function(res){
+                        var ress = JSON.parse(res);
+                        var data = ress.data;
+                        data.regTime = admin.formatDate(data.regTime);
+                        var getTpl = OnLinePop1.innerHTML
+                            ,view = document.getElementById('OnLineCash1');
+                        laytpl(getTpl).render(data, function(html){
+                            view.innerHTML = html;
+                        });
+                        layer.open({
+                            title:'用户信息'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['100%', '800px'] : ['800px', 'auto']
+                            ,content: $('#OnLineCash1').html()
+                        });
+                        form.render(null, 'OnLine-table-element1');
+                    });
+                });
+
+                //查看用户银行
+                $('.OnLine-bank').click(function () {
+                    var uid = $(this).attr('con');
+                    $.post(layui.setter.URL_ADMIN+"/Agent/userBank?uid="+uid,function(res){
+                        var ress = JSON.parse(res);
+                        var data = ress.data;
+                        var getTpl = OnLinePop2.innerHTML
+                            ,view = document.getElementById('OnLineCash2');
+                        laytpl(getTpl).render(data, function(html){
+                            view.innerHTML = html;
+                        });
+                        layer.open({
+                            title:'用户信息'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                            ,content: $('#OnLineCash2').html()
+                        });
+                        form.render(null, 'OnLine-table-element2');
+                    });
+                });
+
+            }
+        });
+
+
+
+
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-OnLine-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-OnLine-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(OnLineForm)', function(data){
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime){
+                //执行重载
+                table.reload('AgentOnLineList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+
+        //按钮搜索
+        $('.online-sort').click(function () {
+            //执行重载
+            var paixu = $(this).attr('con');
+            table.reload('AgentOnLineList', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    paixu: paixu,
+                }
+                ,loading:true
+            });
+        })
+
+
+    });
+
+
+</script>
+

@@ -1,0 +1,273 @@
+<title>设置中心内容</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div style="float: left">设置中心内容</div>
+                        <div style="float: right;">
+                            <button class="layui-btn layui-btn-sm addNoticeCenters layui-btn-normal" >
+                                添加设置
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="NoticeCenter" lay-filter="NoticeCenter"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="ListNoticeCenter1" lay-filter="NoticeCenter-table-element1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form" lay-filter="component-form-element">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block" style="width: 40%;">
+                        <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-input-block">
+                        <textarea name="content" placeholder="请输入内容" id="add_Center" class="layui-textarea" style="width: 80%;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="display: none">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="nodeId" value="2"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="NoticeCenterForm" lay-submit lay-filter="NoticeCenterForm"  class="layui-btn layui-btn-normal">立即新增</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="update-ListNoticeCenter2" lay-filter="update-NoticeCenter-table-element2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form" lay-filter="component-form-element">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block" style="width: 40%;">
+                        <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-input-block">
+                        <textarea name="content" placeholder="请输入内容" id="update-Center" class="layui-textarea" style="width: 80%;"></textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">添加时间</label>
+                    <div class="layui-input-block"  style="width: 40%;">
+                        <input type="text" id="update-addTime" readonly="readonly" name="addTime" placeholder="开始时间" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">是否显示</label>
+                    <div class="layui-input-block enable">
+                        <input type="radio" name="enable" value="1" title="显示" id="Center-display">
+                        <input type="radio" name="enable" value="0" title="隐藏" id="Center-none">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="update-NoticeCenterForm" lay-submit lay-filter="update-NoticeCenterForm"  class="layui-btn layui-btn-normal">立即修改</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</script>
+
+
+
+<script>
+
+    layui.use(['admin','table','layedit','form','jquery'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,layedit = layui.layedit,form = layui.form;
+
+        //载入表格数据
+        table.render({
+            elem: '#NoticeCenter'
+            ,url: layui.setter.URL_ADMIN+'/Information/get_notice?nodeId=6'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'title', title: '标题'},
+                {field:'enable', title: '是否显示', width: 130,templet: function(d){
+                    return d.enable == 0 ? '隐藏':'显示';
+                }}
+                ,{field:'addTime',align:'center', title: '添加时间', width: 130 ,templet: function(d){return admin.formatDates(d.addTime); }}
+                ,{align:'center', title: '操作',width: 200,  fixed: 'right',templet: function(d){
+                    var str = '';
+                    str += '<a class="layui-btn layui-btn-sm NoticeCenter-update"  update="'+d.id+'" style="color: #fbfbfb" href="javascript:;">修改</a>';
+                    str += '&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_del" del="'+d.id+'">删除</button>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data >0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+(res.data).length+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                //删除操作
+                layui.use(['jquery',], function(){
+                    var $= layui.jquery;
+                    $(function(){
+                        $('.btn_del').on('click',function(){
+                            var id = $(this).attr('del');
+                            layer.confirm('确定删除所选项吗？', {
+                                btn: ['确定删除','取消'] //按钮
+                            }, function(){
+                                $.post(layui.setter.URL_ADMIN+"/Information/deleteBanner?id="+id,function(res){
+                                    var _obj = JSON.parse(res);
+                                    if(_obj.code == 0){
+                                        layer.msg(_obj.msg, {time: 1000});
+                                        table.reload('NoticeCenter',{});
+                                    }else{
+                                        layer.msg(_obj.msg, {time: 1000});
+                                    }
+                                });
+                            }, function(){
+                                //layer.msg('已取消操作', {time: 1000});
+                            });
+                        });
+                    });
+                });
+
+
+                //修改
+                $('.NoticeCenter-update').click(function () {
+                    var id = $(this).attr('update');
+
+                    layer.open({
+                        title:'修改帮助'
+                        ,type: 1
+                        ,shadeClose: true
+                        ,area: ['800px', '700px']
+                        ,content: $('#update-ListNoticeCenter2').html()
+                    });
+                    form.render(null, 'update-NoticeCenter-table-element2');
+
+                    var index = "";
+                    admin.req({
+                        url: layui.setter.URL_ADMIN+'/Information/get_info?id='+id,
+                        done: function(res){
+                            var data = res.data;
+                            $('input[name="title"]').val(data[0]['title']);
+                            $('#update-Center').val(data[0]['content']);
+                            $('input[name="addTime"]').val(admin.formatDates(data[0]['addTime']));
+                            if(data[0]['enable'] == 1){
+                                $('#Center-display').attr('checked',true);
+                            }else {
+                                $('#Center-none').attr('checked',true);
+                            }
+                            form.render("radio");
+
+                            //编辑器图片上传 置于最前
+                            layedit.set({
+                                uploadImage: {
+                                    url: layui.setter.URL_ADMIN+'/Information/file' //接口url
+                                    ,type: 'post' //默认post
+                                }
+                            });
+                            //构建一个默认的编辑器
+                            index = layedit.build('update-Center');
+                        }
+                    });
+
+                    //上传修改文件
+                    layui.use(['jquery'], function(){
+                        var $ = layui.jquery;
+                        form.on('submit(update-NoticeCenterForm)', function(data){
+                            data.field.nodeId = 6;
+                            data.field.content = layedit.getContent(index);
+                            $.post(layui.setter.URL_ADMIN+"/Information/doAddNotice?id="+id, data.field, function (res) {
+                                var _obj = JSON.parse(res);
+                                if (_obj.code == 0) {
+                                    layer.msg(_obj.msg, {time: 1000}, function () {
+                                        layer.closeAll();
+                                        table.reload('NoticeCenter',{});
+                                    });
+                                } else {
+                                    layer.msg(_obj.msg, {time: 1000});
+                                }
+                            });
+                        });
+
+                    });
+                });
+            }
+        });
+
+        //增加
+        $('.addNoticeCenters').click(function () {
+
+            layer.open({
+                title:'添加设置'
+                ,type: 1
+                ,shadeClose: true
+                ,area: ['800px', '550px']
+                ,content: $('#ListNoticeCenter1').html()
+            });
+            form.render(null, 'NoticeCenter-table-element1');
+
+            //编辑器图片上传 置于最前
+            layedit.set({
+                uploadImage: {
+                    url: layui.setter.URL_ADMIN+'/Information/file' //接口url
+                    ,type: 'post' //默认post
+                }
+            });
+            //构建一个默认的编辑器
+            var index = layedit.build('add_Center');
+
+            //上传新增文件
+            layui.use(['jquery'], function(){
+                var $ = layui.jquery;
+                form.on('submit(NoticeCenterForm)', function(data){
+                    data.field.nodeId = 6;
+                    data.field.content = layedit.getContent(index);
+                    $.post(layui.setter.URL_ADMIN+"/Information/doAddNotice", data.field, function (res) {
+                        var _obj = JSON.parse(res);
+                        if (_obj.code == 0) {
+                            layer.msg(_obj.msg, {time: 1000}, function () {
+                                layer.closeAll();
+                                table.reload('NoticeCenter',{});
+                            });
+                        } else {
+                            layer.msg(_obj.msg, {time: 1000});
+                        }
+                    });
+                });
+
+            });
+        });
+    });
+</script>
+

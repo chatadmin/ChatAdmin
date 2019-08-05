@@ -1,0 +1,58 @@
+<title>注册赠送</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">注册赠送活动设置</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;margin-top: 10px;">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            新注册用户赠送本人：
+                        </div>
+                        <div class="layui-inline">
+                            <input type="text" id="zczs" name="zczs" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input">
+
+                        </div>
+                        <div class="layui-inline">
+                            元，如果为0则关闭活动
+                        </div>
+                    </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="zczsForm" lay-submit lay-filter="zczsForm"  class="layui-btn layui-bg-blue">保存修改配置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//    获取赠送金额
+    layui.use(['admin'], function(){
+
+        var $ = layui.jquery, admin = layui.admin;
+        admin.req({
+        url: layui.setter.URL_ADMIN+'/Activity/get_info',
+        done: function(res){
+            var _data = res.data;
+                $('#zczs').val(_data.zczs);
+            }
+        })
+    });
+
+//    修改赠送金额
+    layui.use(['form'], function(){
+        var $ = layui.$, form = layui.form;
+        form.on('submit(zczsForm)', function(data){
+            $.post(layui.setter.URL_ADMIN+"/Activity/zczs",data.field,function(res){
+                var res = JSON.parse(res);
+                if(res.code == 0){
+                    layer.msg(res.msg, {time: 2000});
+                }else{
+                    layer.msg(res.msg, {time: 2000});
+                }
+            });
+        })
+    });
+</script>

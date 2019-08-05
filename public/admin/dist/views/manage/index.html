@@ -1,0 +1,381 @@
+
+
+  <title>管理人员 - 列表</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>管理人员</cite></a>
+      <a><cite>列表</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+			  <div style="float: left;margin-right: 50px;">
+					  管理员管理
+			  </div>
+			  <div style="float: right;margin-right: 50px;">
+				  <button class="layui-btn layui-btn-sm addManage" >
+					  添加用户
+				  </button>
+			  </div>
+		  </div>
+
+          <div class="layui-card-body">
+            <table class="layui-hide" id="manage-index-page" lay-filter="manage-index-operate"></table>
+            <script type="text/html" id="manage-index-operate-bar">
+			  {{# if(d.isDelete == 1){ }}
+				  <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="clear">清除</a>
+			  {{# }else{ }}			
+				  <a class="layui-btn layui-btn-sm" lay-event="edit">修改密码</a>
+				  {{# if(d.username != 'admin'){ }}
+			  		<a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="role">修改角色</a>
+				  <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+				  {{# } }}
+			  {{# } }}
+            </script>			
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/html" id="passChange">
+	<div class="layui-fluid">
+		<form>
+		<div class="layui-row layui-col-space15">
+			<div class="layui-card layui-form">
+				<div class="layui-card-body layui-row layui-col-space10" >  
+					<div class="layui-col-md12">
+						<input type="password" name="oldpwd" lay-verify="required" placeholder="请输入原始密码" autocomplete="off" class="layui-input">
+					</div>
+					<div class="layui-col-md12">
+						<input type="password" name="password" lay-verify="pass" placeholder="请输入新密码" autocomplete="off" class="layui-input" id="newpass">
+					</div>
+					<div class="layui-col-md12">
+						<input type="password" name="cpwd" lay-verify="repass" placeholder="再次输入新密码" autocomplete="off" class="layui-input">
+						<input type="hidden" id="adminid" />
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block" style="margin-left:70px">
+							<button class="layui-btn layui-btn-normal" lay-submit lay-filter="pwdChange">立即提交</button>
+							<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						</div>
+					</div>				
+				</div>  
+			</div>  
+		</div>
+		</form>
+	</div> 
+  </script>
+
+  <script type="text/html" id="roleChange">
+	  <div class="layui-fluid">
+			  <div class="layui-row layui-col-space15">
+				  <div class="layui-card layui-form">
+					  <div class="layui-card-body layui-row layui-col-space10" >
+						  <div class="layui-form-item">
+							  <label class="layui-form-label">角色:</label>
+							  <div class="layui-input-block">
+								  <select id="role_ids" name="role_id" lay-verify="role_ids" lay-filter="role_ids" >
+
+								  </select>
+								  <input name="uid" type="hidden" id="adminids" />
+							  </div>
+						  </div>
+						  <div class="layui-form-item">
+							  <div class="layui-input-block" style="margin-left:70px">
+								  <button class="layui-btn layui-btn-normal" lay-submit lay-filter="roleChange">立即提交</button>
+								  <button class="layui-btn layui-btn-primary" id="close">关闭</button>
+							  </div>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+	  </div>
+  </script>
+
+  <script type="text/html" id="addManageForm" lay-filter="Manage-table-element">
+	  <div class="layui-fluid">
+		  <div class="layui-row layui-col-space15">
+			  <div class="layui-col-md12  layui-form">
+				  <form enctype="multipart/form-data">
+					  <div class="layui-form-item" style="width: 70%">
+						  <label class="layui-form-label">用户名:</label>
+						  <div class="layui-input-block">
+							  <input id="manage-user" type="text" name="username" autocomplete="off" placeholder="输入用户名" class="layui-input">
+						  </div>
+					  </div>
+					  <div class="layui-form-item" style="width: 70%">
+						  <label class="layui-form-label">密码:</label>
+						  <div class="layui-input-block">
+							  <input id="manage-pass" type="password" name="password" autocomplete="off" placeholder="输入密码" class="layui-input">
+						  </div>
+					  </div>
+					  <div class="layui-form-item" style="width: 70%">
+						  <label class="layui-form-label">密码:</label>
+						  <div class="layui-input-block">
+							  <input id="manage-pass2" type="password" name="password" autocomplete="off" placeholder="再次输入密码" class="layui-input">
+						  </div>
+					  </div>
+					  <div class="layui-form-item" style="width: 50%">
+						  <label class="layui-form-label">角色:</label>
+						  <div class="layui-input-block">
+							  <select id="role_id" name="role_id" >
+
+							  </select>
+						  </div>
+					  </div>
+				  </form>
+				  <div class="layui-form-item">
+					  <div class="layui-input-block">
+						  <button id="ManagesForm" lay-submit lay-filter="ManagesForm"  class="layui-btn">立即提交</button>
+					  </div>
+				  </div>
+			  </div>
+		  </div>
+	  </div>
+  </script>
+ 
+  <script>
+  layui.use(['admin', 'table' ,'jquery','form'], function(){
+    var admin = layui.admin
+    ,$ = layui.jquery , table = layui.table,form = layui.form;
+  
+    table.render({
+      elem: '#manage-index-page'
+      ,url: layui.setter.URL_ADMIN+'/manage/'
+      ,cols: [[
+        {field:'uid', width:60, title: 'ID', sort: true}
+        ,{field:'username', width:160, title: '用户名'}
+        ,{field:'loginIP', width:220, title: '登陆IP'}
+        ,{field:'online', width:180, title: '状态'}
+        ,{field:'name', width:180, title: '角色'}
+        ,{field:'loginTime', title: '最后登陆时间', minWidth: 150}
+		,{width:250,  title: '操作',fixed: 'right', toolbar: '#manage-index-operate-bar'}
+      ]]
+      ,page: true
+    });
+
+    $('.addManage').on('click',function () {
+        $.post(layui.setter.URL_ADMIN+"/Manage/getRole",function(res){
+            // console.log(res);
+            var da =JSON.parse(res);
+            var _dom = "";
+            for(var i in da.data){
+                _dom += '<option value="'+da.data[i]["id"]+'">'+da.data[i]["name"]+'</option>';;
+			}
+			$('#role_id').html('');
+			$('#role_id').html(_dom);
+            form.render('select');
+        });
+
+        layer.open({
+            title:'添加管理员'
+            ,type: 1
+            ,shadeClose: true
+            ,area: ['500px', '400px']
+            ,content: $('#addManageForm').html()
+        });
+        form.render(null, 'Manage-table-element');
+
+
+
+        $('#ManagesForm').click(function () {
+            var username = $('#manage-user').val();
+            var uPattern = /^[a-zA-Z0-9_-]{5,16}$/;
+			//输出 true
+           	if(uPattern.test(username)){
+                var pass = $('#manage-pass').val();
+                var passt = $('#manage-pass2').val();
+
+                var pPattern = /^(\w){6,20}$/;
+
+                if(pPattern.test(pass)){
+                    var role_id = $('#role_id').val();
+                    if(pass != passt){
+                        layer.msg('两次密码输入不一样，请重新输入', {time: 2000});
+                    }else {
+                        $.ajax({
+                            type: "POST",//方法类型
+                            dataType: "json",//预期服务器返回的数据类型
+                            url: layui.setter.URL_ADMIN+"/Manage/addManage",//url
+                            data: {
+                                username:username,
+                                password:pass,
+                                role_id:role_id
+                            },
+                            success: function (data) {
+                                if(data.code == 0){
+                                	layer.msg(data.msg, {time: 1000},function(){
+                                        layer.closeAll();
+                                        table.reload('manage-index-page',{});
+                                    });
+                                }else{
+                                	layer.msg(data.msg, {time: 2000});
+                                }
+                            }
+                        })
+                    }
+				}else {
+                    layer.msg('密码由6到32个字母，数字组成', {time: 2000});
+				}
+			}else {
+                layer.msg('用户名不正确，用户名由5到16位字母，数字组成，头位不能是数字', {time: 2000});
+			}
+        });
+    });
+
+
+   //监听工具条
+    table.on('tool(manage-index-operate)', function(obj){
+      var data = obj.data;
+     if(obj.event === 'del'){
+        layer.confirm('真的删除行么？', function(index){
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/manage/deleteManager/'+data.uid
+				,data: {username:data.username}
+				,type: 'post'
+				,done: function(res){
+					if(res.code>0){
+						layer.msg(res.msg, {icon: 5});
+					}else{
+						layer.msg(res.msg, {icon: 1});
+						setTimeout(function(){	
+							layer.closeAll();
+						},2000);		
+					}
+				}
+			});
+		  layui.index.render();
+          layer.close(index);
+        });
+      }else if(obj.event === 'clear'){
+        layer.confirm('清除后不可恢复，确定？', function(index){
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/manage/clearManager/'+data.uid
+				,data: {username:data.username}
+				,type: 'post'
+				,done: function(res){
+					if(res.code>0){
+						layer.msg(res.msg, {icon: 5});
+					}else{
+						layer.msg(res.msg, {icon: 1});
+						setTimeout(function(){	
+							layer.closeAll();
+						},2000);		
+					}
+				}
+			});
+		  layui.index.render();
+          layer.close(index);
+        });
+      }
+	  else if(obj.event === 'edit'){
+		  	layer.open({
+					title: '修改 '+data.username+' 的密码',
+					type: 1
+					,shadeClose: true
+					,area: admin.screen() < 2 ? ['80%', '300px'] : ['380px', 'auto']
+					,content: $('#passChange').html()  
+					,success: function(layero, index){
+						$('#adminid').val(data.uid);
+					}
+			});
+      }else if(obj.event === 'role'){
+         $.post(layui.setter.URL_ADMIN+"/Manage/getRole",function(res){
+             var da =JSON.parse(res);
+             var _dom = "";
+             for(var i in da.data){
+                 _dom += '<option value="'+da.data[i]["id"]+'">'+da.data[i]["name"]+'</option>';;
+             }
+             $('#role_ids').html('');
+             $('#role_ids').html(_dom);
+             form.render('select');
+         });
+
+         layer.open({
+             title: '修改 '+data.username+' 的角色',
+             type: 1
+             ,shadeClose: true
+             ,area: admin.screen() < 2 ? ['80%', '300px'] : ['380px', 'auto']
+             ,content: $('#roleChange').html()
+             ,success: function(layero, index){
+                 $('#adminids').val(data.uid);
+                 $('.layui-layer-content').removeClass('layui-layer-content');
+                 $('.layui-layer-page').css('layui-layer-page');
+             }
+         });
+
+         $('#close').click(function () {
+			 layer.closeAll();
+         })
+	 }
+    });
+
+      form.on('select(role_ids)', function(data){
+
+          console.log(111);
+
+      });
+
+
+      form.verify({
+		pass: [
+		  /^[\S]{6,12}$/
+		  ,'密码必须6到12位，且不能出现空格'
+		]
+		,repass: function(value){
+		  if(value !== $('#newpass').val()){
+			return '两次密码输入不一致';
+		  }
+		}
+	  });
+	//监听按钮
+	form.on('submit(pwdChange)', function(data){
+		var adminid = $('#adminid').val();
+  		admin.req({
+			url: layui.setter.URL_ADMIN+'/manage/changemanagerpwd/'+adminid
+			,data: data.field
+			,type: 'post'
+			,done: function(res){
+				if(res.code>0){
+					layer.msg(res.msg, {icon: 5});
+				}else{
+					layer.msg(res.msg, {icon: 1});
+					setTimeout(function(){	
+						layer.closeAll();
+					},2000);		
+				}
+			}
+		});
+	});
+
+
+      //监听按钮 修改角色
+      form.on('submit(roleChange)', function(data){
+          // alert(111)
+		  console.log(data);
+          admin.req({
+              url: layui.setter.URL_ADMIN+'/manage/updateRole'
+              ,data: data.field
+              ,type: 'post'
+              ,done: function(res){
+                  if(res.code>0){
+                      layer.msg(res.msg, {icon: 5});
+                  }else{
+                      layer.msg(res.msg, function () {
+                          table.reload('manage-index-page');
+                      });
+                      setTimeout(function(){
+                          layer.closeAll();
+                      },2000);
+                  }
+              }
+          });
+      })
+  });
+  </script>

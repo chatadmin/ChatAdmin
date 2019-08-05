@@ -1,0 +1,351 @@
+
+<title>朋友圈管理</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">
+          <div style="float:left;">朋友圈管理</div>
+        </div>
+        <div class="layui-card-body">
+          <div class="layui-form">
+            <div class=" layui-form" style="margin-bottom: 10px;">
+
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:50px;"> ID：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="circle-index-id" name="id" autocomplete="off" placeholder="用户ID">
+                </div>
+              </div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:120px;"> 用户：</label>
+                <div class="layui-input-inline" style="width: 140px;">
+                  <input class="layui-input" id="circle-index-username" name="username" autocomplete="off" placeholder="用户名">
+                </div>
+              </div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:120px;"> 手机号码：</label>
+                <div class="layui-input-inline" style="width: 140px;">
+                  <input class="layui-input" id="circle-index-phone" name="phone" autocomplete="off" placeholder="手机号码">
+                </div>
+              </div>
+
+              <div class="layui-inline">
+                <label class="layui-form-label">发布时间：</label>
+                <div class="layui-input-inline" style="width: 140px;">
+                  <input type="text" name="fromtime" class="layui-input" id="circle_search_starttime" placeholder="开始日期">
+                </div>
+                -
+                <div class="layui-input-inline" style="width: 140px;">
+                  <input type="text" name="totime" class="layui-input" id="circle_search_endtime" placeholder="结束日期">
+                </div>
+              </div>
+
+              <div class="layui-inline">
+                <button class="layui-btn"  lay-submit="" lay-filter="circle_index_searching" style="float:float;">搜索</button>
+              </div>
+            </div>
+          </div>
+          <div class="layui-inline" style="margin-bottom: 10px;">
+            <button class="layui-btn layui-btn-danger"  lay-submit="" lay-filter="circle_delete_all" style="float:float;">删除</button>
+          </div>
+          <table class="layui-hide" id="circle_index_list" lay-data="{id:'circleidlist'}"  lay-filter="circle_index_list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/html" id="circle_details_info">
+  <a class="layui-btn layui-btn-sm" lay-event="circle_delete_action">删除</a>
+  <a class="layui-btn layui-btn-sm" lay-event="circle_reviews_like">点赞</a>
+  <a class="layui-btn layui-btn-sm" lay-event="circle_reviews_comment">评论</a>
+</script>
+<script type="text/html" id="circle_picture">
+  <div class="layui-inline circle_picture_display">
+  {{#  layui.each(d.picture_arr, function(index, item){ }}
+    <a target="_blank" href="{{ item }}"><img src="{{ item }}" /></a>
+  {{#  }); }}
+  </div>
+</script>
+<script type="text/html" id="circle_details_comment">
+  <div class="layui-inline" style="margin-top: 10px;margin-left: 15px;">
+    <button class="layui-btn"  lay-submit="" lay-filter="circle_index_comment_all" style="float:float;">删除</button>
+  </div>
+  <table class="layui-hide" id="circle_details_comment_table" lay-data="{id:'detailscommentlist'}"  lay-filter="circle_details_comment_table"></table>
+
+</script>
+<script type="text/html" id="circle_details_like">
+  <table class="layui-hide" id="circle_details_like_table" lay-data="{id:'detailslikelist'}"  lay-filter="circle_details_like_table"></table>
+</script>
+<script type="text/html" id="operation_about">
+    <a class="layui-btn layui-btn-sm" lay-event="circle_comment_delete_action">删除</a>
+</script>
+<script>
+    layui.use(['admin', 'table','laydate','layer','form','laytpl','layedit','upload'], function(){
+        var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, upload = layui.upload;
+
+
+        //开始日期
+        form.render('select');
+        var insStart = laydate.render({
+            elem: '#circle_search_starttime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+
+                //自动弹出结束日期的选择器
+                insEnd.config.elem[0].focus();
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#circle_search_endtime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+        var circle_aaa = function (data) {
+            table.render({
+                id: 'circleidlist'
+                ,elem: '#circle_index_list'
+                ,url: '/interface/circleList' //数据接口
+                ,where: {data:data}
+                ,page: true //开启分页
+                ,limit:10
+                ,method: 'post'
+                ,cols: [[ //表头
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field: 'id', title: 'ID', fixed: 'left'}
+                    ,{field: 'username', title: '用户名'}
+                    ,{field: 'phone', title: '手机号'}
+                    ,{field: 'content', title: '内容'}
+                    ,{field: 'picture', title: '图片',templet:$('#circle_picture')}
+                    ,{field: 'create_time', title: '发布时间',templet: function(d){return admin.formatDate(d.create_time); }}
+                    ,{field:'owen_uid',title:'查看',width:200,templet:$('#circle_details_info')}
+                ]]
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    var circle_aaa_res = {};
+                    $.each(res.where, function (keys, val) {
+                        circle_aaa_res.key = keys;
+                        circle_aaa_res.value = val;
+                        layui.data('circle_aaa_res', circle_aaa_res);
+                    });
+                }
+            });
+
+
+        }
+        var circle_reload = function(data){
+            table.reload('circleidlist', {
+                url: '/interface/circleList'
+                ,where: data //设定异步数据接口的额外参数
+            })
+        }
+
+        var circle_comment_reload = function (data) {
+            table.reload('detailscommentlist',{
+                url:'/interface/commentList'
+                ,where: data
+        })
+        }
+
+        var circle_delete = function(data){
+
+            admin.req({
+                url: layui.setter.URL_ADMIN+'/interface/cirdel'
+                ,data: {id:data.id}
+                ,type: 'post'
+                ,success: function(res){
+                    if(res.code==0){
+                        layer.msg(res.message, {icon: 1});
+                        if(data.isflush==1){
+                            setTimeout(circle_reload(layui.data('circle_aaa_res')),2000);
+                        }
+                    }else{
+                        layer.msg(res.message, {icon: 2});
+                    }
+                }
+                ,error:function(r){
+                    layer.msg(r.message, {icon: 2});
+                }
+            });
+        }
+
+        var circle_comment_del = function(data){
+            admin.req({
+                url: layui.setter.URL_ADMIN+'/interface/commentDelete'
+                ,data: {id:data.id}
+                ,type: 'post'
+                ,success: function(res){
+                    if(res.code==0){
+                        layer.msg(res.message, {icon: 1});
+                        if(data.isflush==1){
+                            setTimeout(circle_comment_reload(layui.data('circle_comment_ddd_res')),2000);
+                        }
+                    }else{
+                        layer.msg(res.message, {icon: 2});
+                    }
+                }
+                ,error:function(r){
+                    layer.msg(r.message, {icon: 2});
+                }
+            });
+        }
+
+
+        circle_aaa();
+        //监听搜索提交按钮
+        form.on('submit(circle_index_searching)', function(data){
+            var data = data.field;
+            circle_aaa(data);
+        })
+
+        table.on('tool(circle_index_list)', function(obj) {
+            var data = obj.data;
+            if(obj.event ==='circle_delete_action' ){
+                layer.confirm('确定执行删除操作吗?', {
+                    btn: ['确定','取消'] //按钮
+                }, function() {
+                    circle_delete({id: data.id, isflush: 1});
+                });
+            }else if(obj.event === 'circle_reviews_like') {
+
+                var index = layer.open({
+                    title: '点赞详情'
+                    , type: 1
+                    , shadeClose: true
+                    , area: ['900px', '60%']
+                    ,content: $('#circle_details_like').html()
+                });
+
+                table.render({
+                    id: 'detailslikelist'
+                    ,elem: '#circle_details_like_table'
+                    ,url: '/interface/likeList' //数据接口
+                    ,where: {data:{id:data.id}}
+                    ,page: true //开启分页
+                    ,limit:10
+                    ,method: 'post'
+                    ,cols: [[ //表头
+                        {type:'checkbox', fixed: 'left'}
+                        ,{field: 'id', title: 'ID', fixed: 'left', unresize: true}
+                        ,{field: 'username', title: '用户名', unresize: true}
+                        ,{field: 'phone', title: '手机号', unresize: true}
+                        ,{field: 'region', title: '地区', unresize: true}
+                        ,{field: 'sex', title: '性别', unresize: true,templet:function (d) {
+                                return d.sex == 1 ? "男" : "女";
+                            }}
+                        ,{field: 'create_time', title: '点赞时间', unresize: true,templet: function(d){return admin.formatDate(d.create_time); }}
+
+                    ]]
+                    ,parseData: function(res){ //res 即为原始返回的数据
+                        var circle_like_ddd_res = {};
+                        $.each(res.where, function (keys, val) {
+                            circle_like_ddd_res.key = keys;
+                            circle_like_ddd_res.value = val;
+                            layui.data('circle_like_ddd_res', circle_like_ddd_res);
+                        });
+                    }
+                });
+
+            }else if(obj.event === 'circle_reviews_comment') {
+
+
+                var index = layer.open({
+                    title: '评论详情'
+                    , type: 1
+                    , shadeClose: true
+                    , area: ['900px', '60%']
+                    ,content: $('#circle_details_comment').html()
+                });
+
+                table.render({
+                    id: 'detailscommentlist'
+                    ,elem: '#circle_details_comment_table'
+                    ,url: '/interface/commentList' //数据接口
+                    ,where: {data:{id:data.id}}
+                    ,page: true //开启分页
+                    ,limit:10
+                    ,method: 'post'
+                    ,cols: [[ //表头
+                        {type:'checkbox', fixed: 'left'}
+                        ,{field: 'id', title: 'ID', fixed: 'left', unresize: true}
+                        ,{field: 'username', title: '用户名', unresize: true}
+                        ,{field: 'phone', title: '手机号', unresize: true}
+                        ,{field: 'region', title: '地区', unresize: true}
+                        ,{field: 'content', title: '评论内容', unresize: true}
+                        ,{field: 'sex', title: '性别', unresize: true,templet:function (d) {
+                                return d.sex == 1 ? "男" : "女";
+                            }}
+                        ,{field: 'create_time', title: '评论时间', unresize: true,templet: function(d){return admin.formatDate(d.create_time); }}
+                        ,{field:'id',title:"操作",width:200,templet:$('#operation_about')}
+
+                    ]]
+                    ,parseData: function(res){ //res 即为原始返回的数据
+                        var circle_comment_ddd_res = {};
+                        $.each(res.where, function (keys, val) {
+                            circle_comment_ddd_res.key = keys;
+                            circle_comment_ddd_res.value = val;
+                            layui.data('circle_comment_ddd_res', circle_comment_ddd_res);
+                        });
+                    }
+                });
+
+                table.on('tool(circle_details_comment_table)',function (obj) {
+                    var data = obj.data;
+                    if(obj.event === 'circle_comment_delete_action'){
+                        layer.confirm('确定执行删除操作吗?', {
+                            btn: ['确定','取消'] //按钮
+                        }, function() {
+                            circle_comment_del({id: data.id, isflush: 1});
+                        });
+                    }
+
+                });
+
+                form.on('submit(circle_index_comment_all)', function(){
+                    var checkStatus = table.checkStatus('detailscommentlist'); //listids 即为基础参数 id 对应的值
+                    var str='';
+                    $.each(checkStatus.data,function(i,item){
+                        str += item.id+'|';
+                    });
+                    layer.confirm('确定执行删除操作吗?', {
+                        btn: ['确定','取消'] //按钮
+                    }, function() {
+                        circle_comment_del({id: str, isflush: 1});
+                    });
+                })
+
+
+
+
+            }
+        });
+
+        form.on('submit(circle_delete_all)', function(){
+            var checkStatus = table.checkStatus('circleidlist'); //listids 即为基础参数 id 对应的值
+            var str='';
+            $.each(checkStatus.data,function(i,item){
+                str += item.id+'|';
+            });
+            layer.confirm('确定执行删除操作吗?', {
+                btn: ['确定','取消'] //按钮
+            }, function() {
+                circle_delete({id: str, isflush: 1});
+            });
+        })
+
+
+    });
+</script>

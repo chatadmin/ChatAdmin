@@ -1,0 +1,598 @@
+
+<title>系统设置</title>
+<div class="layui-fluid">
+  <div class="layui-card">
+      <div class="layui-card-body" style="padding: 15px;">
+        <div class="layui-tab layui-tab-brief">
+          <ul class="layui-tab-title">
+            <li class="layui-this">网站设置</li>
+            <li>投注相关</li>
+            <li>彩票相关</li>
+            <li>充值提现</li>
+            <li>客服设置</li>
+          </ul>
+          <div class="layui-tab-content" id="system_settings_index">
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="system_settings_website">
+		<div class="layui-tab-item layui-show">
+			<div class="layui-form">
+			<div class="layui-form-item">
+			  <label class="layui-form-label">平台名称</label>
+			  <div class="layui-col-md2">
+				<input type="text" name="webName" lay-verify="required" autocomplete="off" placeholder="平台名称" value="{{  d.webName || '' }}" class="layui-input">
+			  </div>
+			</div> 
+			<div class="layui-form-item">
+			  <label class="layui-form-label">平台LOGO</label>
+			  <div class="layui-input-block">
+				<input type="hidden" name="siteLogo" id="siteLogo" />
+				<div class="layui-upload-drag" id="system_settings_logo">
+				{{#  if(d.siteLogo){ }}
+					<img width="160px" src="{{ d.siteLogo }}" />
+				{{#  } else { }}
+				  <i class="layui-icon"></i>
+				  <p>点击上传，或将文件拖拽到此处</p>
+				  {{#  } }}
+				</div> <span>图片规格：260X75，文件大小：300KB以内，上传后需清空缓存</span>
+			  </div>
+			</div> 				
+			<div class="layui-form-item">
+			  <label class="layui-form-label">平台开关</label>
+			  <div class="layui-input-block">
+				<input type="radio" name="switchWeb" value="1" title="开启" {{#  if(d.switchWeb == 1){ }} checked {{#  } }} >
+				<input type="radio" name="switchWeb" value="0" title="关闭" {{#  if(d.switchWeb!=1){ }} checked {{#  } }}>
+			  </div>
+			</div>	
+			<div class="layui-form-item layui-form-text">
+			  <label class="layui-form-label">维护公告</label>
+			  <div class="layui-col-md4">
+				<textarea name="webCloseServiceResult" placeholder="平台维护公告" class="layui-textarea">{{  d.webCloseServiceResult || '' }}</textarea>
+			  </div>
+			</div> 
+			<!--<div class="layui-form-item layui-form-text">
+			  <label class="layui-form-label">滚动公告</label>
+			  <div class="layui-col-md4">
+				<textarea name="webGG" placeholder="滚动公告" class="layui-textarea">{{  d.webGG || '' }}</textarea>
+			  </div>
+			</div>-->
+			<div class="layui-form-item">
+			  <label class="layui-form-label">备案号</label>
+			  <div class="layui-col-md2">
+				<input type="text" name="beiAn" lay-verify="beiAn" autocomplete="off" placeholder="备案号" value="{{  d.beiAn }}" class="layui-input">
+			  </div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">域名</label>
+				<div class="layui-col-md2">
+					<input type="text" name="yuMing" lay-verify="yuMing" autocomplete="off" placeholder="域名" value="{{  d.yuMing }}" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label">推荐码</label>
+			  <div class="layui-input-inline">
+				<input type="radio" name="regCode" value="1" title="开启" {{#  if(d.regCode == 1){ }} checked {{#  } }} >
+				<input type="radio" name="regCode" value="0" title="关闭" {{#  if(d.regCode!=1){ }} checked {{#  } }}>
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">开启后，注册必须填写推荐码</div>
+			</div> 
+			<div class="layui-form-item">
+			  <label class="layui-form-label">提款密码</label>
+			  <div class="layui-input-inline">
+				<input type="radio" name="coinPwd" value="0" title="开启" {{#  if(d.coinPwd!=1){ }} checked {{#  } }} >
+				<input type="radio" name="coinPwd" value="1" title="关闭" {{#  if(d.coinPwd == 1){ }} checked {{#  } }}>
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">开启后，注册必须填写提款密码</div>
+			</div> 
+			<div class="layui-form-item">
+			  <label class="layui-form-label">IP注册限制</label>
+			  <div class="layui-col-md1">
+				<input type="text" name="reglimit24" autocomplete="off" placeholder="IP注册限制" value="{{  d.reglimit24 || '' }}" class="layui-input">
+			  </div>
+				<div class="layui-form-mid layui-word-aux">&nbsp;24小时内同IP注册限制个数，0为不限制</div>
+			</div>			
+			<div class="layui-form-item">
+			  <label class="layui-form-label">安全码</label>
+			  <div class="layui-input-inline">
+				<input type="text" name="adminSafeCode" autocomplete="off" placeholder="安全码" value="{{  d.adminSafeCode || '' }}" class="layui-input">
+			  </div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label">前台登陆</label>
+			  <div class="layui-input-inline">
+				<input type="radio" name="siteLogined" value="0" title="关闭" {{#  if(d.siteLogined!=1){ }} checked {{#  } }} >
+				<input type="radio" name="siteLogined" value="1" title="开启" {{#  if(d.siteLogined == 1){ }} checked {{#  } }}>
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">开启后，访问前台任何页面都需要登陆</div>
+			</div> 
+			<div class="layui-form-item">
+			  <label class="layui-form-label">转账设置</label>
+			  <div class="layui-input-inline">
+				<input type="radio" name="rechargeText" value="0" title="需要" {{#  if(d.rechargeText!=1){ }} checked {{#  } }} >
+				<input type="radio" name="rechargeText" value="1" title="不需要" {{#  if(d.rechargeText == 1){ }} checked {{#  } }}>
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">设置用户手动转账是否需要填写昵称</div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label">站内信弹窗</label>
+			  <div class="layui-input-inline">
+				<input type="radio" name="msg_pop" value="0" title="不弹窗" {{#  if(d.msg_pop!=1){ }} checked {{#  } }} >
+				<input type="radio" name="msg_pop" value="1" title="弹" {{#  if(d.msg_pop == 1){ }} checked {{#  } }}>
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">选择后，发布站内信后用户前台立即弹出</div>
+			</div>			
+			<div class="layui-form-item layui-form-text">
+			  <label class="layui-form-label">后台IP限制</label>
+			  <div class="layui-col-md3">
+				<textarea name="adminLoginIP" placeholder="设置IP后，非设置的IP不允许访问后台,提示：一行一个IP" class="layui-textarea">{{  d.adminLoginIP  || '' }}</textarea>
+			  </div>
+			</div>			
+			<div class="layui-form-item layui-form-text">
+			  <label class="layui-form-label">统计代码</label>
+			  <div class="layui-col-md4">
+				<textarea name="statCode" placeholder="统计代码" class="layui-textarea">{{  d.statCode || '' }}</textarea>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <label class="layui-form-label">手机模板</label>
+			  <div class="layui-input-block">
+			  <label>
+				<input type="radio" name="wap_theme" value="1" title="<img src='/upload/system/theme1.png' height='200' \/>" {{#  if(d.wap_theme==1){ }} checked {{#  } }} >
+				
+			  </label>	
+			  <label>
+				<input type="radio" name="wap_theme" value="2" title="<img src='/upload/system/theme2.png' height='200' \/>" {{#  if(d.wap_theme == 2){ }} checked {{#  } }}>
+			  </label>
+			  <label>
+				<input type="radio" name="wap_theme" value="3" title="<img src='/upload/system/theme3.png' height='200' \/>" {{#  if(d.wap_theme == 3){ }} checked {{#  } }}>
+			  </label>
+			  </div>
+			</div>		
+			<div class="layui-form-item">
+			  <label class="layui-form-label">PC模板</label>
+			  <div class="layui-input-block">
+			  <label>
+				<input type="radio" name="pc_theme" value="1" title="<img src='/upload/system/pc_theme1.png' height='200' \/>" {{#  if(d.pc_theme==1){ }} checked {{#  } }} >
+				
+			  </label>	
+			  <label>
+				<input type="radio" name="pc_theme" value="2" title="<img src='/upload/system/pc_theme2.png' height='200' \/>" {{#  if(d.pc_theme == 2){ }} checked {{#  } }}>
+			  </label>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="system_setting_submit_wangzhan">立即提交</button>
+				  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			  </div>
+			</div>				
+			</div>
+			</div>
+		<div class="layui-tab-item">
+			<div class="layui-form" method="post">
+			<div class="layui-form-item">
+			  <label class="layui-form-label">总投注</label>
+			  <div class="layui-input-block">
+				<input type="radio" name="switchBuy" value="1" title="开启" {{#  if(d.switchBuy == 1){ }} checked {{#  } }} >
+				<input type="radio" name="switchBuy" value="0" title="关闭" {{#  if(d.switchBuy!=1){ }} checked {{#  } }}>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <label class="layui-form-label">代理投注</label>
+			  <div class="layui-input-block">
+				<input type="radio" name="switchDLBuy" value="1" title="开启" {{#  if(d.switchDLBuy == 1){ }} checked {{#  } }} >
+				<input type="radio" name="switchDLBuy" value="0" title="关闭" {{#  if(d.switchDLBuy!=1){ }} checked {{#  } }}>
+			  </div>
+			</div>				
+			<div class="layui-form-item">
+			  <label class="layui-form-label">总代投注</label>
+			  <div class="layui-input-block">
+				<input type="radio" name="switchZDLBuy" value="1" title="开启" {{#  if(d.switchZDLBuy == 1){ }} checked {{#  } }} >
+				<input type="radio" name="switchZDLBuy" value="0" title="关闭" {{#  if(d.switchZDLBuy!=1){ }} checked {{#  } }}>
+			  </div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label">撤单开关</label>
+			  <div class="layui-input-block">
+				<input type="radio" name="cancelOrder" value="0" title="开启" {{#  if(d.cancelOrder!=1){ }} checked {{#  } }} >
+				<input type="radio" name="cancelOrder" value="1" title="关闭" {{#  if(d.cancelOrder == 1){ }} checked {{#  } }}>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label">返点最大值</label>
+				<div class="layui-input-inline">
+				  <input type="tel" name="fanDianMax" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.fanDianMax || '' }}" />
+				</div>
+				<div class="layui-form-mid layui-word-aux">%</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label">返点差值</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="fanDianDiff" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.fanDianDiff || '' }}">
+				</div>
+			  <div class="layui-form-mid layui-word-aux">% 上下级返点最小差值</div>
+			  </div>
+			</div>	
+			
+			<!--<div class="layui-form-item">-->
+			  <!--&lt;!&ndash;<div class="layui-inline">&ndash;&gt;-->
+				<!--&lt;!&ndash;<label class="layui-form-label">最大投注数</label>&ndash;&gt;-->
+				<!--&lt;!&ndash;<div class="layui-input-inline">&ndash;&gt;-->
+				  <!--&lt;!&ndash;<input type="tel" name="betMaxCount" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.betMaxCount || '' }}" />&ndash;&gt;-->
+				<!--&lt;!&ndash;</div>&ndash;&gt;-->
+				<!--&lt;!&ndash;<div class="layui-form-mid layui-word-aux">注</div>&ndash;&gt;-->
+			  <!--&lt;!&ndash;</div>&ndash;&gt;-->
+			  <!--&lt;!&ndash;<div class="layui-inline">&ndash;&gt;-->
+				<!--&lt;!&ndash;<label class="layui-form-label">最大中奖</label>&ndash;&gt;-->
+				<!--&lt;!&ndash;<div class="layui-input-inline">&ndash;&gt;-->
+				  <!--&lt;!&ndash;<input type="text" name="betMaxZjAmount" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.betMaxZjAmount || '' }}">&ndash;&gt;-->
+				<!--&lt;!&ndash;</div>&ndash;&gt;-->
+				<!--&lt;!&ndash;<div class="layui-form-mid layui-word-aux">元</div>&ndash;&gt;-->
+			  <!--&lt;!&ndash;</div>&ndash;&gt;-->
+			<!--</div>	-->
+			<div class="layui-form-item">
+			  <label class="layui-form-label">返点限制</label>
+			  <div class="layui-input-inline">
+				<input type="text" name="betModeMaxFanDian0"  autocomplete="off" lay-verify="number" placeholder="最大返点限制" class="layui-input" value="{{  d.betModeMaxFanDian0 || '' }}">
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">最大返点限制</div>
+			</div>	
+			<div class="layui-form-item">
+			  <label class="layui-form-label">积分比例</label>
+			  <div class="layui-input-inline">
+				<input type="text" name="scoreProp"  autocomplete="off" lay-verify="number" placeholder="积分比例" class="layui-input" value="{{  d.scoreProp || '' }}"> 
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">每消费1元积的分数</div>
+			</div>			
+			<div class="layui-form-item">
+			  <label class="layui-form-label">积分兑换比</label>
+			  <div class="layui-input-inline">
+				<input type="text" name="scoreMoney"  autocomplete="off" lay-verify="number" placeholder="积分兑换比例" class="layui-input" value="{{  d.scoreMoney || '' }}"> 
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">每1积分兑换金额</div>
+			</div>			
+			<div class="layui-form-item">
+			  <label class="layui-form-label">积分兑换值</label>
+			  <div class="layui-input-inline">
+				<input type="text" name="scoreMin"  autocomplete="off" lay-verify="number" placeholder="积分最少兑换值" class="layui-input" value="{{  d.scoreMin || '' }}"> 
+			  </div>
+			  <div class="layui-form-mid layui-word-aux">每次最少兑换值</div>
+			</div>	
+			<div class="layui-form-item layui-form-text">
+			  <label class="layui-form-label">积分规则</label>
+			  <div class="layui-input-block">
+				<textarea name="scoreRule" placeholder="积分规则" class="layui-textarea">{{  d.scoreRule || '' }}</textarea>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="system_setting_submit_touzhu">立即提交</button>
+				  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			  </div>
+			</div>				
+			</div>
+</div><div class="layui-tab-item">
+			<div class="layui-form">
+			<div class="layui-form-item">
+			  <label class="layui-form-label" style="width:200px;">六合彩五行——金</label>
+			  <div class="layui-col-md3">
+				<input type="text" name="lhcWxJin" value="{{  d.lhcWxJin || '' }}" autocomplete="off" placeholder="六合彩五行——金" class="layui-input">
+			  </div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label" style="width:200px;">六合彩五行——木</label>
+			  <div class="layui-col-md3">
+				<input type="text" name="lhcWxMu" value="{{  d.lhcWxMu || '' }}" autocomplete="off" placeholder="六合彩五行——木" class="layui-input">
+			  </div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label" style="width:200px;">六合彩五行——水</label>
+			  <div class="layui-col-md3">
+				<input type="text" name="lhcWxShui" value="{{  d.lhcWxShui || '' }}" autocomplete="off" placeholder="六合彩五行——水" class="layui-input">
+			  </div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label" style="width:200px;">六合彩五行——火</label>
+			  <div class="layui-col-md3">
+				<input type="text" name="lhcWxHuo" value="{{  d.lhcWxHuo || '' }}" autocomplete="off" placeholder="六合彩五行——火" class="layui-input">
+			  </div>
+			</div>
+			<div class="layui-form-item">
+			  <label class="layui-form-label" style="width:200px;">六合彩五行——土</label>
+			  <div class="layui-col-md3">
+				<input type="text" name="lhcWxTu" value="{{  d.lhcWxTu || '' }}" autocomplete="off" placeholder="六合彩五行——土" class="layui-input">
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:100px;">六合彩生肖</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="animalsYear" autocomplete="off" class="layui-input" value="{{  d.animalsYear || '' }}" />
+				</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:100px;">特码A返水</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="lhcTeMa" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.lhcTeMa || '' }}">
+				</div>
+				<div class="layui-form-mid layui-word-aux">%(设置为0则不销售特码A)</div>
+			  </div>
+			</div>	
+			
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:100px;">北京快3漏期</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="bjk3Miss" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.bjk3Miss || '' }}" />
+				</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:100px;">PK10漏期</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="pk10Miss" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.pk10Miss || '' }}">
+				</div>
+				<div class="layui-form-mid layui-word-aux">官方没开增加期数</div>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:100px;">PC蛋蛋漏期</label>
+				<div class="layui-input-inline">
+				  <input type="tel" name="pcddMiss" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.pcddMiss || '' }}" />
+				</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:100px;">北京快乐8漏期</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="bjkl8Miss" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.bjkl8Miss || '0' }}">
+				</div>
+			  <div class="layui-form-mid layui-word-aux">官方没开增加期数</div>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="system_setting_submit_lottery">立即提交</button>
+				  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			  </div>
+			</div>				
+			</div>
+</div>	
+<div class="layui-tab-item">
+			<div class="layui-form">
+				<div class="layui-form-item">
+				  <div class="layui-inline">
+					<label class="layui-form-label" style="width:130px;">充值限制</label>
+					<div class="layui-input-inline" style="width: 100px;">
+					  <input type="text" name="rechargeMin" placeholder="￥" lay-verify="number" autocomplete="off" class="layui-input" value="{{  d.rechargeMin || '0' }}">
+					</div>
+					<div class="layui-form-mid">-</div>
+					<div class="layui-input-inline" style="width:130px;">
+					  <input type="text" name="rechargeMax" placeholder="￥" lay-verify="number"  autocomplete="off" class="layui-input" value="{{  d.rechargeMax || '999999' }}">
+					</div>
+					<div class="layui-form-mid layui-word-aux">元</div>
+				  </div>
+				</div>
+				<div class="layui-form-item">
+				  <div class="layui-inline">
+					<label class="layui-form-label" style="width:130px;">支付宝/微信充值</label>
+					<div class="layui-input-inline" style="width: 100px;">
+					  <input type="text" name="rechargeMin1" placeholder="￥" lay-verify="number" autocomplete="off" class="layui-input" value="{{  d.rechargeMin1 || '0' }}">
+					</div>
+					<div class="layui-form-mid">-</div>
+					<div class="layui-input-inline" style="width: 100px;">
+					  <input type="text" name="rechargeMax1" placeholder="￥" lay-verify="number" autocomplete="off" class="layui-input" value="{{  d.rechargeMax1 || '999999' }}">
+					</div>
+					<div class="layui-form-mid layui-word-aux">元</div>
+				  </div>
+				</div>
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:130px;">洗码量</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="cashMinAmount" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.cashMinAmount || '0' }}" />
+				</div>
+			  <div class="layui-form-mid layui-word-aux">%</div>
+			  </div>
+			</div>					
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label" style="width:130px;">最低提现</label>
+            <div class="layui-input-inline">
+              <input type="text" name="cashMin" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.cashMin || '0' }}">
+            </div>
+			<div class="layui-form-mid layui-word-aux">元</div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label" style="width:130px;">最高提现</label>
+            <div class="layui-input-inline">
+               <input type="text" name="cashMax" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.cashMax || '0' }}">
+            </div>
+			<div class="layui-form-mid layui-word-aux">元</div>
+          </div>
+        </div>
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:130px;">微信/支付宝最低提现</label>
+				<div class="layui-input-inline">
+				  <input type="tel" name="cashMin1" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.cashMin1 || '0' }}" />
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:130px;">微信/支付宝最高提现</label>
+				<div class="layui-input-inline">
+				  <input type="text" name="cashMax1" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.cashMax1 || '0' }}">
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			  </div>
+			</div>			
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:130px;">提现时间</label>
+				<div class="layui-input-inline" style="width: 100px;">
+				  <input type="text" class="layui-input" name="cashFromTime" id="cashFromTime" placeholder="开始日期" value="{{  d.cashFromTime }}" readonly>
+				</div>
+				<div class="layui-form-mid">-</div>
+				<div class="layui-input-inline" style="width: 100px;">
+					<input type="text" class="layui-input" name="cashToTime" id="cashToTime" placeholder="结束日期" value="{{  d.cashToTime }}" readonly>
+				</div>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label" style="width:130px;">砸金蛋 活动</label>
+				<div class="layui-input-inline">
+				  <input type="tel" name="eggCount" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.eggCount || '0' }}" />
+				</div>
+			  <div class="layui-form-mid layui-word-aux">充值送砸金蛋次数，如果为0则关闭活动</div>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="system_setting_submit_chongzhi">立即提交</button>
+				  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			  </div>
+			</div>				
+			</div>
+</div>	
+
+<div class="layui-tab-item">
+			<div class="layui-form" >
+				
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">客服QQ</label>
+            <div class="layui-input-inline">
+              <input type="text" name="kefuQQ" autocomplete="off" lay-verify="number" class="layui-input" value="{{  d.kefuQQ || '' }}">
+            </div>
+          </div>
+        </div>
+			<div class="layui-form-item layui-form-text">
+			  <label class="layui-form-label">客服链接</label>
+			  <div class="layui-col-md4">
+				<textarea name="kefuGG" placeholder="客服链接" class="layui-textarea">{{  d.kefuGG || '' }}</textarea>
+			  </div>
+			</div>			
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="system_settings_submit_kefu">立即提交</button>
+				  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			  </div>
+			</div>				
+			</div>
+</div>	
+</script>	
+<script>
+layui.use(['admin', 'table', 'laydate', 'form', 'laytpl','upload'], function(){
+  var $ = layui.$,admin = layui.admin,element = layui.element,layer = layui.layer,laydate = layui.laydate,form = layui.form ,router = layui.router(),laytpl = layui.laytpl,upload = layui.upload;
+
+  admin.req({
+	url: layui.setter.URL_ADMIN+'/system/settings'
+   ,done: function(res){
+		$('#system_settings_index').html(laytpl($('#system_settings_website').html()).render(res.data));
+		form.render();
+		upload.render({
+		  elem: '#system_settings_logo'
+		  ,url: layui.setter.URL_ADMIN+'/system/imgUpload'
+		  ,done: function(res){
+			if(res.code==0){
+                layer.msg(res.msg);
+				$('#system_settings_logo').html('<img src="'+res.data+'" />');
+				$('#siteLogo').val(res.data);
+			}
+			else{
+                layer.msg(res.msg);
+			}
+		  }
+		});		
+		
+		 //开始日期
+		var insStart = laydate.render({
+		  elem: '#cashFromTime'
+		  ,min: 0
+		  ,type: 'time'
+		  ,done: function(value, date){
+			//更新结束日期的最小日期
+			insEnd.config.min = lay.extend({}, date, {
+			  month: date.month - 1
+			});
+			
+			//自动弹出结束日期的选择器
+		   insEnd.config.elem[0].focus();
+		  }
+		});
+		
+		//结束日期
+		var insEnd = laydate.render({
+		  elem: '#cashToTime'
+		  ,min: 0
+		  ,type: 'time'
+		  ,done: function(value, date){
+			//更新开始日期的最大日期
+			insStart.config.max = lay.extend({}, date, {
+			  month: date.month - 1
+			});
+		  }
+		});	
+
+		form.on('submit(system_setting_submit_wangzhan)', function(data){
+			fromSubmit(data);
+			return;
+		})
+		form.on('submit(system_setting_submit_touzhu)', function(data){
+			fromSubmit(data);
+			return;
+		})
+		form.on('submit(system_setting_submit_chongzhi)', function(data){
+			fromSubmit(data);
+			return;
+		})
+		form.on('submit(system_setting_submit_lottery)', function(data){
+			fromSubmit(data);
+			return;
+		})	
+		form.on('submit(system_settings_submit_kefu)', function(data){
+			fromSubmit(data);
+			return;
+		})		
+   }
+  });	 
+
+
+
+	var fromSubmit = function(data){
+		var iii = layer.msg('loading');
+  		admin.req({
+			url: layui.setter.URL_ADMIN+'/system/updatesettings'
+			,data: data.field
+			,type: 'post'
+			,done: function(res){
+				layer.close(iii)
+				if(res.code>0){
+					layer.msg(res.msg, {icon: 5});
+				}else{
+					layer.msg(res.msg, {icon: 1});
+					setTimeout(function(){	
+						layer.closeAll();
+					},1000);		
+				}
+			}
+		});	
+	}
+});
+</script>

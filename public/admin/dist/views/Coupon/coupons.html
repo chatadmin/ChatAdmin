@@ -1,0 +1,89 @@
+<title>充值券列表</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline" style="font-size: 20px;width: 100%">
+                        <div style="float: left">充值券列表</div>
+                        <div style="float: right;margin-right: 50px;">
+
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="counpons" lay-filter="counpons"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','table'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table;
+
+        //载入表格数据
+        table.render({
+            elem: '#counpons'
+            ,url: layui.setter.URL_ADMIN+'/Coupon/get_coupon'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'title',align:'center', title: '标题', width: 130}
+                ,{field:'coin',align:'center', title: '金额', width: 130}
+                ,{field:'nums',align:'center', title: '总数量', width: 130}
+                ,{field:'count',align:'center', title: '已兑换数量', width: 130}
+                ,{field:'Surplus',align:'center', title: '未兑换数量', width: 130}
+                ,{field:'addTime',align:'center', title: '到期时间',templet: function(d){return admin.formatDates(d.addTime); }}
+                ,{field:'expTime',align:'center', title: '添加时间',templet: function(d){return admin.formatDates(d.expTime); }}
+                ,{align:'center', title: '操作',width: 200,  fixed: 'right',templet: function(d){
+                    var str = '';
+                    str += '<a class="layui-btn layui-btn-sm"  style="color: #fbfbfb" href="javascript:;" lay-href="Coupon/coupon_list/cid='+d.cid+'/type=1">查看详情</a>';
+                    str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_del" del="'+d.cid+'">删除</button>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                //删除操作
+                layui.use(['jquery',], function(){
+                    var $= layui.jquery;
+                    $(function(){
+                        $('.btn_del').on('click',function(){
+                            var id = $(this).attr('del');
+                            layer.confirm('确定删除所选项吗？', {
+                                btn: ['确定删除','取消删除'] //按钮
+                            }, function(){
+                                $.post(layui.setter.URL_ADMIN+"/Coupon/deleteCoupons?cid="+id,function(res){
+                                    var _obj = JSON.parse(res);
+                                    if(_obj.code == 0){
+                                        table.reload('counpons', {});
+                                        layer.msg(_obj.msg, {time: 2000});
+                                    }else{
+                                        layer.msg(_obj.msg, {time: 2000});
+                                    }
+                                });
+                            }, function(){
+                                layer.msg('已取消操作', {time: 1000});
+                            });
+                        });
+                    });
+                });
+            }
+        });
+
+    });
+
+
+</script>
+

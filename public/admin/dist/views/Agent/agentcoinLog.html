@@ -1,0 +1,366 @@
+<title>佣金明细</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline">
+                        <div style="float: left">佣金明细</div>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-inline  layui-col-md-offset4 layui-form" lay-filter="component-form-element">
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="会员名" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-agents-starts" value="" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-agents-ends" value="" name="toTime" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-form" lay-filter="component-form-element">
+                                <select id="AgentsList2" empty2="1" name="type" lay-verify="">
+
+                                </select>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit lay-filter="listAgentsForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentAgentsList" lay-filter="AgentAgentsList"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="ListAgentsCash2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="Agents-table-element2">
+                    <tr>
+                        <td style="text-align: center">用户名</td><td>{{ d.username }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值金额</td><td>{{ d.amount }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值前资金</td><td>{{ d.coin }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值银行</td><td>{{ d.bankName }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">银行账号	</td><td>{{ d.account }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开户名</td><td>{{ d.accountName }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值时间</td><td>{{ d.rechargeTime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="AgentsCash2"></script>
+
+<script type="text/html" id="ListAgentsCash1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="Agents-table-element1">
+                    <tr>
+                        <td style="text-align: center">投注号码：</td><td>{{ d.number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">单号：</td><td>{{ d.wjorderId }}</td>
+                        <td style="text-align: center">投注数量：</td><td>{{ d.actionNum }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">发起人：</td><td>{{ d.username }}</td>
+                        <td style="text-align: center">模式：</td><td>{{ d.mode }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">倍数：</td><td>{{ d.bonusProp }}</td>
+                        <td style="text-align: center">中奖注数：</td><td>{{ d.multiple }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">彩种：	</td><td>{{ d.species }}</td>
+                        <td style="text-align: center">赔率-返点：	</td><td>{{ d.bonusProp }}-{{ d.fanDian }}%</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">期号：	</td><td>{{ d.actionNo }}</td>
+                        <td style="text-align: center">玩法：</td><td>{{ d.play }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开奖号：</td><td>{{ d.lotteryNo }}</td>
+                        <td style="text-align: center">投注时间：</td><td>{{ d.actionTime }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">订单状态：</td><td>{{ d.status }}</td>
+                        <td style="text-align: center">来源：</td>
+                        {{# if( d.betType == 0 ){ }}
+                        <td>web</td>
+                        {{# }else if( d.betType == 1 ){ }}
+                        <td>手机</td>
+                        {{# }else if( d.betType == 2 ){ }}
+                        <td>未知</td>
+                        {{# } }}
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">投注：</td><td>{{ d.betCont }}</td>
+                        <td style="text-align: center">中奖：</td><td>{{ d.zjbonus }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">上级返点：</td><td>{{ d.fanDianAmount }}%</td>
+                        <td style="text-align: center">个人盈亏：</td><td>{{ d.profit }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="AgentsCash1"></script>
+
+<script type="text/html" id="ListAgentsCash3">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="Agents-table-element3">
+                    <tr>
+                        <td style="text-align: center">用户名</td><td>{{ d.user }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">提现金额</td><td>{{ d.amount }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">提现前可用资金</td><td>{{ d.coin }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">充值银行</td><td>{{ d.bankName }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">银行账号	</td><td>{{ d.account }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开户名</td><td>{{ d.username }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">申请时间</td><td>{{ d.actionTime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="AgentsCash3"></script>
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form','laytpl'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,laytpl= layui.laytpl;
+
+        //获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-receive-start').attr('value', startDate);
+
+        //载入表格数据
+        table.render({
+            elem: '#AgentAgentsList'
+            ,url: layui.setter.URL_ADMIN+'/Agent/coin_log?fromTime='+startDate
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,loading:true
+            ,cols: [[
+                {field:'username',align:'center', title: '用户名', width: 100},
+                {field:'info',align:'center', title: '帐变类型', width: 200},
+                {field:'numbers',align:'center', title: '单号', width: 150,templet: function(d){
+                    return '<a href="javascript:;" con="'+ d.extfield0 +'" urltype="'+d.urltype+'" class="Agents-Statistics" style="color: #1E9FFF">'+d.numbers+'</a>'
+                }},
+                {field:'game',align:'center', title: '游戏', width: 100},
+                {field:'play',align:'center', title: '玩法', width: 150},
+                {field:'term',align:'center', title: '期号', width: 150},
+                {field:'coin',align:'center', title: '资金', width: 150},
+                {field:'userCoin',align:'center', title: '余额', width: 150},
+                {field:'actionTime',align:'center', title: '时间',templet: function(d){return admin.formatDate(d.actionTime); }},
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                var lip = res;
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+
+                var species = lip.type;
+                var _color = "";
+                _color +='<option value="">全部彩种</option>';
+                for(var j in species){
+                    _color += '<option value="'+species[j]["id"]+'">'+species[j]["title"]+'</option>';
+                }
+                if($('#AgentsList2').attr('empty2') == 1){
+                    $('#AgentsList2').append(_color);
+                    $('#AgentsList2').attr('empty2','2')
+                }
+                form.render(null,'component-form-element');
+
+
+                $('.Agents-Statistics').click(function () {
+                    var id = $(this).attr('con');
+                    var urltype = $(this).attr('urltype');
+                    //充值
+                    if(urltype == 2){
+                        $.post(layui.setter.URL_ADMIN+"/Agent/rechargeInfo?id="+id,function(res){
+                            var ress = JSON.parse(res);
+                            if(ress.code == 0){
+                            var data = ress.data;
+                                data.rechargeTime = admin.formatDate(data.rechargeTime);
+                            var getTpl = ListAgentsCash2.innerHTML
+                                ,view = document.getElementById('AgentsCash2');
+                            laytpl(getTpl).render(data, function(html){
+                                view.innerHTML = html;
+                            });
+                            layer.open({
+                                title:'充值信息'
+                                ,type: 1
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                                ,content: $('#AgentsCash2').html()
+                            });
+                            form.render(null, 'Agents-table-element2');
+                            }else{
+                                layer.msg(ress.msg);
+                            }
+                        });
+
+                    }else if(urltype == 1){
+                        //投注
+                        $.post(layui.setter.URL_ADMIN+"/Agent/betInfo?id="+id,function(res){
+                            var ress = JSON.parse(res);
+                            if(ress.code == 0){
+                            var data = ress.data;
+                                data.actionTime = admin.formatDate(data.actionTime);
+                            var getTpl = ListAgentsCash1.innerHTML
+                                ,view = document.getElementById('AgentsCash1');
+                            laytpl(getTpl).render(data, function(html){
+                                view.innerHTML = html;
+                            });
+                            layer.open({
+                                title:'投注信息'
+                                ,type: 1
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['80%', '800px'] : ['800px', 'auto']
+                                ,content: $('#AgentsCash1').html()
+                            });
+                            form.render(null, 'Agents-table-element1');
+                            }else {
+                                layer.msg(ress.msg);
+                            }
+                        });
+                    }else if(urltype == 3){
+                        //提现
+                        $.post(layui.setter.URL_ADMIN+"/Agent/cashInfo?id="+id,function(res){
+                            var ress = JSON.parse(res);
+                            if(ress.code == 0){
+                            var data = ress.data;
+                                data.actionTime = admin.formatDate(data.actionTime);
+                            var getTpl = ListAgentsCash3.innerHTML
+                                ,view = document.getElementById('AgentsCash3');
+                            laytpl(getTpl).render(data, function(html){
+                                view.innerHTML = html;
+                            });
+                            layer.open({
+                                title:'提现信息'
+                                ,type: 1
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                                ,content: $('#AgentsCash3').html()
+                            });
+                            form.render(null, 'Agents-table-element3');
+                            }else {
+                                layer.msg(ress.msg);
+                            }
+                        });
+                    }
+
+
+                });
+            }
+        });
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-agents-starts'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-agents-ends'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(listAgentsForm)', function(data){
+            var username = data.field.username.trim()
+                ,type = data.field.type.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime,type);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime,type){
+                    var ii = layer.load(0, {shade: false});
+                    setTimeout(function(){
+                        layer.close(ii)
+                    }, 3000);
+                //执行重载
+                table.reload('AgentAgentsList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        type: type,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+    });
+
+
+</script>
+

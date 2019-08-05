@@ -1,0 +1,906 @@
+
+
+  <title>收款设置</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>系统设置</cite></a>
+      <a><cite>收款设置</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+			<div class="systemt_bank_operate_btn" style="margin-bottom: 10px;" >			
+			  <button class="layui-btn" data-type="system_bank_addbank">添加收款</button>
+			  <button class="layui-btn" data-type="system_bank_paytype_manage">收款类型</button>
+			</div>			  
+            <table class="layui-hide" id="system_bank" lay-filter="system_bank"></table>
+			<script type="text/html" id="system_bank_operate">
+				  <a class="layui-btn layui-btn-sm" lay-event="edit">修改</a>		
+				  <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</a>
+			</script>			
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+	<script type="text/html" id="system_bank_typeId_table">
+		{{#  if(d.typeId == 1){ }}
+			在线
+		{{#  } else{ }}
+			<span style="color: #ff5b3c;">人工</span>
+		{{#  } }}	   
+	</script>
+	<script type="text/html" id="system_bank_today_money" >
+		<span style="color: #ff5b3c;">{{ d.today_money||'0' }}元</span>
+	</script>	
+	<script type="text/html" id="system_bank_enable">
+	   <input type="checkbox" name="enable" lay-skin="switch" lay-text="开|关" {{# if(d.enable ==1){ }} checked {{# } }} lay-filter="system_bank_enable_switch" value="{{ d.location }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}">
+	</script>
+
+ <script type="text/html" id="system_bank_edit_online">
+<div class="layui-fluid">
+    <div class="layui-form" lay-filter="system_bank_addbank_from">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+	<div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space10 layui-form-item">
+              <div class="layui-col-lg6">
+                <label class="layui-form-label">收款类型：</label>
+                <div class="layui-input-block">
+						<select id="system_bank_typeId" name="typeId" lay-verify=""  lay-filter="system_bank_online_offline">
+							<option value="1" selected>在线充值</option>
+							<option value="2">人工入款</option>
+						</select>
+                </div>
+              </div>
+              <div class="layui-col-lg6">
+					<select id="system_bank_bankId" name="bankId" lay-verify="required"  lay-filter="system_bank_banklist">
+					<option value="0">请选择接口</option>
+					</select>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">显示名称：</label>
+              <div class="layui-input-block">
+                <input type="text" name="title" autocomplete="off" class="layui-input " lay-verify="required"  value="{{ d.title || '' }}">
+						<input type="hidden" name="id" value="{{ d.id || '' }}"/>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">商户号：</label>
+              <div class="layui-input-block">
+                <input type="text" name="username" autocomplete="off" class="layui-input " lay-verify="required"   value="{{ d.username || '' }}">
+              </div>
+            </div>			
+            <div class="layui-form-item">
+              <label class="layui-form-label">赠送彩金：</label>
+              <div class="layui-input-inline" style="width:80px">
+					<input type="text" name="zs_money" lay-verify="number"  autocomplete="off" class="layui-input " value="{{ d.zs_money || '0' }}">
+              </div>
+			  <div class="layui-form-mid layui-word-aux">%   使用此支付方式额外赠送彩金</div>
+            </div>	
+            <div class="layui-row layui-col-space10 layui-form-item">
+				<div class="layui-col-lg6">
+              <label class="layui-form-label">分层限制：</label>
+              <div class="layui-input-block" style="width:130px" >
+					<select name="show_access" lay-filter="system_bank_addbank_show_access">
+						<option {{ d.show_access == 0 ? 'selected' : '' }} value="0">无限制</option>
+						<option {{ d.show_access == 1 ? 'selected' : '' }} value="1">等级限制</option>
+						<option {{ d.show_access == 2 ? 'selected' : '' }} value="2">存款金额限制</option>
+						<option {{ d.show_access == 3 ? 'selected' : '' }} value="3">存款次数限制</option>
+					</select>
+              </div>
+              </div>
+			  <div class="layui-col-lg6 " id="system_bank_addbank_show_access_item" style="display:none;padding-left:30px">
+              </div>			  
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">微信展示：</label>
+              <div class="layui-input-block">
+					<input type="radio" name="wx_show" value="0" title="显示" {{# if(d.wx_show ==0){ }} checked {{# } }}>
+					<input type="radio" name="wx_show" value="1" title="不显示" {{# if(d.wx_show ==1){ }} checked {{# } }}>
+              </div>
+            </div>		
+            <div class="layui-form-item">
+              <label class="layui-form-label">状态：</label>
+              <div class="layui-input-block">
+						<input type="radio" name="enable" value="1" title="开启" {{ d.enable == 1 ? 'checked' : '' }}>
+							<input type="radio" name="enable" value="0" title="关闭" {{ d.enable == 0 ? 'checked' : '' }}>
+              </div>
+            </div>	
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md6">   
+      <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+              <label class="layui-form-label">密钥/私钥：</label>
+              <div class="layui-input-block">
+                <textarea name="account" lay-verify="required"  placeholder="请输入密钥/私钥,如果是RSA私钥，去掉前后注释及换行" class="layui-textarea">{{ d.account || '' }}</textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">平台公钥(部分接口需要)</label>
+              <div class="layui-input-block">
+                <textarea name="payinfo[publickey]" class="layui-textarea" placeholder="请输入平台公钥,去掉前后注释及换行（选填）">{{ d.payinfo.publickey || '' }}</textarea>
+              </div>
+            </div>			
+            <div class="layui-form-item">
+              <label class="layui-form-label">支付域名：</label>
+              <div class="layui-input-block">
+                <input type="text" name="payinfo[payurl]" placeholder="商城域名（选填）" autocomplete="off" class="layui-input " value="{{ d.payinfo.payurl || '' }}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">额外参数：</label>
+              <div class="layui-input-block">
+                <input type="text" name="payinfo[otherpara]" placeholder="一些支付接口额外需要的参数" autocomplete="off" class="layui-input " value="{{ d.payinfo.otherpara || '' }}">
+              </div>
+            </div>	
+        </div>
+      </div>
+    </div>
+  </div>
+ <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">   
+      <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+              <label class="layui-form-label">支付方式：</label>
+              <div class="layui-input-block">
+					   {{#  layui.each(d.payTypeData, function(index, item){ }}
+						<input class="pay_type" lay-filter="system_bank_checkbox_layer" type="checkbox" name="pay_type" title="{{ item.title }}" value="{{ item.id }}" {{#  if(item.checked == 1){ }} checked {{#  } }}>
+					   {{#  }); }}	
+              </div>
+            </div>
+			<div id="system_bank_paytype_content">
+			</div>
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="system_bank_edit_layer">立即提交</button>
+				  <button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+				</div>
+			  </div>
+			</div>
+        </div>
+      </div>
+    </div>
+  </div>   
+  </div>  
+</div>
+  </script> 
+<script type="text/html" id="system_bank_edit_offline">
+<div class="layui-fluid">
+    <div class="layui-form" lay-filter="system_bank_addbank_from">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+	<div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space10 layui-form-item">
+              <div class="layui-col-lg6">
+                <label class="layui-form-label">收款类型：</label>
+                <div class="layui-input-block">
+						<select id="system_bank_typeId" name="typeId" lay-verify=""  lay-filter="system_bank_online_offline">
+							<option value="1" >在线充值</option>
+							<option value="2" selected>人工入款</option>
+						</select>
+                </div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">显示名称：</label>
+              <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="required"  autocomplete="off" class="layui-input "  value="{{ d.title || '' }}">
+						<input type="hidden" name="id" value="{{ d.id || '' }}"/>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">持卡人：</label>
+              <div class="layui-input-block">
+                <input type="text" name="username" lay-verify="required"  autocomplete="off" class="layui-input "  value="{{ d.username || '' }}">
+              </div>
+            </div>	
+            <div class="layui-form-item">
+              <label class="layui-form-label">账号：</label>
+              <div class="layui-input-block">
+                <input type="text" name="account" lay-verify="required"  autocomplete="off" class="layui-input "  value="{{ d.account || '' }}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">开户行：</label>
+              <div class="layui-input-block">
+                <input id="payinfo_openbank" type="text" name="payinfo[openbank]" autocomplete="off" class="layui-input "  value="">
+              </div>
+            </div>				
+            <div class="layui-form-item">
+              <label class="layui-form-label">赠送彩金：</label>
+              <div class="layui-input-inline" style="width:80px">
+					<input type="text" name="zs_money" autocomplete="off" class="layui-input " value="{{ d.zs_money || '0' }}">
+              </div>
+			  <div class="layui-form-mid layui-word-aux">%   使用此支付方式额外赠送彩金</div>
+            </div>	
+            <div class="layui-row layui-col-space10 layui-form-item">
+				<div class="layui-col-lg6">
+              <label class="layui-form-label">分层限制：</label>
+              <div class="layui-input-block" style="width:130px" >
+					<select name="show_access" lay-filter="system_bank_addbank_show_access">
+						<option {{ d.show_access == 0 ? 'selected' : '' }} value="0">无限制</option>
+						<option {{ d.show_access == 1 ? 'selected' : '' }} value="1">等级限制</option>
+						<option {{ d.show_access == 2 ? 'selected' : '' }} value="2">存款金额限制</option>
+						<option {{ d.show_access == 3 ? 'selected' : '' }} value="3">存款次数限制</option>
+					</select>
+              </div>
+              </div>
+			  <div class="layui-col-lg6 " id="system_bank_addbank_show_access_item" style="display:none;padding-left:30px">
+              </div>			  
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">微信展示：</label>
+              <div class="layui-input-block">
+					<input type="radio" name="wx_show" value="0" title="显示" {{# if(d.wx_show ==0){ }} checked {{# } }}>
+					<input type="radio" name="wx_show" value="1" title="不显示" {{# if(d.wx_show ==1){ }} checked {{# } }}>
+              </div>
+            </div>	
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md6">   
+      <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+              <label class="layui-form-label">二维码：</label>
+			  <div class="layui-input-block">
+				<input type="hidden" name="pic" id="pic_ewm" con="{{ d.id }}"/>
+				<div class="layui-upload-drag" id="system_settings_offline_ewm">
+				{{#  if(d.pic){ }}
+					<img width="160px" src="{{ d.pic }}" />
+				{{#  } else { }}
+				  <i class="layui-icon"></i>
+				  <p>点击上传，或将文件拖拽到此处</p>
+				{{#  } }}
+				</div> <span></span>
+			  </div>
+            </div>
+            <div class="layui-row layui-col-space10 layui-form-item">
+              <div class="layui-col-lg6">
+                <label class="layui-form-label">支付方式：</label>
+                <div class="layui-input-block">
+						<select id="system_bank_typeId" name="pay_type" lay-verify=""  lay-filter="system_bank_offline_paytype">
+                            <option value="0">请选择支付方式</option>
+						{{#  layui.each(d.payTypeData, function(index, item){ }}
+							<option value="{{ item.id }}" {{#  if(item.checked == 1){ }} selected {{#  } }} >{{ item.title }}</option>
+						 {{#  }); }}
+						</select>
+                </div>
+              </div>
+              <div class="layui-col-lg6" style="display:none" id="system_bank_bankId_div">
+					<select id="system_bank_bankId_offline" name="bankId" lay-verify=""  lay-filter="system_bank_banklist">
+					<option value="0">请选择银行</option>
+					</select>			  
+              </div>
+            </div>			
+            <div class="layui-form-item">
+              <label class="layui-form-label">按钮文字：</label>
+              <div class="layui-input-block">
+                <input type="text" name="memo" placeholder="" autocomplete="off" class="layui-input " value="{{ d.memo || '' }}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label">金额限制：</label>
+				<div class="layui-input-inline" style="width: 100px;">
+				  <input type="text" name="payinfo[price_min]" placeholder="￥" autocomplete="off" class="layui-input" id="payinfo_price_min" value="0">
+				</div>
+				<div class="layui-form-mid">-</div>
+				<div class="layui-input-inline" style="width: 100px;">
+				  <input type="text" id="payinfo_price_max" name="payinfo[price_max]" placeholder="￥" autocomplete="off" class="layui-input" value="0">
+				</div>
+			  </div>
+            </div>
+            <div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label"></label>
+			  <div class="layui-form-mid layui-word-aux">受限于系统设置<span id="payinfo_system_price_min"></span>-<span id="payinfo_system_price_max"></span></div>
+			  </div>
+            </div>			
+            <div class="layui-form-item">
+              <label class="layui-form-label">状态：</label>
+              <div class="layui-input-block"  id="system_bank_offline_paytype_wx_zfb">
+						<input type="radio" name="enable" value="1" title="开启" {{ d.enable == 1 ? 'checked' : '' }}>
+							<input type="radio" name="enable" value="0" title="关闭" {{ d.enable == 0 ? 'checked' : '' }}>
+                  <input id="bank_wx_zfb" type="number" value="1" name="bankId" hidden>
+              </div>
+            </div>	
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="system_bank_edit_layer">立即提交</button>
+				  <button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+				</div>
+			  </div>
+			</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>  
+</div>
+  </script>  
+  <div id="system_bank_paytype_manage_tpl" style="display:none">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">			  
+            <table class="layui-hide" id="system_bank_paytype" lay-filter="system_bank_paytype"></table>
+			<script type="text/html" id="system_bank_paytype_operate">
+				  <a class="layui-btn layui-btn-normal layui-btn-sm savepaytype" lay-event="savepaytype">保存</a>
+				  <a class="layui-btn layui-btn-normal layui-btn-sm saveImg" lay-event="saveImg">更换图片</a>
+			</script>
+          </div>
+        </div>
+      </div>
+</div> 
+<script type="text/html" id="system_bank_paytype_enable">
+   <input type="checkbox" name="isshow" lay-skin="switch" lay-text="开|关" {{# if(d.isshow ==1){ }} checked {{# } }} lay-filter="system_bank_paytype_switch" value="{{ d.isshow }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}">
+</script> 
+<script type="text/html" id="system_bank_paytype_alias">
+  <input type="text" name="alias" value="{{ d.alias }}" autocomplete="off" class="layui-input alias">
+  <input type="hidden" name="id" value="{{ d.id }}" class="layui-input paytypeid">
+  <input type="hidden" name="title" value="{{ d.title }}" class="layui-input title">
+</script>
+  <script type="text/html" id="Listpay2" lay-filter="pay-table-element2">
+      <div class="layui-fluid">
+          <div class="layui-row layui-col-space15">
+              <div class="layui-col-md12  layui-form">
+                  <div class="layui-upload-drag" id="test-upload-pay" style="width: 90px;height: 90px;">
+                      <i class="layui-icon"></i>
+                      <p>点击上传，或将文件拖拽到此处</p>
+                  </div>
+                  <input class="layui-upload-file" type="file" accept="undefined" name="file">
+              </div>
+          </div>
+      </div>
+  </script>
+
+
+
+  <script>
+  layui.use(['admin', 'table','upload','form'], function(){
+    var $ = layui.$, admin = layui.admin
+    ,table = layui.table,laytpl = layui.laytpl, form = layui.form,upload = layui.upload;
+		
+    var active = {
+		reloaDataBank:function(){
+			var iii = layer.msg('loading');
+			 table.render({
+			  elem: '#system_bank'
+			  ,url: layui.setter.URL_ADMIN+'/system/bank'
+			  ,cols: [[
+				{field:'typeId', title: '类型',templet: '#system_bank_typeId_table', width:60}
+				,{field:'title', title: '收款名称'}
+				,{field:'bankName',title: '银行'}
+				,{field:'username', title: '持卡人/商户号'}
+				,{field:'account', title: '账号/商户秘钥（KEY）'}
+				,{field:'enable', title: '状态',templet: '#system_bank_enable', width:80}
+				,{field:'zs_money', title: '赠送彩金', templet: function(d){return d.zs_money+'%'; }, width:120}
+				,{field:'today_money', title: '今日收款',templet: '#system_bank_today_money', width:120}
+				,{field:'score', width:130, title: '操作', toolbar: '#system_bank_operate'}
+			  ]]
+			  ,page: {
+				  layout: ['count', 'prev', 'page', 'next', 'skip']
+			  },done: function(res){
+					layer.close(iii);
+			   }
+			});		
+		}
+	}; 
+	//主列表载入
+	active['reloaDataBank'].call();
+
+	//监听列表开关
+    form.on('switch(system_bank_enable_switch)', function(obj){
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+		var iii = layer.msg('loading');
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/system/switchBankStatus2'
+		   ,data: {id:json.id,pname:json.title,bid:json.bankId}
+		   ,type: 'post'
+		   ,done: function(res){
+				layer.close(iii)	
+				if(res.msg) {
+					layer.msg(res.msg, {icon: 2});
+					setTimeout(function(){	
+						active['reloaDataBank'].call();
+					},2000);
+				}	
+		   }
+		});
+    });	
+
+	//监听列表操作栏
+   table.on('tool(system_bank)', function(obj){
+      var data = obj.data;
+		 if(obj.event === 'delete'){	 
+			  layer.confirm('确定删除吗？', {
+				btn: ['确定','取消'] //按钮
+			  }, function(){
+				var iii = layer.msg('loading');	
+				 var data = obj.data;
+				 admin.req({
+					url: layui.setter.URL_ADMIN+'/system/deleteSysBank'
+					,data: {id:data.id}
+					,type: 'post'
+					,done: function(res){
+						layer.close(iii)	
+						obj.del();		
+						layer.msg(res.msg, {icon: 1});
+						setTimeout(function(){	
+							layer.closeAll();
+						},1000);	
+					}
+				});
+				return false;
+			  }, function(){
+				
+			  });
+		 }else if(obj.event === 'edit'){
+			var iii = layer.msg('loading');
+			var that = obj;
+			var payTypeData,contentdiv,online;
+			if(data.typeId==1){//在线充值
+				contentdiv = 'system_bank_edit_online';
+				online = 1;
+			}else{//人工转账
+				contentdiv = 'system_bank_edit_offline';
+				online = 0;
+			}
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/system/getpaytypes/1'
+			   ,done: function(res){
+				    payTypeData = res.data;
+					var payTypeDataSort = new Array(),payForInit =  new Array(),offline_paytype=0;
+					for ( var i = 0; i <payTypeData.length; i++){
+						if(typeof(data.payinfo[payTypeData[i]['id']]) != "undefined") {//支付方式添加选择识别
+							payTypeData[i]['checked'] = 1;
+							if(offline_paytype==0) offline_paytype=payTypeData[i]['id'];
+						}
+						payTypeDataSort[i] =  payTypeData[i];
+						payForInit['pay-'+payTypeData[i]['id']] =  payTypeData[i];
+					}
+					data.payTypeData = payTypeDataSort;
+					data.payForInit = payForInit;
+					var thatdata = data;
+					var bankedit = layer.open({
+							title: '编辑收款',
+							type: 1
+							,shadeClose: true
+							,area: admin.screen() < 2 ? ['80%', '300px'] : ['65%', 'auto']
+							,content: laytpl($('#'+contentdiv).html()).render(data)
+							,success: function(layero, index){
+								layer.close(iii);
+								form.render();
+								system_bank_OnlineBank(online,data.bankId,offline_paytype);//初始化银行第三方支付接口
+								addPayTypeLimit(data,'init','',online);//初始化已选择的支付方式
+								system_bank_addbank_show_access(data.show_access,that);//初始化分层限制
+
+								if(online==0){//人工转账上传渲染
+									upload_render();
+								}
+
+								//监听提交按钮
+								form.on('submit(system_bank_edit_layer)', function(data){
+									system_bank_edit_layer(data,that);
+								})
+								//监听支付方式点击事件，添加金额控制
+								form.on('checkbox(system_bank_checkbox_layer)', function(obj){
+									addPayTypeLimit(data,'add',obj.elem,online);
+								});	
+								
+								//监听人工转账，选择网银出现银行选择
+								form.on('select(system_bank_offline_paytype)', function(obj){
+									if(obj.value==5) {
+										system_bank_OnlineBank(0,data.bankId,5);
+									}else{
+										$('#system_bank_bankId_div').fadeOut();
+									}
+									$('#payinfo_system_price_min').html(data.payForInit['pay-'+obj.value].price_min+'元');
+									$('#payinfo_system_price_max').html(data.payForInit['pay-'+obj.value].price_max+'元');
+								});	
+								//监听分层限制选择
+								form.on('select(system_bank_addbank_show_access)', function(data){
+									system_bank_addbank_show_access(data.value,that);
+								}); 
+								//监听人工，在线切换，切换后部分事件需要重新监听渲染
+								form.on('select(system_bank_online_offline)', function(data){
+									if(data.value==1){
+										$('.layui-layer-content').html(laytpl($('#system_bank_edit_online').html()).render(thatdata));
+										system_bank_OnlineBank(1,thatdata.bankId,offline_paytype);//初始化支付接口
+										addPayTypeLimit(thatdata,'init','',1);							
+										form.on('checkbox(system_bank_checkbox_layer)', function(obj){
+											addPayTypeLimit(thatdata,'add',obj.elem,1);
+										});	//初始化已选择的支付方式		
+									}
+									else {
+										$('.layui-layer-content').html(laytpl($('#system_bank_edit_offline').html()).render(thatdata));
+										upload_render();
+										system_bank_OnlineBank(0,thatdata.bankId,offline_paytype);//初始化支付接口
+										addPayTypeLimit(thatdata,'init','',0);									
+									}
+									form.render();
+								});   								
+							}
+					});
+			   }
+			});
+      }
+	 }
+	 )
+	
+	//上传渲染
+	function upload_render(){
+        upload.render({
+             elem: '#system_settings_offline_ewm'
+            ,url: layui.setter.URL_ADMIN+'/system/updateLogo?id='+$('#pic_ewm').attr('con')
+            ,done: function(res){
+                if(res.code==0){
+                    $('#system_settings_offline_ewm').html('<img width="160px" src="'+res.data+'" />');
+                    $('#pic_ewm').val(res.data);
+                } else{
+                    layer.msg(res.msg);
+                }
+            }
+        });
+	}
+	
+	//分层限制
+	 function system_bank_addbank_show_access(selectvalue,that){
+		var html;
+		var obj = $('#system_bank_addbank_show_access_item');
+		if(selectvalue == 1){
+			 admin.req({
+				url: layui.setter.URL_ADMIN+'/system/getmemberlevel'
+				,type: 'post'
+				,done: function(res){
+				   html = '<select name="show_value"><option class="" data-state="0">选择会员等级</option>';
+				   for(val in res.data){
+					   html += '<option ';
+					   if(that.data.show_value==res.data[val].id) html+=' selected ';
+					   html += ' value="'+res.data[val].id+'">LEVEL '+res.data[val].level+'</option>';
+				   }
+					html += '</select>';	
+					obj.html(html);
+					form.render('select');
+					obj.show();												
+				}
+			});	
+		}else if(selectvalue == 2){
+			html = '<input type="text" name="show_value" autocomplete="off" class="layui-input "  value="'+that.data.show_value+'">';
+			obj.html(html);
+			obj.show();		
+		}else if(selectvalue == 3){
+			html = '<input type="text" name="show_value" autocomplete="off" class="layui-input "  value="'+that.data.show_value+'">';
+			obj.html(html);
+			obj.show();	
+		}else{
+			obj.hide();	
+			obj.html('');
+		}	 
+	 }
+	 
+	 //银行接口初始化
+	 function system_bank_OnlineBank(type,curid,offline_paytype){
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/system/getbanklist/'+type
+		   ,done: function(res){
+			   var options = '';
+			   for(val in res.data){
+				   options += '<option value="'+res.data[val].id+'"';
+				   if(curid==res.data[val].id) options += ' selected ';
+				   options +='>'+res.data[val].name+'</option>';
+			   }
+			   if(type==0 && offline_paytype==5)  {
+					$('#system_bank_bankId_offline').append(options);
+					form.render('select');
+					$('#system_bank_bankId_div').fadeIn();
+				}
+			   else {
+				$('#system_bank_bankId').append(options);
+				form.render('select');
+			   }
+		   }
+		});		
+	 }
+	 
+	 //新增或修改支付通道提交
+	function system_bank_edit_layer(data,that){
+		var iii = layer.msg('loading');
+		var data = data.field;
+  		admin.req({
+			url: layui.setter.URL_ADMIN+'/system/updateBank'
+			,data: data
+			,type: 'post'
+			,done: function(res){
+				layer.close(iii)
+				if(res.code>0){
+					layer.msg(res.msg, {icon: 5});
+				}else{
+					layer.closeAll();
+					var iii2 = layer.msg(res.msg, {icon: 1});
+					if(that==1) active['reloaDataBank'].call();
+					else {
+						that.update(data);
+						that.update({payinfo: res.data.payinfo});
+						that.update({bankName: res.data.bankName});
+						form.render('checkbox');
+					}
+					setTimeout(function(){
+						layer.close(iii2);
+					},1000);
+				}
+			}
+		});
+	}	
+	
+	//监听顶上两个按钮
+	$('.systemt_bank_operate_btn .layui-btn').on('click',function(){ 
+		var type = $(this).data('type');	
+		if(type==='system_bank_addbank'){	//添加新接口，赋值初始值，流程跟编辑差不多
+			var data_res={name:'',show_access:0,bankId:'',home:'',sort:'',isDelete:0,location:0,showisdelete:1,payinfo:{publickey:''}};
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/system/getpaytypes/0'
+			   ,done: function(res){
+				    payTypeData = res.data;
+					var payTypeDataSort = new Array(),payForInit =  new Array(),offline_paytype=0;
+					for ( var i = 0; i <payTypeData.length; i++){
+						payTypeDataSort[i] =  payTypeData[i];
+						payForInit['pay-'+payTypeData[i]['id']] =  payTypeData[i];
+					}
+					data_res.payTypeData = payTypeDataSort;
+					data_res.payForInit = payForInit;			
+					layer.open({
+					title: '添加收款',
+					type: 1
+					,shadeClose: true
+					,area: admin.screen() < 2 ? ['80%', '300px'] : ['65%', 'auto']
+					,content: laytpl($('#system_bank_edit_online').html()).render(data_res)
+					,success: function(layero, index){
+						var that={data:{show_value:0}},online=1;
+						form.render();
+						system_bank_OnlineBank(online,data_res.bankId,0);//初始化支付接口
+						form.on('submit(system_bank_edit_layer)', function(data){
+							system_bank_edit_layer(data,1);
+						})
+						form.on('checkbox(system_bank_checkbox_layer)', function(obj){
+							addPayTypeLimit(data_res,'add',obj.elem,online);
+						});								
+						form.on('select(system_bank_addbank_show_access)', function(data){
+							system_bank_addbank_show_access(data.value,that);
+						}); 
+						form.on('select(system_bank_online_offline)', function(data){
+							if(data.value==1){
+								$('.layui-layer-content').html(laytpl($('#system_bank_edit_online').html()).render(data_res));
+								system_bank_OnlineBank(1,data_res.bankId,offline_paytype);//初始化支付接口
+							}
+							else {
+								$('.layui-layer-content').html(laytpl($('#system_bank_edit_offline').html()).render(data_res));
+								upload_render();
+								system_bank_OnlineBank(0,data_res.bankId,offline_paytype);//初始化支付接口
+								addPayTypeLimit(data_res,'init','',0);	
+								form.on('select(system_bank_offline_paytype)', function(obj){
+                                    $("#bank_wx_zfb").remove();
+									if(obj.value==5) {
+										system_bank_OnlineBank(0,data_res.bankId,5);
+									}else if(obj.value==1){
+                                        $('#system_bank_offline_paytype_wx_zfb').append('<input id="bank_wx_zfb" type="number" value="1" name="bankId" hidden>');
+                                    }else if(obj.value==2){
+                                        $('#system_bank_offline_paytype_wx_zfb').append('<input id="bank_wx_zfb" type="number" value="2" name="bankId" hidden>');
+                                    }else{
+										$('#system_bank_bankId_div').fadeOut();
+									}
+									$('#payinfo_system_price_min').html(data_res.payForInit['pay-'+obj.value].price_min+'元');
+									$('#payinfo_system_price_max').html(data_res.payForInit['pay-'+obj.value].price_max+'元');
+								});									
+							}
+							form.render();
+						}); 
+					}
+					})
+					}	
+			})	
+		}
+		else if(type==='system_bank_paytype_manage'){//支付通道编辑
+		 table.render({
+		  elem: '#system_bank_paytype'
+		  ,url: layui.setter.URL_ADMIN+'/system/getpaytypes'
+		  ,cols: [[
+			 {field:'id', title: 'ID',width:50}
+			,{field:'title', title: '通道名称',width:100}
+			,{field:'icon', title: '图标',width:50, templet: function(d){
+                         return "<img style='height: 30px;width: 30px;' src='"+ d.icon +"'>";
+                     }}
+			,{field:'alias',title: '显示名称',templet: '#system_bank_paytype_alias',width:223}
+			,{field:'isshow', title: '状态',templet: '#system_bank_paytype_enable',width:85}
+			,{field:'score',  title: '操作', toolbar: '#system_bank_paytype_operate',width:200}
+		  ]]
+		  ,done: function(res){
+				layer.open({
+						 type: 1
+						,title: false
+						,shadeClose: true
+						,area: admin.screen() < 2 ? ['80%', '300px'] : ['750px', '425px']
+						,content: $('#system_bank_paytype_manage_tpl').html()
+						,success: function(layero, index){
+							form.render();
+							form.on('switch(system_bank_paytype_switch)', function(obj){
+							  var json = JSON.parse(decodeURIComponent($(this).data('json')));
+								var iii = layer.msg('loading');
+								admin.req({
+									url: layui.setter.URL_ADMIN+'/system/switchpaytype'
+								   ,data: {id:json.id,pname:json.title}
+								   ,type: 'post'
+								   ,done: function(res){
+									   layer.close(iii)
+								   }
+								});
+							});	
+							$('.savepaytype').on('click',function(){
+									var iii = layer.msg('loading');
+									var alias = $(this).parent().parent().parent().find('.alias').val();
+									var paytypeid = $(this).parent().parent().parent().find('.paytypeid').val();
+									var title = $(this).parent().parent().parent().find('.title').val();
+									admin.req({
+										url: layui.setter.URL_ADMIN+'/system/updatepaytype'
+									   ,data: {alias:alias,id:paytypeid,pname:title}
+									   ,type: 'post'
+									   ,done: function(res){
+										   layer.close(iii)
+									   }
+									});	
+							})
+                        $('.saveImg').on('click',function(){
+                            var paytypeid = $(this).parent().parent().parent().find('.paytypeid').val();;
+                            $.ajax({
+                                type:'post',
+                                url:layui.setter.URL_ADMIN+'/system/payOne?id='+paytypeid,
+                                dataType:'json',
+                                success:function(res){
+                                    var _data = res.data;
+                                    $('#test-upload-pay').html('<img style="height: 100%;width: 100%" src="'+_data.icon+'" >');
+                                }
+                            });
+
+                            var bbb = layer.open({
+                                title:'点击图标进行修改'
+                                ,type: 1
+                                ,shadeClose: true
+                                ,area: ['230px', '230px']
+                                ,content: $('#Listpay2').html()
+                            });
+                            form.render(null, 'pay-table-element2');
+                            var aaa="";
+
+                            //图片预览
+                            $("#update-pay-img1").change(function(){
+                                var objUrl = admin.getObjectURL(this.files[0]) ;
+                                if (objUrl)
+                                {
+                                    $("#update-pay-img2").attr("src", objUrl);
+                                    $("#update-pay-img2").removeClass("hide");
+                                }
+                            }) ;
+
+                            upload.render({
+                                elem: '#test-upload-pay'
+                                ,url: layui.setter.URL_ADMIN+'/system/payUpdateImg?id='+paytypeid
+                                ,before: function(obj){
+                                    aaa = layer.msg('图片上传中。。。');
+                                    obj.preview(function(index, file, result){
+                                        $('#test-upload-pay').html('<img style="height: 100%;width: 100%" src="'+result+'" >');
+                                    });
+                                }
+                                ,done: function(res){
+                                    if(res.code == 0 ){
+                                        layer.msg(res.msg, {time: 1000},function(){
+                                            layer.closeAll();
+                                            table.reload('system_bank_paytype');
+                                        });
+                                    }else {
+                                        layer.msg(res.msg, {time: 1000});
+                                    }
+                                }
+                            });
+                        })
+						}
+				});	
+		   }
+		});										
+		}
+    });	
+		
+	//支付通道点击事件
+	function addPayTypeLimit(data,mode,dataselect,online){
+		if(online==1){
+			var htmlStr='',htmlformat = '<div class="layui-form-item" id="system_bank_paytype_line_{payid}"><div class="layui-inline"><label class="layui-form-label">{paytitle}：</label><div class="layui-input-inline" style="width:250px"><div class="layui-input-inline" style="width: 100px;"><input type="text" lay-verify="required" name="payinfo[{payid}][price_min]" placeholder="￥" autocomplete="off" class="layui-input" value="{price_min}"></div><div class="layui-form-mid">-</div><div class="layui-input-inline" style="width: 100px;"><input lay-verify="required" type="text" name="payinfo[{payid}][price_max]" placeholder="￥" autocomplete="off" class="layui-input" value="{price_max}"></div></div></div><div class="layui-inline"><div class="layui-input-inline" style="width:120px"><input lay-filter="system_bank_pay_type_add" type="checkbox" name="payinfo[{payid}][tiaoma]" {tiaoma} title="开启条码" lay-skin="primary" value="1" ></div><div class="layui-form-mid layui-word-aux">支付通道金额限制，受限于系统设置({system_min}-{system_max})</div></div></div>';
+			if(mode=='init'){
+				for ( var i in data.payinfo) {
+					if(isNaN(i)) continue;
+					if(typeof(data.payForInit['pay-'+i])=='undefined') continue;//已经隐藏的支付方式，不展示
+					htmlStr += htmlformat.format({
+						"paytitle" : data.payForInit['pay-'+i].title,
+						"payid" : data.payForInit['pay-'+i].id,
+						"price_min" : data.payinfo[i].price_min,
+						"price_max" : data.payinfo[i].price_max,
+						"system_min" : data.payForInit['pay-'+i].price_min,
+						"system_max" : data.payForInit['pay-'+i].price_max,
+						"tiaoma" : typeof(data.payinfo[i].tiaoma)=='undefined'?'':'checked'
+					});
+				}
+				$('#system_bank_paytype_content').append(htmlStr);
+				form.render('checkbox');			
+			}else{
+				var addtype = dataselect.checked,i=dataselect.value;
+				htmlStr = htmlformat.format({
+						"paytitle" : typeof(data.payForInit['pay-'+i].title)=='undefined'?dataselect.title:data.payForInit['pay-'+i].title,
+						"payid" : typeof(data.payForInit['pay-'+i].id)=='undefined'?i:data.payForInit['pay-'+i].id,
+						"price_min" : typeof(data.payinfo[i])=='undefined'?'':data.payinfo[i].price_min,
+						"price_max" : typeof(data.payinfo[i])=='undefined'?'':data.payinfo[i].price_max,
+						"system_min" : data.payForInit['pay-'+i].price_min,
+						"system_max" : data.payForInit['pay-'+i].price_max,					
+						"tiaoma" : typeof(data.payinfo[i])=='undefined'?'':'checked'
+					});
+				if(addtype){
+					$('#system_bank_paytype_content').append(htmlStr);
+					form.render('checkbox');
+				}
+				else	
+					$('#system_bank_paytype_line_'+i).remove();			
+			}
+		}else{
+			for ( var i in data.payinfo) {
+				if(isNaN(i)) continue;
+				$('#payinfo_openbank').val(data.payinfo[i].openbank);
+				$('#payinfo_price_max').val(data.payinfo[i].price_max);
+				$('#payinfo_price_min').val(data.payinfo[i].price_min);
+				$('#payinfo_system_price_min').html(data.payForInit['pay-'+i].price_min+'元');
+				$('#payinfo_system_price_max').html(data.payForInit['pay-'+i].price_max+'元');
+				break;
+			}
+		}
+	}
+	
+	//类似php sprintf
+	String.prototype.format = function (b) {
+		var a = this;
+		if (arguments.length > 0) {
+			if (arguments.length == 1 && typeof(b) == "object") {
+				for (var e in b) {
+					if (b[e] != undefined) {
+						var f = new RegExp("({" + e + "})", "g");
+						a = a.replace(f, b[e])
+					}
+				}
+			} else {
+				for (var c = 0; c < arguments.length; c++) {
+					if (arguments[c] != undefined) {
+						var f = new RegExp("({[" + c + "]})", "g");
+						a = a.replace(f, arguments[c])
+					}
+				}
+			}
+		}
+		return a
+	};
+	
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});	 
+  });
+  </script>

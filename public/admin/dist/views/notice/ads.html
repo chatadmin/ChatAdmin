@@ -1,0 +1,365 @@
+<title>PC对联广告</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div style="float: left">PC对联广告</div>
+                        <div style="float: right;">
+                            <button class="layui-btn layui-btn-sm addAds layui-btn-normal">
+                                添加对联广告
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="ads" lay-filter="ads"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="ListAds1" lay-filter="Ads-table-element1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form">
+                <form enctype="multipart/form-data" id="addAdsForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">位置</label>
+                        <div class="layui-input-block" style="width: 20%;">
+                            <select name="typeid" lay-verify="component-form-element">
+                                <option value="15">左侧</option>
+                                <option value="16">右侧</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="Ads-title" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input" style="width: 80%">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">链接</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="link"  placeholder="请输入链接" autocomplete="off" class="layui-input" style="width: 80%">
+                            <span class="layui-inline" style="color: #c9c9c9">*可不填</span>
+                        </div>
+                    </div>
+
+                    <style>
+                        .file{cursor: pointer;float: left;  width: 102px;height: 40px;  padding: 10px 5px;  border: 1px dashed #e2e2e2;  background-color: #fff;  text-align: center;  cursor: pointer;  color: #999;  display: inline-block;}
+                        .file input{cursor: pointer;display: block;width: 102px;height: 100%;z-index: 9;position:absolute;top: 0;margin-left: 0;opacity: 0}
+                        .file img{cursor: pointer;height: 45px;position:relative;top: 0;margin-left: 0;margin-top: -72px;width: 70px;}
+                    </style>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上传图片</label>
+                        <div class="layui-input-block" style="height: 50px">
+                            <div class="file">
+                                <div class="surplus">
+                                    <i class="layui-icon" style="font-size: 30px; color: #009688;"></i>
+                                    <p style="font-size: 10px;">点击上传</p></div>
+                                <input type="file" name="content"  placeholder="" id="Ads-img1">
+                                <img src="" alt="" id="Ads-img2">
+                            </div>
+                            <div class="layui-inline" style="float: left;height:40px;line-height: 40px;padding: 10px 5px;"> *图片规格（宽度：140px，高度不限）</div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">排序</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="sort" value="1"  placeholder="排序" autocomplete="off" class="layui-input" style="width: 30%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="display: none">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="nodeId" value="5"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </form>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="NoticeAdsForm" lay-submit lay-filter="NoticeAdsForm"  class="layui-btn layui-btn-normal">立即提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="ListAds2" lay-filter="Ads-table-element2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form">
+                <form enctype="multipart/form-data" id="updateAdsForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">位置</label>
+                        <div class="layui-input-block" style="width: 40%;">
+                            <select name="typeid" lay-verify="component-form-element">
+                                <option value="15">左侧</option>
+                                <option value="16">右侧</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="update-Ads-title" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input" style="width: 80%">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">链接</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="link"  placeholder="请输入链接*可不填" autocomplete="off" class="layui-input" style="width: 80%;">
+                            <span class="layui-inline"></span>
+                        </div>
+                    </div>
+
+                    <style>
+                        .update-file{cursor: pointer;float: left;  width: 102px;height: 40px;  padding: 10px 5px;  border: 1px dashed #e2e2e2;  background-color: #fff;  text-align: center;  cursor: pointer;  color: #999;  display: inline-block;}
+                        .update-file input{cursor: pointer;display: block;width: 102px;height: 100%;z-index: 9;position:absolute;top: 0;margin-left: 0;opacity: 0}
+                        .update-file img{cursor: pointer;height: 45px;position:relative;top: 0;margin-left: 0;margin-top: -72px;width: 70px;}
+                    </style>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">点击上传</label>
+                        <div class="layui-input-block" style="height: 50px">
+                            <div class="update-file">
+                                <div class="surplus" style="opacity: 0">
+                                    <i class="layui-icon" style="font-size: 30px; color: #009688;"></i>
+                                    <p style="font-size: 10px;">点击上传</p></div>
+                                <input type="file" name="content"  placeholder="" id="update-Ads-img1">
+                                <img src="" alt="" id="update-Ads-img2">
+                            </div>
+                            <div class="layui-inline" style="float: left;height:40px;line-height: 40px;padding: 10px 5px;"> *图片规格（宽度：140px，高度不限）</div>
+
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">排序</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="sort" value="1"  placeholder="排序" autocomplete="off" class="layui-input" style="width: 30%">
+                        </div>
+                    </div>
+
+                </form>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="update-NoticeAdsForm" lay-submit lay-filter="update-NoticeAdsForm"  class="layui-btn layui-btn-normal">提交修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','table','form','laydate'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,form = layui.form ,laydate = layui.laydate;
+
+        //载入表格数据
+        table.render({
+            elem: '#ads'
+            ,url: layui.setter.URL_ADMIN+'/Information/get_PCDL'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'title',align:'center', title: '标题'},
+                {field:'typeid',align:'center', title: '位置',templet: function(d){
+                    return d.typeid == 15 ? "左侧" : "右侧" ;
+                }}
+                ,{field:'sort',align:'center', title: '排序',  sort: true}
+                ,{field:'addTime',align:'center', title: '添加时间',templet: function(d){return admin.formatDates(d.addTime); }}
+                ,{align:'center', title: '操作',  fixed: 'right',templet: function(d){
+                    var str = '';
+                    str += '<a class="layui-btn layui-btn-sm Ads-update"  style="color: #fbfbfb" href="javascript:;" update="'+d.id+'">修改</a>';
+                    str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_del" del="'+d.id+'">删除</button>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                //删除操作
+                layui.use(['jquery'], function(){
+                    var $= layui.jquery;
+                    $(function(){
+                        $('.btn_del').on('click',function(){
+                            var id = $(this).attr('del');
+                            layer.confirm('确定删除所选项吗？', {
+                                btn: ['确定删除','取消删除'] //按钮
+                            }, function(){
+                                $.post(layui.setter.URL_ADMIN+"/Information/deleteBanner?id="+id,function(res){
+                                    var _obj = JSON.parse(res);
+                                    if(_obj.code == 0){
+                                        layer.msg(_obj.msg, {time: 2000});
+                                        table.reload('ads',{});
+                                    }else{
+                                        layer.msg(_obj.msg, {time: 2000});
+                                    }
+                                });
+                            }, function(){
+                                layer.msg('已取消操作', {time: 1000});
+                            });
+
+                        });
+                    });
+                });
+
+                //修改
+                $('.Ads-update').on('click',function () {
+                    var id = $(this).attr('update');
+                    $.ajax({
+                        type:'post',
+                        url:layui.setter.URL_ADMIN+'/Information/get_info?id='+id,
+                        dataType:'json',
+                        success:function(res){
+                            var data = res.data;
+                            $('input[name="title"]').val(data[0]['title']);
+                            $('input[name="link"]').val(data[0]['link']);
+                            $('#update-Ads-img2').attr('src',data[0]['content']);
+                            $('input[name="sort"]').val(data[0]['sort']);
+                            $('select[name="typeid"]').val(data[0]['typeid']);
+                            form.render('select');
+                        }
+                    });
+
+                    layer.open({
+                        title:'修改PC对联广告'
+                        ,type: 1
+                        ,shadeClose: true
+                        ,area: ['550px', '500px']
+                        ,content: $('#ListAds2').html()
+                    });
+                    form.render(null, 'BannerMobile-table-element2');
+                    form.render('select');
+
+
+                    //图片预览
+                    $("#update-Ads-img1").change(function(){
+                        var objUrl = admin.getObjectURL(this.files[0]) ;
+                        if (objUrl)
+                        {
+                            $("#update-Ads-img2").attr("src", objUrl);
+                            $("#update-Ads-img2").removeClass("hide");
+                        }
+                    }) ;
+
+                    //上传修改文件
+                    layui.use(['jquery'], function(){
+                        var $ = layui.jquery;
+                        $("#update-NoticeAdsForm").click(function(){
+                            var data = new FormData($( "#updateAdsForm" )[0]);
+                            if($('#update-Ads-title').val()){
+                                $("#update-NoticeAdsForm").unbind();
+                                layer.msg('图片上传中。。。');
+                                $.ajax({
+                                    type:'post',
+                                    url:layui.setter.URL_ADMIN+'/Information/doAddBanner?id='+id,
+                                    cache: false,    //上传文件不需缓存
+                                    processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
+                                    contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                                    data:data,
+                                    dataType:'json',
+                                    success:function(res){
+                                        if(res.code == 0 ){
+                                            layer.msg(res.msg, {time: 1000},function(){
+                                                layer.closeAll();
+                                                table.reload('ads',{});
+                                            });
+                                        }else {
+                                            layer.msg(res.msg, {time: 1000},function(){
+                                                layer.closeAll();
+                                            });
+                                        }
+                                    }
+                                })
+                            }else {
+                                layer.msg('标题不能为空', {time: 1000});
+                            }
+                        })
+                    });
+                });
+
+            }
+        });
+
+
+        $('.addAds').click(function () {
+            layer.open({
+                title:'添加轮播图'
+                ,type: 1
+                ,shadeClose: true
+                ,area: ['550px', '500px']
+                ,content: $('#ListAds1').html()
+            });
+            form.render(null, 'Ads-table-element1');
+            form.render('select');
+
+            //图片预览
+            $("#Ads-img1").change(function(){
+                var objUrl = admin.getObjectURL(this.files[0]) ;
+                if (objUrl)
+                {
+                    $("#Ads-img2").attr("src", objUrl);
+                    $('.surplus').css('opacity','0');
+                    $("#Ads-img2").removeClass("hide");
+                }
+            }) ;
+
+            //上传新增文件
+            layui.use(['jquery'], function(){
+                var $ = layui.jquery;
+                $("#NoticeAdsForm").click(function(){
+                    var data = new FormData($( "#addAdsForm" )[0]);
+                    if($('#Ads-title').val()){
+                        $("#NoticeAdsForm").unbind();
+                        layer.msg('图片上传中。。。');
+                        $.ajax({
+                            type:'post',
+                            url:layui.setter.URL_ADMIN+'/Information/doAddBanner',
+                            cache: false,    //上传文件不需缓存
+                            processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
+                            contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                            data:data,
+                            dataType:'json',
+                            success:function(res){
+                                if(res.code == 0 ){
+                                    layer.msg(res.msg, {time: 1000},function(){
+                                        layer.closeAll();
+                                        table.reload('ads',{});
+                                    });
+                                }else {
+                                    layer.msg(res.msg, {time: 1000},function(){
+                                        layer.closeAll();
+                                    });
+                                }
+                            }
+                        })
+                    }else {
+                        layer.msg('标题不能为空', {time: 1000});
+                    }
+                })
+            });
+        });
+
+    });
+
+
+</script>
+

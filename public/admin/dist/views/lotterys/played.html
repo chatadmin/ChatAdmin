@@ -1,0 +1,342 @@
+
+<title>玩法赔率</title>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>彩票管理</cite></a>
+      <a><cite>玩法赔率</cite></a>
+    </div>
+  </div>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+	          <div class="layui-tab layui-tab-brief">
+	            <ul class="layui-tab-title" id="lottery_types" lay-filter="lottery_type_tab" >
+	            </ul>
+	            <div class="layui-tab-content" style="padding:10px 0;">
+
+				<div class="layui-card">
+				  <div class="layui-card-body">
+					<div class="layui-tab layui-tab-brief">
+						<ul class="layui-tab-title" id="lottery_types_groups" lay-filter="lottery_type_group_tab">
+						</ul>
+					</div>
+				  </div>
+				</div>
+				  <div class="layui-card-body">
+					<div class="test-table-reload-btn lottery-played-operate-btn" style="margin-bottom: 10px;" >
+		            <div class="layui-inline layui-form"  lay-filter="lottery_played_quick" style="width:100px">
+		            	<select id="quick_type" name="quick_type" lay-verify="">
+		            		<option value="multiple">赔率</option>
+		            		<option value="maxCount">最高注数</option>
+		            		<option value="minCharge">最低投注</option>
+		            		<option value="sort">排序</option>
+		            	</select>
+		            </div>	
+		            <div class="layui-inline">
+		            	<input type="text" name="quick_value" id="quick_value" autocomplete="off" class="layui-input">
+		            </div>					
+					  <button class="layui-btn" data-type="getQuickData">批量填写</button>
+					  <button class="layui-btn" data-type="lottery_play_saveall">批量保存</button>
+					  <span id="lottery_toolba"></span>
+					  <script type="text/html" id="lottery_group_state">
+					  {{# if(d.lottery_group_state == 1){ }}
+					  <button class="layui-btn layui-btn-warm lottery_group_state" data-type="lottery_group_state">状态：开启</button>
+					  {{# }else{ }}	
+					  <button class="layui-btn layui-btn-danger lottery_group_state" data-type="lottery_group_state">状态：关闭</button>
+
+					  {{# } }}	
+						<input type="hidden" id="lottery_played_groupid" value="{{ d.lottery_played_groupid }}" />				  
+					  </script>
+					</div>					
+					<table class="layui-hide" id="lottery_groups_played" lay-filter="lottery_groups_played"></table>
+				  	<script type="text/html" id="lottery_played_peilv">
+					  <input type="text" name="multiple" value="{{ d.multiple }}" autocomplete="off" class="layui-input multiple">
+					  <input type="hidden" class="lottery_played_index" value="{{ d.LAY_TABLE_INDEX }}" />
+					  <input type="hidden" class="lottery_played_code" value="{{ d.code }}" />
+					  <input type="hidden" class="lottery_played_id" value="{{ d.id }}" />
+					</script>		
+				  	<script type="text/html" id="lottery_played_zhushu">
+					  <input type="text" name="maxCount" value="{{ d.maxCount }}" autocomplete="off" class="layui-input maxCount">
+					</script>	
+				  	<script type="text/html" id="lottery_played_zuiditouzhu">
+					  <input type="text" name="minCharge" value="{{ d.minCharge }}" autocomplete="off" class="layui-input minCharge">
+					</script>
+					<script type="text/html" id="lottery_played_paixu">
+					  <input type="text" name="sort" value="{{ d.sort }}" autocomplete="off" class="layui-input sort">
+					</script>
+					<script type="text/html" id="lottery_played_zhuangtai">
+					  <input type="checkbox" name="enable" lay-skin="switch" lay-text="开|关"  lay-filter="lottery_played_zhuangtai_enable"
+					   value="{{ d.enable }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" {{ d.enable == 1 ? 'checked' : '' }}>
+					</script>
+	                <script type="text/html" id="LAY_played_operate">
+						  <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="save">保存修改</a>		
+						  <a class="layui-btn layui-btn-warm layui-btn-sm" lay-event="edit">修改信息</a>
+				  	</script>					
+				  </div>
+	          </div>
+	        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+    <script type="text/html" id="lottery_play_info">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-card layui-form">
+				<div class="layui-card-body layui-row layui-col-space10" >  
+					<div class="layui-form-item">
+					  <label class="layui-form-label">玩法介绍：</label>
+					  <div class="layui-input-block">
+						<textarea name="simpleInfo" placeholder="" class="layui-textarea">{{ d.simpleInfo }}</textarea>
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">详细介绍：</label>
+					  <div class="layui-input-block">
+						<textarea name="info" placeholder="" class="layui-textarea">{{ d.info }}</textarea>
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">中奖范例：</label>
+					  <div class="layui-input-block">
+						<textarea name="example" placeholder="" class="layui-textarea">{{ d.example }}</textarea>
+					  </div>
+					  <input type="hidden" name="id" value="{{ d.id }}" />
+					  <input type="hidden" name="pname" value="{{ d.name }}" />
+					  <input type="hidden" id="trindex" value="0" />
+					</div>				
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn layui-btn-normal" lay-submit lay-filter="lotteryPlayInfoChange">立即提交</button>
+							<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						</div>
+					</div>				
+				</div>  
+			</div>  
+		</div>   
+	</div> 
+  </script>
+  <script>
+  layui.use(['admin', 'table', 'laydate', 'form', 'laytpl'], function(){
+    var $ = layui.$, admin = layui.admin, table = layui.table, laydate = layui.laydate, form = layui.form, laytpl = layui.laytpl,element = layui.element;
+
+    //获取彩种
+    admin.req({
+        url: layui.setter.URL_ADMIN+'/lotterys/gettypes'
+       ,done: function(res){
+    	   var options = '';
+    	   for(val in res.data){
+    		   options += '<li class="changeState" data-state="'+res.data[val].id+'">'+res.data[val].name+'</li>';
+    	   }
+    	   $('#lottery_types').append(options);
+			//生成下拉框元素
+			form.render(null, 'lottery_type_tab');		
+			$('.changeState').on('click', loadPlayGroup);
+			$('#lottery_types').find('li:first').click();
+			form.render(null, 'lottery_played_quick');
+       }
+	});	
+	
+    //选项卡切换
+    $('.changeState').on('click', loadPlayGroup);
+	
+	var loadPlayGroup = function(){
+		var state = $(this).data('state');
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/lotterys/getplaygroups'
+		   ,data: {type:state}
+		   ,done: function(res){
+			   var options = '';
+			   for(val in res.data){
+				   options += '<li class="changeGroup" data-state="'+res.data[val].id+'">'+res.data[val].name+'</li>';
+			   }
+			   $('#lottery_types_groups').html(options);
+				//生成下拉框元素
+				form.render(null, 'lottery_type_group_tab');		
+				$('.changeGroup').on('click', loadPlayGroupPlayed);
+				$('#lottery_types_groups').find('li:first').click();
+		   }
+		});
+    };
+	
+	var loadPlayGroupPlayed = function(){
+		var iii = layer.msg('loading');
+		var groupid = $(this).data('state');
+		table.render({
+		  elem: '#lottery_groups_played'
+		  ,url: layui.setter.URL_ADMIN+'/lotterys/getplayeds'
+		  ,where:{
+			access_token: layui.data('layuiAdmin').access_token
+		    ,groupid: groupid
+		  }
+		  ,cols: [[
+			{type:'checkbox', fixed: 'left'}
+			,{field:'name', title: '玩法'}
+			,{field:'multiple', title: '赔率', templet: '#lottery_played_peilv'}
+			,{field:'allCount', title: '总注数'}
+			,{field:'maxCount', title: '最高注数', templet: '#lottery_played_zhushu'}
+			,{field:'minCharge', title: '最低投注', templet: '#lottery_played_zuiditouzhu'}
+			,{field:'sort', title: '排序', templet: '#lottery_played_paixu'}
+			,{field:'enable', title: '状态', templet: '#lottery_played_zhuangtai'}
+			,{width:220, align:'center', title: '操作', toolbar: '#LAY_played_operate', fixed: 'right'}
+		  ]]
+		 // ,page: {
+		//	  layout: ['count', 'prev', 'page', 'next', 'skip']
+		 // }
+		  ,loading:true
+		  ,id:'lottery_played_data'
+		  ,done: function(res){
+				layer.close(iii);
+				element.render('tab');
+			    $('#lottery_toolba').html(laytpl($('#lottery_group_state').html()).render(res));
+				$('.lottery-played-operate-btn .lottery_group_state').on('click',lottery_group_state);
+		   }
+		});	
+	}
+
+    table.on('tool(lottery_groups_played)', function(obj){
+      var data = obj.data;
+	  var trindex = obj.tr.find('.lottery_played_index').val();
+		 if(obj.event === 'save'){	 
+			var iii = layer.msg('loading');
+			var multiple = obj.tr.find('.multiple').val()
+			var maxCount = obj.tr.find('.maxCount').val()
+			var minCharge = obj.tr.find('.minCharge').val()
+			var code = obj.tr.find('.lottery_played_code').val()
+			var sort = obj.tr.find('.sort').val()
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/lotterys/updatePlayed'
+			   ,data: {multiple:multiple,maxCount:maxCount,minCharge:minCharge,sort:sort,id:data.id,pname:data.name,code:code}
+			   ,type: 'post'
+			   ,done: function(res){
+				   layer.close(iii)
+			   }
+			});
+		 }else if(obj.event === 'edit'){
+		  	layer.open({
+					title: '修改信息',
+					type: 1
+					,shadeClose: true
+					,area: admin.screen() < 2 ? ['80%', '300px'] : ['480px', 'auto']
+					,content: laytpl($('#lottery_play_info').html()).render(data)
+					,success: function(layero, index){
+						$('#trindex').val(trindex);
+					}
+			});
+      }
+	 }
+	 )
+	 
+    form.on('switch(lottery_played_zhuangtai_enable)', function(obj){
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+		var iii = layer.msg('loading');
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/lotterys/switchplayedstatus'
+		   ,data: {id:json.id,pname:json.name}
+		   ,type: 'post'
+		   ,done: function(res){
+			   layer.close(iii)
+		   }
+		});
+    });	 
+
+	form.on('submit(lotteryPlayInfoChange)', function(data){
+		var iii = layer.msg('loading');
+  		admin.req({
+			url: layui.setter.URL_ADMIN+'/lotterys/playedinfoupdateed'
+			,data: data.field
+			,type: 'post'
+			,done: function(res){
+				var trindex = $('#trindex').val();
+				table.cache.lottery_played_data[trindex].simpleInfo = data.field.simpleInfo;
+				table.cache.lottery_played_data[trindex].info = data.field.info;
+				table.cache.lottery_played_data[trindex].example = data.field.example;
+				layer.close(iii)
+				if(res.code>0){
+					layer.msg(res.msg, {icon: 5});
+				}else{
+					layer.msg(res.msg, {icon: 1});
+					setTimeout(function(){	
+						layer.closeAll();
+					},1000);		
+				}
+			}
+		});
+	})	
+	
+    var lottery_group_state=function(){
+      var groupid = $('#lottery_played_groupid').val();
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/lotterys/switchplayedgroupstatus'
+			,data: {groupid:groupid}
+			,type: 'post'
+			,done: function(res){
+			    $('#lottery_toolba').html(laytpl($('#lottery_group_state').html()).render(res));
+				$('.lottery-played-operate-btn .lottery_group_state').on('click',lottery_group_state);
+			}
+		});
+    };
+	
+	$('.lottery-played-operate-btn .layui-btn').on('click',function(){   
+		var type = $(this).data('type');	
+		if(type==='lottery_play_saveall'){
+			var iii = layer.msg('loading');
+			var mydatas=[],multiple,maxCount,minCharge,sort,playedid,code;
+			var groupid = $('#lottery_played_groupid').val();
+			$(this).parent().parent().find('table').eq(2).find('tr').each(function(i){ 
+				 multiple = $(this).find('.multiple').val()
+				 maxCount = $(this).find('.maxCount').val()
+				 minCharge = $(this).find('.minCharge').val()
+				 playedid = $(this).find('.lottery_played_id').val()
+				 code = $(this).find('.lottery_played_code').val()
+				 sort = $(this).find('.sort').val()	;		 
+				 mydatas[i] = {"multiple":multiple,"maxCount":maxCount,"minCharge":minCharge,"playedid":playedid,"sort":sort,'code':code};
+		   });
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/lotterys/updateall'
+				,data: {mydatas,groupid:groupid}
+				,type: 'post'
+				,done: function(res){
+					layer.close(iii)
+				}
+			});
+		}else{
+		     var checkStatus = table.checkStatus('lottery_played_data')
+			,data = checkStatus.data;
+			if(data.length==0){
+				layer.msg('没有选择记录！', {icon: 5});
+				return ;
+			}else{
+				var regPos = /^\d+(\.\d+)?$/;
+				var quick_value = $('#quick_value').val();
+				if(!regPos.test(quick_value)){
+					layer.msg('数字格式！', {icon: 5});
+					return ;				
+				}
+				$(this).parent().parent().find('table').eq(2).find('tr').each(function(i){ 
+					 playedid = $(this).find('.lottery_played_id').val();
+					 code = $(this).find('.lottery_played_code').val();			
+					for (x in data)
+					{
+						if(playedid==118){
+							if(data[x].code==code){
+								$(this).find('.'+$('#quick_type').val()).val(quick_value);
+							}
+						}else{
+							if(data[x].id==playedid){
+								$(this).find('.'+$('#quick_type').val()).val(quick_value);
+							}
+						}
+					}
+				});	
+			}
+		}
+    });
+	
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});
+  });
+  </script>

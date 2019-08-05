@@ -1,0 +1,323 @@
+
+<title>用户列表</title>
+
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					<div style="float:left;">用户列表</div>
+
+					<!--<div class="member_index_add_user" style="float:right;margin-left: 20px;">
+						<button class="layui-btn layui-btn-normal" data-type="addUser">添加会员</button>
+					</div>-->
+				</div>
+				<div class="layui-card-body">
+					<div class="layui-form">
+						<div class=" layui-form" style="margin-bottom: 10px;">
+
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:50px;"> ID：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="member-index-id" name="id" autocomplete="off" placeholder="用户ID">
+                </div>
+              </div>
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width:50px;"> 用户：</label>
+								<div class="layui-input-inline" style="width: 120px;">
+									<input class="layui-input" id="member-index-username" name="username" autocomplete="off" placeholder="用户名">
+								</div>
+							</div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:80px;"> 手机号：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="member-index-phone" name="phone" autocomplete="off" placeholder="手机号">
+                </div>
+              </div>
+							<div class="layui-inline">
+								<label class="layui-form-label">注册时间：</label>
+								<div class="layui-input-inline" style="width: 120px;">
+									<input type="text" name="fromtime" class="layui-input" id="member_search_starttime" placeholder="开始日期">
+								</div>
+								-
+								<div class="layui-input-inline" style="width: 120px;">
+									<input type="text" name="totime" class="layui-input" id="member_search_endtime" placeholder="结束日期">
+								</div>
+							</div>
+              <div class="layui-inline">
+                <label class="layui-form-label"> 用户状态：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <select id="member_state_type" name="is_use">
+                    <option value="0">请选择</option>
+                    <option value="1">可用</option>
+                    <option value="2">不可用</option>
+                  </select>
+                </div>
+              </div>
+							<div class="layui-inline">
+								<button class="layui-btn"  lay-submit="" lay-filter="member_index_searching" style="float:float;">搜索</button>
+							</div>
+              </br>
+              <div class="layui-inline" style="margin-top: 20px;">
+                <button class="layui-btn"  lay-submit="" lay-filter="userstatus" style="float:float;">禁用</button>
+              </div>
+
+              <div class="layui-inline" style="margin-top: 20px;">
+                <button class="layui-btn"  lay-submit="" lay-filter="userunstatus" style="float:float;">解除</button>
+              </div>
+						</div>
+					</div>
+					<table class="layui-hide" id="member_index_list" lay-data="{id:'useridlist'}"  lay-filter="member_index_list"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/html" id="system_user_enable">
+	<input type="checkbox" name="is_normal" lay-skin="switch" lay-text="禁用|正常" {{# if(d.is_normal==1){ }} checked {{# } }} lay-filter="system_user_enable_switch" value="{{ d.location }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}">
+</script>
+<script type="text/html" id="wallet_recharge_money">
+  <a class="layui-btn layui-btn-sm" lay-event="recharge_money">充值</a>
+</script>
+<script type="text/html" id="user_recharge_money_input">
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12  layui-form">
+        <div class="layui-form-item">
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 用户名：</label>
+            <div class="layui-input-inline" style="width: 120px;">
+              <label class="layui-form-label" id="member-rechare-username" style="width:120px;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 手机号：</label>
+            <div class="layui-input-inline"  style="width: 120px;">
+              <label class="layui-form-label" id="member-rechare-phone" style="width:120px;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline" style="float: left">
+            <label class="layui-form-label" style="width:120px;"> 昵称：</label>
+            <div class="layui-input-inline" style="width: 120px;">
+              <label class="layui-form-label" id="member-rechare-nickname" style="width:120px;text-align: left;"></label>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label" style="width:120px;">充值金额</label>
+            <div class="layui-input-inline" style="width: 120px;">
+              <input class="layui-input" id="member-rechare-money" name="money" autocomplete="off" lay-verify="member_verify_wallet" placeholder="充值金额">
+              <input id="member-rechare-uid" name="uid" type="hidden" />
+            </div>
+          </div>
+          <br/>
+          <br/>
+          <br/>
+          <div class="inline" style="text-align: center">
+            <div class="inline">
+              <button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="user_money_button" id="user_money_button">
+                <i class="layui-icon">&#xe67c;</i>充值
+              </button>
+              <button class="layui-btn layui-btn-danger layui-layer-close layui-layer-close1" lay-submit="" lay-filter="user_money_clear_button"  id="user_money_clear_button">
+                <i class="layui-icon ">&#xe67c;</i>取消
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table','laydate','layer','form','laytpl','layedit','upload'], function(){
+        var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, upload = layui.upload;
+
+
+        //开始日期
+        form.render('select');
+        var insStart = laydate.render({
+            elem: '#member_search_starttime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+
+                //自动弹出结束日期的选择器
+                insEnd.config.elem[0].focus();
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#member_search_endtime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        form.verify({
+            //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+            member_verify_wallet: [
+                /^\d+|\d+\.\d{1,2}$/
+                ,'请输入正确的金额(eg:12.55)'
+            ]
+        });
+		var member_aaa = function (data) {
+			table.render({
+        id: 'useridlist'
+				,elem: '#member_index_list'
+				,url: '/interface/userlist' //数据接口
+				,where: {data:data}
+				,page: true //开启分页
+				,limit:10
+				,method: 'post'
+				,cols: [[ //表头
+              {type:'checkbox', fixed: 'left'}
+          ,{field: 'id', title: 'ID', fixed: 'left', unresize: true}
+					,{field: 'username', title: '用户名', unresize: true}
+					,{field: 'phone', title: '手机号', unresize: true}
+					,{field: 'wallet', title: '余额', unresize: true}
+          ,{field: 'id', title: '充值', unresize: true,templet:$('#wallet_recharge_money')}
+					,{field: 'birthday', title: '生日', unresize: true,templet:function (d) {
+                      return d.birthday ? admin.formatDate(d.birthday) : "暂无填写";
+                  }}
+          ,{field:'sex',title:'性别',unresize:true,templet:function (d) {
+                      return d.sex == 1 ? '男' : '女';
+                  }}
+          ,{field:'is_normal',title:'状态',unresize:true,templet:$('#system_user_enable')}
+					,{field: 'create_time', title: '注册时间',unresize: true, templet: function(d){return admin.formatDate(d.create_time); }}
+
+				]]
+          ,parseData: function(res){ //res 即为原始返回的数据
+            var member_aaa_res = {};
+            $.each(res.where, function (keys, val) {
+                member_aaa_res.key = keys;
+                member_aaa_res.value = val;
+                layui.data('member_aaa_res', member_aaa_res);
+            });
+          }
+			});
+
+
+		}
+
+		var member_reload = function(data){
+        table.reload('useridlist', {
+            url: '/interface/userlist'
+            ,where: data //设定异步数据接口的额外参数
+        })
+    }
+		var member_status = function(data){
+
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/interface/switchUserStatus'
+            ,data: {id:data.id,status:data.status}
+            ,type: 'post'
+            ,success: function(res){
+                if(res.code==0){
+                    layer.msg(res.message, {icon: 1});
+                    if(data.isflush==1){
+                        setTimeout(member_reload(layui.data('member_aaa_res')),2000);
+                    }
+                }else{
+                    layer.msg(res.message, {icon: 2});
+                }
+            }
+            ,error:function(r){
+                layer.msg(r.message, {icon: 2});
+            }
+        });
+    }
+    member_aaa();
+		//监听搜索提交按钮
+		form.on('submit(member_index_searching)', function(data){
+			var data = data.field;
+        member_aaa(data);
+		})
+
+		//监听用户状态
+		form.on('switch(system_user_enable_switch)', function(obj){
+			var json = JSON.parse(decodeURIComponent($(this).data('json')));
+			var iii = layer.msg('loading');
+			var status = json.is_normal;
+			member_status({id:json.id,status:json.is_normal});
+
+		});
+
+    form.on('submit(userstatus)', function(){
+        var checkStatus = table.checkStatus('useridlist'); //listids 即为基础参数 id 对应的值
+        var str='';
+        $.each(checkStatus.data,function(i,item){
+            str += item.id+'|';
+        });
+        member_status({id:str,status: 1,isflush:1});
+    })
+
+    form.on('submit(userunstatus)', function(){
+        var checkStatus = table.checkStatus('useridlist'); //listids 即为基础参数 id 对应的值
+        var str='';
+        $.each(checkStatus.data,function(i,item){
+            str += item.id+'|';
+        });
+        member_status({id:str,status: 0,isflush:1});
+    })
+
+    table.on('tool(member_index_list)', function(obj) {
+        var data = obj.data;
+        if(obj.event === 'recharge_money') {
+            layer.open({
+                title: '用户充值'
+                , type: 1
+                , shadeClose: true
+                , area: ['450px', '35%']
+                ,content: $('#user_recharge_money_input').html()
+            })
+            $('#member-rechare-username').html(data.username);
+            $('#member-rechare-phone').html(data.phone);
+            $('#member-rechare-nickname').html(data.nickname);
+            $('#member-rechare-uid').val(data.id);
+            form.on('submit(user_money_button)',function() {
+                var money = $('#member-rechare-money').val();
+                var username = $('#member-rechare-username').html();
+                layer.confirm('确定为用户 '+username+' 充值 '+money+' 吗?', {
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    admin.req({
+                        url: layui.setter.URL_ADMIN + '/interface/recharge'
+                        , data: {
+                            id: $('#member-rechare-uid').val(),
+                            money: $('#member-rechare-money').val()
+                        }
+                        , type: 'post'
+                        , success: function (res) {
+                            if (res.code == 0) {
+                                layer.msg(res.message, {icon: 1});
+                                var datas = {wallet: res.money};
+                                setTimeout(obj.update(datas), 1000);
+                            }
+                        }
+                        ,error:function(r){
+                            layer.msg(r.message, {icon:2});
+                        }
+                    });
+                });
+            });
+
+        }
+    });
+		$('.member_index_add_user').click(function () {
+			layer.open({
+				area: ['600px', '400px'],
+				content: $('#member-user-add').html()
+			});
+		})
+	});
+</script>

@@ -1,0 +1,2510 @@
+<style type="text/css">
+	.condition .layui-inline {
+		margin: 0 0 7px 0;
+	}
+	.wrap {
+		padding: 15px 0 0 0;
+	}
+
+	.text-more {
+		text-align: center;
+		line-height: 38px;
+		cursor: pointer;
+	}
+	a.ibig{ cursor: pointer;font-size:x-large;}
+.ccc .layui-tab-card > .layui-tab-title .layui-this{
+		/*background:#474E53 ;*/
+		background:#719BB9 ;
+	    color:#ffffff;
+	    font-weight: bold;
+	}
+	.layui-card .layui-tab{border-radius: 5px;}
+	.usedata .layui-this{
+		background: #D7E3F7;
+		/*color: #ffffff;*/
+	}
+	.usedata>li{ margin-right: 15px; border-top-left-radius: 8px; border-top-right-radius: 8px;}
+	a.look{color: #527CC4; font-size: 14px; cursor: pointer;}
+	/*#userPopup{max-width: 1190px;}*/
+	/*.scopedc{ max-width: 12%;}*/
+	.scopedc .layui-input{padding: 0;display: inline-block; width: 40%;}
+	.layui-body{overflow-y: scroll;}
+	.ccc .layui-form-mid{margin: 0;}
+	.green{color: green}
+	.red{color: red}
+	.gray{color: gray}
+
+	.indent-state,.money-state{list-style: none; width: 100%; overflow: hidden;}
+	.indent-state li,.money-state li{ float: left; padding:10px; margin:10px; cursor:pointer;}
+	.indent-state .active,.money-state .active{background:#E0EBFD;border-radius: 5px; }
+
+	.left_cc{overflow: hidden;}
+
+	.left_cc.onrs{overflow:inherit;}
+
+	.layui-header{z-index: 999;}
+	/*给父级增加 层级权重 用于弹框显示*/
+	.layui-body{z-index: 10001;}
+
+	.hlt{float: left;}
+	.hrt{ float: right;}
+	.hurdle{ background: #E1F0FF; padding: 15px; height: 50px; line-height: 20px;}
+	.layui-inline{text-align: center;}
+	.layui-tab-item{overflow: hidden;}
+	.peoplecount{border: 1px solid #E0E0E0; padding: 8px 0;}
+	.pttq{ padding: 8px 0;}
+	.baseinfow{padding-left: 5px;}
+	.ccc .layui-tab-content{min-height: 400px;}
+	.ttt.layui-input{ width: 50%;}
+	.btcenter{text-align: center;}
+	.qxx{position: relative;}
+	#addbankcard{margin-bottom: 5px;}
+	.coomargin{margin: 8px 0;}
+	legend.core{font-size: 16px;}
+    .clear{color: red;}
+	.tow_1{width: 49%;float:left;}
+	#unfold{background: none;text-align: left; display: block; float: none;}
+	.tiergrade{ border: 1px solid #E8CECE; font-size: 14px; display: inline-block; line-height: 0; padding: 10px; cursor: pointer;}
+	.tiergradelist{overflow: hidden;}
+	.tire{width: 40px;  display: inline-block;}
+</style>
+<title>用户信息</title>
+<div class="ccc">
+
+	<div class="layui-fluid">
+
+
+		<div class="layui-row layui-card">
+
+			<fieldset class="layui-elem-field layui-field-title" >
+				<legend class="core">充值用户:<span class="clear">0</span> | 未充值用户:<span class="clear">0</span></legend>
+			</fieldset>
+
+
+
+			<!--top-->
+			<div class="layui-col-md12  wrap">
+					<div class="top">
+						<form class="layui-form left_cc onrs layui-col-md9 condition">
+
+							<div class="layui-inline layui-col-md3  layui-col-sm4">
+								<label class="layui-form-label">用户名</label>
+								<div class="layui-input-block">
+									<input type="text" name="title" required lay-verify="required" placeholder="."
+										   autocomplete="off" class="layui-input">
+								</div>
+							</div>
+
+
+							<div class="layui-inline layui-col-md3  layui-col-sm4">
+								<label class="layui-form-label">真实姓名</label>
+								<div class="layui-input-block">
+									<input type="text" name="title" required lay-verify="required" placeholder="."
+										   autocomplete="off" class="layui-input">
+								</div>
+							</div>
+
+							<div class="layui-inline layui-col-md3  layui-col-sm4">
+								<label class="layui-form-label">注册时间</label>
+								<div class="layui-input-block">
+									<input type="text" name="title" required lay-verify="required" placeholder="."
+										   autocomplete="off" class="layui-input dateselect1 tow_1">
+									<input type="text" name="title" required lay-verify="required" placeholder="."
+										   autocomplete="off" class="layui-input dateselect2 tow_1" >
+								</div>
+							</div>
+
+							<div class="layui-inline layui-col-md3  layui-col-sm4">
+								<label class="layui-form-label">注册ID</label>
+								<div class="layui-input-block">
+									<input type="text" name="title" required lay-verify="required" placeholder="."
+										   autocomplete="off" class="layui-input">
+								</div>
+							</div>
+
+
+							<div class="layui-collapse" style="border: none;">
+								<div class="layui-colla-item" style="border: none;">
+									<div class="layui-colla-title layui-col-md2  layui-col-sm2 layui-inline" id="unfold">
+										更多选择
+									</div>
+
+									<div class="layui-colla-content " style="border: none;">
+										<div class="layui-inline layui-col-md3  layui-col-sm4">
+											<label class="layui-form-label">层级区间</label>
+											<div class="layui-input-inline scopedc  layui-col-md6  layui-col-sm6">
+												<input type="text" name="price_min" placeholder="￥" autocomplete="off"
+													   class="layui-input">-
+												<input type="text" name="price_max" placeholder="￥" autocomplete="off"
+													   class="layui-input">
+											</div>
+										</div>
+
+										<div class="layui-inline layui-col-md3  layui-col-sm4">
+											<label class="layui-form-label">上级代理</label>
+											<div class="layui-input-block">
+												<input type="text" name="title" required lay-verify="required"
+													   placeholder="."
+													   autocomplete="off" class="layui-input">
+											</div>
+										</div>
+
+										<div class="layui-inline layui-col-md3  layui-col-sm4">
+											<label class="layui-form-label">在线状态</label>
+											<div class="layui-input-block">
+												<select name="type" lay-verify="required" lay-filter="aihao">
+													<option value=""></option>
+													<option value="0">在线</option>
+													<option value="1">下线</option>
+													<option value="2">die</option>
+													<option value="2">live</option>
+												</select>
+											</div>
+										</div>
+										<div class="layui-inline layui-col-md3  layui-col-sm4">
+											<label class="layui-form-label">类型</label>
+											<div class="layui-input-block">
+												<select name="type" lay-verify="required" lay-filter="aihao">
+													<option value=""></option>
+													<option value="0">在线</option>
+													<option value="1">下线</option>
+													<option value="2">die</option>
+													<option value="2">live</option>
+												</select>
+											</div>
+										</div>
+										<div class="layui-inline layui-col-md3  layui-col-sm4">
+											<label class="layui-form-label">返点区间</label>
+											<div class="layui-input-inline scopedc  layui-col-md6  layui-col-sm6">
+												<input type="text" name="price_min" placeholder="￥" autocomplete="off"
+													   class="layui-input">-
+												<input type="text" name="price_max" placeholder="￥" autocomplete="off"
+													   class="layui-input">
+											</div>
+											<!--<div class="layui-form-mid">-</div>-->
+											<!--<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">-->
+											<!--<input type="text" name="price_max" placeholder="￥" autocomplete="off"-->
+											<!--class="layui-input">-->
+											<!--</div>-->
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+
+						</form>
+
+
+						<div class="right_cc layui-col-md3">
+
+							<!--<div class="layui-inline layui-col-md4 layui-col-xs4 text-more" id="moreSelect" state="false">-->
+								<!--更多选择<i class="layui-icon layui-icon-up"></i>-->
+							<!--</div>-->
+
+							<div class="layui-inline layui-col-md4 layui-col-xs4">
+								<button class="layui-btn layui-btn-normal layui-bg-black">搜索</button>
+							</div>
+
+							<div class="layui-inline layui-col-md4 layui-col-xs4">
+								<button class="addusert layui-btn layui-btn-warm">添加会员</button>
+							</div>
+
+						</div>
+
+
+					</div>
+					<div class="layui-card-body">
+						<table class="layui-hide layui-form layui-border-box layui-table-view" id="bannerList5"
+							   lay-filter="bannerList5"></table>
+					</div>
+			</div>
+			<!--main-->
+			<div class="layui-col-md12  wrap mian">
+
+				<!--table-->
+				<div class="layui-card-body">
+
+					<button id="batchlist" class="layui-btn layui-btn-normal layui-bg-black coomargin"  >批量操作</button>
+					<table class="layui-hide" id="useinfo" lay-filter="useinfo"></table>
+
+
+
+					<script type="text/html" id="tiergrade">
+						<a class="tiergrade"  lay-event="tiergrade" title="层级">4</a>
+					</script>
+
+					<script type="text/html" id="subordinates">
+						<a class="ibig layui-icon layui-icon-user " lay-event="del" title="下级"></a>
+					</script>
+
+					<script type="text/html" id="useinfo-barDemo">
+						<a class="ibig layui-icon layui-icon-survey " lay-event="detail" title="编辑"></a>
+						<a class="ibig layui-icon layui-icon-set" lay-event="edit" title="设置"></a>
+						<!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+					</script>
+				</div>
+
+				<!--popup-->
+				<div id="userPopup" class="layui-tab layui-tab-card " lay-filter="demoTab">
+					<ul id="tzz" class="layui-tab-title layui-bg-black">
+						<li class="layui-this">会员信息</li>
+						<li>账务变更</li>
+						<li>盈亏同级</li>
+						<li>充值提现</li>
+						<li>游戏记录</li>
+						<li>盈亏风险</li>
+
+					</ul>
+					<div class="layui-tab-content">
+
+						<!--会员信息-->
+						<div class="layui-tab-item layui-show " des="1">
+							<div class="layui-tab ">
+								<ul class="layui-tab-title usedata">
+									<li class="layui-this">基本信息</li>
+									<li>银行卡</li>
+									<li>登录信息</li>
+									<li>保密</li>
+									<li>优惠信息</li>
+								</ul>
+								<div class="layui-tab-content">
+									<!--基本信息-->
+									<div class="layui-tab-item layui-show ">
+										<div class="layui-col-md12  wrap">
+
+											<div class="top layui-col-md12">
+												<form class="layui-form left_cc layui-col-md8 condition">
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">来源</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">类型</label>
+														<div class="layui-input-block">
+															<select name="type" lay-verify="required" lay-filter="aihao">
+																<option value=""></option>
+																<option value="0">在线</option>
+																<option value="1">下线</option>
+																<option value="2">die</option>
+																<option value="2">live</option>
+															</select>
+														</div>
+													</div>
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">id</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">用户名</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">真实姓名</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">昵称</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">余额</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">打码量</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">积分</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input dateselect1">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">等级</label>
+														<div class="layui-input-block">
+															<input type="number" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input dateselect2">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">上级</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">层级</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">返点</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">登录密码</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">转移</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">性别</label>
+														<div class="layui-input-block">
+															<select name="type" lay-verify="required" lay-filter="aihao">
+																<option value=""></option>
+																<option value="0">在线</option>
+																<option value="1">下线</option>
+																<option value="2">die</option>
+																<option value="2">live</option>
+															</select>
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">邮箱</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">微信号</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">QQ号</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">手机号</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">注册ID</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">最后登录IP</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">注册时间</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">最后登录时间</label>
+														<div class="layui-input-block">
+															<input type="text" name="title" required lay-verify="required" placeholder="."
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">备注</label>
+														<div class="layui-input-block">
+															<textarea type="text" name="title" required lay-verify="required" placeholder="."
+																	  autocomplete="off" class="layui-input"></textarea>
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">操作</label>
+														<div class="layui-input-block">
+															<input type="radio" name="change" value="冻结" title="冻结">
+															<input type="radio" name="change" value="不限制直属下级数量" title="不限制直属下级数量" checked>
+														</div>
+													</div>
+
+													<div class="hurdle layui-col-sm12 layui-inline">
+														<span class="hlt">风险控制</span>
+														<span class="hrt">风险等级: 低  ></span>
+													</div>
+
+
+													<div class="form_decide layui-col-sm12 layui-inline">
+														<button class="layui-btn layui-btn-primary">取消</button>
+														<button class="layui-btn">保存</button>
+													</div>
+
+												</form>
+
+
+												<div class="right_cc baseinfow layui-col-md4">
+
+													<div class="layui-inline peoplecount layui-col-md6  layui-col-sm6">
+														<div class="">
+															同ip提款人数:0
+														</div>
+													</div>
+
+													<div class="layui-inline peoplecount layui-col-md6  layui-col-sm6">
+														<div class="">
+															关联人数:0
+														</div>
+													</div>
+
+													<div class=" pttq  layui-col-sm12">
+														<div class="">
+															财务信息 <a class=" layui-icon layui-icon-down"></a>
+														</div>
+
+														<table class="layui-table">
+															<!--<colgroup>-->
+																<!--<col width="150">-->
+																<!--<col width="200">-->
+																<!--<col>-->
+															<!--</colgroup>-->
+															<thead>
+															<tr>
+																<th>时间</th>
+																<th>重置</th>
+																<th>洗码</th>
+																<th>优惠</th>
+																<th>提现</th>
+																<th>盈亏</th>
+															</tr>
+															</thead>
+															<tbody>
+															<tr>
+																<td>今日</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+															</tr>
+															<tr>
+																<td>今日</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+															</tr>
+															<tr>
+																<td>今日</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+															</tr>
+															<tr>
+																<td>今日</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+																<td>0</td>
+															</tr>
+															</tbody>
+														</table>
+														<div class="">
+															投注信息 <a class=" layui-icon layui-icon-down"></a>
+														</div>
+														<form class="layui-form  ">
+
+															<div class="layui-inline layui-col-md12  layui-col-sm12">
+																<label class="layui-form-label layui-col-sm3">玩法</label>
+																<div class="layui-col-sm4">
+															 <select  name="type" lay-verify="required" lay-filter="aihao">
+																		<option value=""></option>
+																		<option value="0">系统彩</option>
+																		<option value="1">官方彩</option>
+																	</select>
+																</div>
+																<div class="layui-col-sm4">
+																	<select  name="type" lay-verify="required" lay-filter="aihao">
+																		<option value=""></option>
+																		<option value="0">北京快三</option>
+																		<option value="1">天津快三</option>
+																		<option value="2">北京快三</option>
+																		<option value="2">北京快三</option>
+																	</select>
+																</div>
+
+																<table class="layui-table">
+																	<!--<colgroup>-->
+																	<!--<col width="150">-->
+																	<!--<col width="200">-->
+																	<!--<col>-->
+																	<!--</colgroup>-->
+																	<thead>
+																	<tr>
+																		<th>时间</th>
+																		<th>重置</th>
+																		<th>洗码</th>
+																		<th>优惠</th>
+																		<th>提现</th>
+																		<th>盈亏</th>
+																	</tr>
+																	</thead>
+																	<tbody>
+																	<tr>
+																		<td>今日</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																	</tr>
+																	<tr>
+																		<td>今日</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																	</tr>
+																	<tr>
+																		<td>今日</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																	</tr>
+																	<tr>
+																		<td>今日</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																		<td>0</td>
+																	</tr>
+																	</tbody>
+																</table>
+
+															</div>
+
+
+
+														</form>
+													</div>
+
+
+												</div>
+
+
+											</div>
+											<div class="layui-card-body">
+												<table class="layui-hide layui-form layui-border-box layui-table-view" id="bannerList52"
+													   lay-filter="bannerList52"></table>
+											</div>
+										</div>
+									</div>
+									<!--银行卡-->
+									<div class="layui-tab-item " des="bank">
+										<button id="addbankcard" class="layui-btn layui-btn-warm">添加银行卡</button>
+										<table class="layui-hide" id="bank" lay-filter="bank"></table>
+										<script type="text/html" id="bank-barDemo">
+											<a class="ibig layui-icon layui-icon-survey " lay-event="bankedit" title="编辑"></a>
+											<a class="ibig layui-icon layui-icon-delete" lay-event="bankdel"></a>
+										</script>
+									</div>
+									<!--登录信息-->
+									<div class="layui-tab-item " des="loginInfo">
+
+										<table class="layui-hide" id="loginInfo" lay-filter="loginInfo"></table>
+
+										<script type="text/html" id="loginInfo-lookip">
+											<a class="look" lay-event="loginInfoedit" title="编辑">查看</a>
+										</script>
+
+										<script type="text/html" id="loginInfo-look">
+											<a class="look" lay-event="loginInfoedit" title="编辑">查看</a>
+										</script>
+
+									</div>
+									<div class="layui-tab-item ">保密内容待定</div>
+									<!--优惠信息-->
+									<div class="layui-tab-item ">
+										<div class="layui-row">
+										<form class="layui-form left_cc layui-col-md9 condition">
+
+											<div class="layui-inline layui-col-md3  layui-col-sm4 layui-col-sm4">
+												<label class="layui-form-label">名称</label>
+												<div class="layui-input-block">
+													<input type="text" name="title" required lay-verify="required" placeholder="."
+														   autocomplete="off" class="layui-input">
+												</div>
+											</div>
+
+
+											<div class="layui-inline layui-col-md3  layui-col-sm4">
+												<label class="layui-form-label">单号</label>
+												<div class="layui-input-block">
+													<input type="text" name="title" required lay-verify="required" placeholder="."
+														   autocomplete="off" class="layui-input">
+												</div>
+											</div>
+
+											<div class="layui-inline layui-col-md3  layui-col-sm4">
+												<label class="layui-form-label">时间</label>
+												<div class="layui-input-block">
+													<input type="text" name="title" required lay-verify="required" placeholder="."
+														   autocomplete="off" class="layui-input dateselect3">
+												</div>
+											</div>
+
+											<div class="layui-inline layui-col-md3  layui-col-sm4">
+												<label class="layui-form-label">~</label>
+												<div class="layui-input-block">
+
+													<input type="text" name="title" required lay-verify="required" placeholder="."
+														   autocomplete="off" class="layui-input dateselect4">
+												</div>
+											</div>
+
+
+
+											<div class="layui-inline layui-col-md3  layui-col-sm4">
+												<label class="layui-form-label">类型</label>
+												<div class="layui-input-block">
+													<select name="type" lay-verify="required" lay-filter="aihao">
+														<option value=""></option>
+														<option value="0">在线</option>
+														<option value="1">下线</option>
+														<option value="2">die</option>
+														<option value="2">live</option>
+													</select>
+												</div>
+											</div>
+
+
+											<div class="layui-inline layui-col-md3  layui-col-sm4">
+												<label class="layui-form-label">状态</label>
+												<div class="layui-input-block">
+													<select name="type" lay-verify="required" lay-filter="aihao">
+														<option value=""></option>
+														<option value="0">在线</option>
+														<option value="1">下线</option>
+														<option value="2">die</option>
+														<option value="2">live</option>
+													</select>
+												</div>
+											</div>
+
+
+
+
+											<div class="layui-inline layui-col-md3  layui-col-sm4">
+												<label class="layui-form-label">金额</label>
+												<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+													<input type="text" name="price_min" placeholder="￥" autocomplete="off"
+														   class="layui-input">
+												</div>
+												<div class="layui-form-mid">-</div>
+												<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+													<input type="text" name="price_max" placeholder="￥" autocomplete="off"
+														   class="layui-input">
+												</div>
+											</div>
+
+										</form>
+
+
+										<div class="right_cc layui-col-md3  ">
+
+											<div class="layui-inline layui-col-xs6 text-more">
+												更多选择<i class="layui-icon layui-icon-up"></i>
+											</div>
+
+											<div class="layui-inline layui-col-xs6">
+												<button class="layui-btn layui-btn-normal layui-bg-black">搜索</button>
+											</div>
+
+
+										</div>
+
+										</div>
+
+											<table class="layui-hide" id="cheap" lay-filter="cheap"></table>
+											<script type="text/html" id="cheap-barDemo">
+												<a class="ibig layui-icon layui-icon-delete" lay-event="cheapdel"></a>
+											</script>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<!--账务变更-->
+						<div class="layui-tab-item" des="2">
+							<div class="layui-tab ">
+								<ul class="layui-tab-title usedata">
+									<li class="layui-this ">账务变信息</li>
+									<li>预留</li>
+
+								</ul>
+								<div class="layui-tab-content" >
+									<!--账务变信息-->
+									<div class="layui-tab-item layui-show">
+										<div class="layui-row">
+											<form class="layui-form left_cc layui-col-md9 condition">
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">名称</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input">
+													</div>
+												</div>
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">单号</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input">
+													</div>
+												</div>
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">时间</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input dateselect5">
+													</div>
+												</div>
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">~</label>
+													<div class="layui-input-block">
+
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input dateselect6">
+													</div>
+												</div>
+
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">类型</label>
+													<div class="layui-input-block">
+														<select name="type" lay-verify="required" lay-filter="aihao">
+															<option value=""></option>
+															<option value="0">在线</option>
+															<option value="1">下线</option>
+															<option value="2">die</option>
+															<option value="2">live</option>
+														</select>
+													</div>
+												</div>
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">状态</label>
+													<div class="layui-input-block">
+														<select name="type" lay-verify="required" lay-filter="aihao">
+															<option value=""></option>
+															<option value="0">在线</option>
+															<option value="1">下线</option>
+															<option value="2">die</option>
+															<option value="2">live</option>
+														</select>
+													</div>
+												</div>
+
+
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">金额</label>
+													<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+														<input type="text" name="price_min" placeholder="￥" autocomplete="off"
+															   class="layui-input">
+													</div>
+													<div class="layui-form-mid">-</div>
+													<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+														<input type="text" name="price_max" placeholder="￥" autocomplete="off"
+															   class="layui-input">
+													</div>
+												</div>
+
+											</form>
+
+
+											<div class="right_cc layui-col-md3  ">
+
+												<div class="layui-inline layui-col-xs6 text-more">
+													更多选择<i class="layui-icon layui-icon-up"></i>
+												</div>
+
+												<div class="layui-inline layui-col-xs6">
+													<button class="layui-btn layui-btn-normal layui-bg-black">搜索</button>
+												</div>
+
+
+											</div>
+
+										</div>
+
+										<table class="layui-hide" id="moneylist" lay-filter="cheap"></table>
+										<script type="text/html" id="moneylist-barDemo">
+											<a class="ibig layui-icon layui-icon-delete" lay-event="moneylist"></a>
+										</script>
+									</div>
+
+									<div class="layui-tab-item ">预留</div>
+
+
+								</div>
+							</div>
+						</div>
+
+						<div class="layui-tab-item" des="3"></div>
+						<div class="layui-tab-item" des="4">
+							<div class="layui-tab ">
+								<ul class="layui-tab-title usedata">
+									<li class="layui-this ">提款订单</li>
+									<li>充值记录</li>
+									<li>投注记录</li>
+									<li>积分兑换</li>
+
+								</ul>
+								<div class="layui-tab-content" >
+									<!--提款订单-->
+									<div class="layui-tab-item layui-show">
+										<!--query state-->
+										<ul class="indent-state">
+											<li class="active"><span >待处理</span></li>
+											<li><span>已处理</span></li>
+											<li><span>已拒绝</span></li>
+										</ul>
+
+										<div class="layui-row">
+											<form class="layui-form left_cc layui-col-md9 condition">
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">名称</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input">
+													</div>
+												</div>
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">单号</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input">
+													</div>
+												</div>
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">时间</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input dateselect7">
+													</div>
+												</div>
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">~</label>
+													<div class="layui-input-block">
+
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input dateselect8">
+													</div>
+												</div>
+
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">类型</label>
+													<div class="layui-input-block">
+														<select name="type" lay-verify="required" lay-filter="aihao">
+															<option value=""></option>
+															<option value="0">在线</option>
+															<option value="1">下线</option>
+															<option value="2">die</option>
+															<option value="2">live</option>
+														</select>
+													</div>
+												</div>
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">状态</label>
+													<div class="layui-input-block">
+														<select name="type" lay-verify="required" lay-filter="aihao">
+															<option value=""></option>
+															<option value="0">在线</option>
+															<option value="1">下线</option>
+															<option value="2">die</option>
+															<option value="2">live</option>
+														</select>
+													</div>
+												</div>
+
+
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">金额</label>
+													<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+														<input type="text" name="price_min" placeholder="￥" autocomplete="off"
+															   class="layui-input">
+													</div>
+													<div class="layui-form-mid">-</div>
+													<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+														<input type="text" name="price_max" placeholder="￥" autocomplete="off"
+															   class="layui-input">
+													</div>
+												</div>
+
+											</form>
+
+
+											<div class="right_cc layui-col-md3 ">
+
+												<div class="layui-inline layui-col-xs6 text-more">
+													更多选择<i class="layui-icon layui-icon-up"></i>
+												</div>
+
+												<div class="layui-inline layui-col-xs6">
+													<button class="layui-btn layui-btn-normal layui-bg-black">搜索</button>
+												</div>
+
+
+											</div>
+
+										</div>
+
+										<table class="layui-hide" id="indent" lay-filter="indent"></table>
+										<script type="text/html" id="indent-barDemo">
+											<a class="ibig green  layui-icon layui-icon-password" lay-event="indentlock"></a>
+											<a class="ibig red layui-icon layui-icon-close-fill" lay-event="indentdel"></a>
+											<a class="ibig gray layui-icon layui-icon-ok-circle" lay-event="indentconfirm"></a>
+										</script>
+									</div>
+
+									<!--充值记录-->
+									<div class="layui-tab-item ">
+
+
+										<ul class="money-state">
+											<li class="active"><span>银行入款</span></li>
+											<li><span>第三方支付</span></li>
+											<li><span>管理员入款</span></li>
+											<li><span>优惠活动</span></li>
+											<li><span>反水</span></li>
+										</ul>
+
+										<ul class="indent-state">
+											<li class="active"><span >待处理</span></li>
+											<li><span>已处理</span></li>
+											<li><span>已拒绝</span></li>
+										</ul>
+
+										<div class="layui-row">
+											<form class="layui-form left_cc layui-col-md9 condition">
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">名称</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input">
+													</div>
+												</div>
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">单号</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input">
+													</div>
+												</div>
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">时间</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input dateselect7">
+													</div>
+												</div>
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">~</label>
+													<div class="layui-input-block">
+
+														<input type="text" name="title" required lay-verify="required" placeholder="."
+															   autocomplete="off" class="layui-input dateselect8">
+													</div>
+												</div>
+
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">类型</label>
+													<div class="layui-input-block">
+														<select name="type" lay-verify="required" lay-filter="aihao">
+															<option value=""></option>
+															<option value="0">在线</option>
+															<option value="1">下线</option>
+															<option value="2">die</option>
+															<option value="2">live</option>
+														</select>
+													</div>
+												</div>
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">状态</label>
+													<div class="layui-input-block">
+														<select name="type" lay-verify="required" lay-filter="aihao">
+															<option value=""></option>
+															<option value="0">在线</option>
+															<option value="1">下线</option>
+															<option value="2">die</option>
+															<option value="2">live</option>
+														</select>
+													</div>
+												</div>
+
+
+
+
+												<div class="layui-inline layui-col-md3  layui-col-sm4">
+													<label class="layui-form-label">金额</label>
+													<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+														<input type="text" name="price_min" placeholder="￥" autocomplete="off"
+															   class="layui-input">
+													</div>
+													<div class="layui-form-mid">-</div>
+													<div class="layui-input-inline scopedc layui-col-md3  layui-col-sm4">
+														<input type="text" name="price_max" placeholder="￥" autocomplete="off"
+															   class="layui-input">
+													</div>
+												</div>
+
+											</form>
+
+
+											<div class="right_cc layui-col-md3  ">
+
+												<div class="layui-inline layui-col-xs6 text-more">
+													更多选择<i class="layui-icon layui-icon-up"></i>
+												</div>
+
+												<div class="layui-inline layui-col-xs6">
+													<button class="layui-btn layui-btn-normal layui-bg-black">搜索</button>
+												</div>
+
+
+											</div>
+
+										</div>
+
+										<table class="layui-hide" id="addindent" lay-filter="addindent"></table>
+										<script type="text/html" id="addindent-barDemo">
+											<a class="ibig green  layui-icon layui-icon-password" lay-event="addindentlock"></a>
+											<a class="ibig red layui-icon layui-icon-close-fill" lay-event="addindentdel"></a>
+											<a class="ibig gray layui-icon layui-icon-ok-circle" lay-event="addindentconfirm"></a>
+										</script>
+
+									</div>
+
+
+
+									<div class="layui-tab-item ">预留3</div>
+									<div class="layui-tab-item ">预留4</div>
+
+
+
+								</div>
+							</div>
+						</div>
+						<div class="layui-tab-item" des="5">游戏记录</div>
+						<div class="layui-tab-item" des="6">
+							<div class="layui-tab ">
+								<ul class="layui-tab-title usedata">
+									<li class="layui-this ">今日</li>
+									<li>昨日</li>
+									<li>15天</li>
+									<li>30天</li>
+									<li>90天</li>
+									<li>180天</li>
+								</ul>
+								<div class="layui-tab-content" style="max-height: 600px; overflow: scroll;" >
+									<!--提款订单-->
+									<div class="layui-tab-item layui-show">
+										<div class="layui-col-md6">
+											<p class="todaytit">同ip提款人数: <span>0</span></p>
+											<table class="layui-hide" id="risktoday" lay-filter="risktoday" lay-size="sm"></table>
+
+												<p class="todaytit">财务信息: <span>0</span></p>
+												<table class="layui-hide" id="risktodaymoney" lay-filter="risktodaymoney" lay-size="sm"></table>
+										</div>
+
+										<div class="layui-col-md6 todayright">
+											<p class="todaytit">关联用户人数: <span>0</span></p>
+											<table class="layui-hide" id="risktodayip" lay-filter="risktodayip" lay-size="sm"></table>
+
+											<p class="todaytit">彩票盈亏: <span>0</span></p>
+											<table class="layui-hide" id="risktodayloss" lay-filter="risktodayloss" lay-size="sm"></table>
+										</div>
+
+
+										<!--游戏盈亏-->
+										<div class="layui-col-md12 ">
+											<p class="todaytit">游戏盈亏 <span></span></p>
+
+											<table class="layui-table">
+												<thead>
+												<tr>
+													<th>游戏平台</th>
+													<th>游戏类型</th>
+													<th>投注额</th>
+													<th>中奖额</th>
+													<th>输赢额</th>
+													<th>返点额</th>
+													<th>活动额</th>
+													<th>盈亏额</th>
+												</tr>
+												</thead>
+												<tbody>
+												<tr>
+													<td>合计</td>
+													<td>-</td>
+													<td>0</td>
+													<td>0</td>
+													<td>0</td>
+													<td>0</td>
+													<td>0</td>
+													<td>0</td>
+												</tr>
+												</tbody>
+											</table>
+										</div>
+
+
+									</div>
+
+									<div class="layui-tab-item ">昨日</div>
+									<div class="layui-tab-item ">15天</div>
+									<div class="layui-tab-item ">30天</div>
+									<div class="layui-tab-item ">90天</div>
+									<div class="layui-tab-item ">180天</div>
+
+
+
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+
+
+
+			</div>
+		</div>
+	</div>
+
+
+	<style type="text/css">
+		.tool—list{background: #ffffff;float: left;}
+		.tool—list li{padding: 10px 5px; font-size: 16px; text-align: center; float: left; width: 100%; cursor: pointer;}
+		.tool—list i{padding: 10px;}
+		.tool—list span{}
+		.eit{ cursor: pointer;}
+		.adduse,.popcount,.changeparent,.addclip,.sendmoney,.rinsemoney,.toupmoney,.children,.upinfolist,.seechildren,.tool—list,.tiergradelist{background: #ffffff; padding-top: 25px; display: none;}
+.todaytit{padding: 15px 0;}
+		.todayright{padding-left: 9px;}
+		#userPopup{display: none;}
+	</style>
+
+
+
+	<!--添加会员弹出框-->
+	<div class="adduse">
+
+		<form class="layui-form" action="">
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">账号类型</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="账号类型" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">密码</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">确认密码</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">设置推荐码</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="设置推荐码" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">返点比例</label>
+				<div class="layui-input-inline ">
+					<input   type="text" name="title" required  lay-verify="required" placeholder="设置推荐码" autocomplete="off" class="layui-input layui-col-sm6 ttt" >
+					<input  type="text" name="title" required  lay-verify="required" placeholder="设置推荐码" autocomplete="off" class="layui-input layui-col-sm6 ttt">
+				</div>
+
+
+			</div>
+			<div class="btcenter">
+				<button class="layui-btn layui-btn-primary  layui-layer-close qxx">取消</button>
+				<button class="layui-btn">确定</button>
+			</div>
+		</form>
+
+	</div>
+
+
+	<!--统计弹出-->
+	<div class="popcount">
+
+		<form class="layui-form" action="">
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">投注总额</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="投注总额" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">中奖总额</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="中奖总额" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">总返点</label>
+				<div class="layui-input-inline">
+					<input type="text" name="password" required lay-verify="required" placeholder="总返点" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">总佣金</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="总佣金" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">充值</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="充值" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">优惠</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="优惠" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">提现</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="提现" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">余额</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="余额" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">个人总结算</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="个人总结算" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+
+			<div class="btcenter">
+				<button class="layui-btn layui-btn-primary  layui-layer-close qxx">取消</button>
+				<button class="layui-btn">确定</button>
+			</div>
+		</form>
+
+	</div>
+
+	<!--变更上级-->
+	<div class="changeparent">
+
+		<form class="layui-form" action="">
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型</label>
+				<div class="layui-input-inline">
+					<select name="type" lay-verify="required" lay-filter="aihao">
+						<option value=""></option>
+						<option value="0">在线</option>
+						<option value="1">下线</option>
+						<option value="2">die</option>
+						<option value="2">live</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">变更信息</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="投注总额" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="中奖总额" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">说明</label>
+				<div class="layui-input-inline">
+					<input type="text" name="password" required lay-verify="required" placeholder="总返点" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+
+			<div class="btcenter">
+				<button class="layui-btn layui-btn-primary  layui-layer-close qxx">取消</button>
+				<button class="layui-btn">确定</button>
+			</div>
+		</form>
+
+	</div>
+
+	<!--添加银行-->
+	<div class="addclip">
+
+		<form class="layui-form" action="">
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">持卡人</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="持卡人" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">银行</label>
+				<div class="layui-input-inline">
+					<select name="type" lay-verify="required" lay-filter="aihao">
+						<option value=""></option>
+						<option value="0">花旗</option>
+						<option value="1">浦发</option>
+						<option value="2">农村合作社</option>
+						<option value="2">交通银行</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">开户网点</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="开户网点" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">银行卡号</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="银行卡号" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="btcenter">
+				<button class="layui-btn layui-btn-primary  layui-layer-close qxx">取消</button>
+				<button class="layui-btn">确定</button>
+			</div>
+		</form>
+
+	</div>
+
+	<!--赠送彩金-->
+	<div class="sendmoney">
+
+		<form class="layui-form" action="">
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">选择用户:</label>
+				<div class="layui-input-inline">
+						<input name="change" value="用户名" title="用户名" type="radio">
+						<input name="change" value="UserID" title="UserID" checked="" type="radio">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名或UID:</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="用户名或UID:" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">赠送彩金</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="赠送彩金" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="备注" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="btcenter">
+				<button class="layui-btn layui-btn-primary  layui-layer-close qxx">取消</button>
+				<button class="layui-btn">确定</button>
+			</div>
+		</form>
+
+	</div>
+
+	<!--手工充值-->
+	<div class="rinsemoney">
+
+		<form class="layui-form" action="">
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">选择用户:</label>
+				<div class="layui-input-inline">
+					<input name="change" value="用户名" title="用户名" type="radio">
+					<input name="change" value="UserID" title="UserID" checked="" type="radio">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名或UID:</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="用户名或UID:" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">洗码金额</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="洗码金额" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="备注" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="btcenter">
+				<button class="layui-btn layui-btn-primary  layui-layer-close qxx">取消</button>
+				<button class="layui-btn">确定</button>
+			</div>
+		</form>
+
+	</div>
+	<!--充值金额-->
+	<div class="toupmoney">
+
+		<form class="layui-form" action="">
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">选择用户:</label>
+				<div class="layui-input-inline">
+					<input name="change" value="用户名" title="用户名" type="radio">
+					<input name="change" value="UserID" title="UserID" checked="" type="radio">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名或UID:</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="用户名或UID:" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">充值金额</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required  lay-verify="required" placeholder="充值金额" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-inline">
+					<input type="password" name="password" required lay-verify="required" placeholder="备注" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+
+			<div class="btcenter">
+				<button class="layui-btn layui-btn-primary  layui-layer-close qxx">取消</button>
+				<button class="layui-btn">确定</button>
+			</div>
+		</form>
+
+	</div>
+
+	<!--查看用户登录ip-->
+	<div class="upinfolist">
+
+		<table class="layui-table">
+			<!--<colgroup>-->
+				<!--<col width="150">-->
+				<!--<col width="200">-->
+				<!--<col>-->
+			<!--</colgroup>-->
+			<thead>
+			<tr>
+				<th>用户名</th>
+				<th>时间</th>
+				<th>ip地址</th>
+				<th>次数</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>name</td>
+				<td>2016-11-29</td>
+				<td>192.168.1.1</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>2016-11-29</td>
+				<td>192.168.1.1</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>2016-11-29</td>
+				<td>192.168.1.1</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>2016-11-29</td>
+				<td>192.168.1.1</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>2016-11-29</td>
+				<td>192.168.1.1</td>
+				<td>6</td>
+			</tr>
+
+			</tbody>
+		</table>
+
+	</div>
+
+	<!--查看下级-->
+	<div class="seechildren">
+		<table class="layui-table">
+			<!--<colgroup>-->
+			<!--<col width="150">-->
+			<!--<col width="200">-->
+			<!--<col>-->
+			<!--</colgroup>-->
+			<thead>
+			<tr>
+				<th>用户名</th>
+				<th>层级</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>name</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>0</td>
+			</tr>
+
+
+			</tbody>
+		</table>
+
+	</div>
+
+	<!--编辑工具栏弹窗	-->
+	<ul class="tool—list">
+		<li class="eit t-count"><i class="layui-icon layui-icon-read"></i><span>统计</span></li>
+		<li class="eit t-dow"><i class="layui-icon layui-icon-close"></i><span>踢下线</span></li>
+		<li class="eit t-change"><i class="layui-icon layui-icon-up"></i><span>变更上级</span></li>
+		<li class="eit t-bank"><i class="layui-icon layui-icon-auz"></i><span>添加银行</span></li>
+		<li class="eit t-freeze"><i class="layui-icon layui-icon-tips"></i><span>冻结账户</span></li>
+		<li class="eit t-money"><i class="layui-icon layui-icon-rmb"></i><span>赠送彩金</span></li>
+		<li class="eit t-bath"><i class="layui-icon layui-icon-cellphone"></i><span>手工洗码</span></li>
+		<li class="eit t-toup"><i class="layui-icon layui-icon-return"></i><span>手工充值</span></li>
+	</ul>
+
+	<!--层级-->
+
+
+
+	<ul class="tiergradelist">
+		<li><span class="tire">层级</span> <span class="tire">用户名</span></li>
+		<li><span class="tire">1</span> <span class="tire">小明</span></li>
+		<li><span class="tire">2</span> <span class="tire">小明</span></li>
+		<li><span class="tire">3</span> <span class="tire">小明</span></li>
+		<li><span class="tire">4</span> <span class="tire">小明</span></li>
+	</ul>
+
+
+
+</div>
+
+
+<script>
+
+	layui.use(['admin', 'form', 'laydate', 'table','element'], function () {
+		var $ = layui.$
+				, admin = layui.admin
+				, element = layui.element
+				, form = layui.form;
+		var laydate = layui.laydate;
+		var table = layui.table;
+
+		element.render('collapse');
+		//初始化 日历
+		for(var i=1;i<=8;i++){
+			var el='.dateselect'+i
+			laydate.render({
+				elem: el
+			});
+		}
+
+		//添加用户弹窗
+        $(".addusert").on("click",function(){
+			layer.open({
+				type: 1,
+				title :"添加会员",
+				closeBtn: 2,
+				area: ["400px","450px"],
+				resize:!0,
+				shadeClose: !1,
+				shade:0,
+				content: $(".adduse"),
+				zIndex:10000
+			});
+		})
+
+       /*表单
+       * */
+		table.render({
+			elem: '#useinfo'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 80
+//			,height: 332
+			,cols: [[
+				{type:'checkbox', fixed: 'left'}
+				,{field:'id', title: 'ID', sort: true, fixed: 'left'}
+				,{field:'username', title: '用户名'}
+				,{field:'sex',  title: '姓名', sort: true}
+				,{field:'city',  title: '上级'}
+//				,{field:'sign', title: '层级'} tiergrade
+				,{width:80,  title: '层级',align:'center', toolbar: '#tiergrade'}
+				,{field:'experience',  title: '等级', sort: true}
+				,{field:'wealth',  title: '来源', sort: true}
+				,{field:'classify',  title: '存款总额'}
+				,{field:'score',  title: '提款总额', sort: true,}
+				,{field:'score',  title: '登录来源', sort: true,}
+				,{field:'score',  title: '状态', sort: true,}
+				,{field:'score',  title: '注册时间', sort: true,}
+				,{width:80,  title: '下级',align:'center', fixed: 'right', toolbar: '#subordinates'}
+				,{width:178,  title: '操作',align:'center', fixed: 'right', toolbar: '#useinfo-barDemo'}
+			]]
+			,page: true
+		});
+
+
+		//批量操作
+		$("#batchlist").on("click",function(){
+			layer.confirm('确认操作', function(index){
+				layer.close(index);
+				layer.close(index);
+			});
+		})
+
+		//监听表格复选框选择
+		table.on('checkbox(useinfo)', function(obj){
+			console.log(obj)
+		});
+
+		//监听工具条
+		table.on('tool(useinfo)', function(obj){
+		    console.log(obj)
+			var data = obj.data;
+			if(obj.event === 'detail'){
+				$("#userPopup").css("dispaly","none");
+				var width=window.innerWidth*1*0.9+"px";
+				layer.open({
+					type: 1,
+//					title :!1,
+					title :"设置",
+					closeBtn: 2,
+//					move:"#tzz",
+					area: width,
+					resize:!0,
+//					skin: 'layui-layer-nobg', //没有背景色
+					shadeClose: !1,
+					shade:0,
+					content: $("#userPopup"),
+					zIndex:10000
+				});
+
+			} else if(obj.event === 'del'){
+
+               //查看下级
+				layer.open({
+					type: 1,
+					title :"查看下级",
+					closeBtn: 2,
+					area: ["400px"],
+					resize:!0,
+					shadeClose: !1,
+					shade:0,
+					content: $(".seechildren"),
+					zIndex:10000,
+					success:function(){
+						layer.msg("在这个回调内把data数据塞入dom内")
+					}
+				});
+
+			} else
+			    if(obj.event === 'edit'){
+				console.log(obj)
+				var data=obj.data;
+				//obj.data 是这个单元格内数据 作为参数在 弹窗层中传递
+				//这是一个很诡异的操作
+				layer.open({
+					shade:0,
+					type: 4,
+					tips: [3, '#D3BCBC'],
+					content: [$(".tool—list").html(), $(obj.tr[0]).find(".ibig ").eq(2)],
+					time:15000,
+					success: function(layero, index){
+						//弹出后init 传入 data对象
+						//1.统计 popcount
+						$(".t-count").on("click",function(){
+
+							layer.open({
+								type: 1,
+								title :"统计",
+								closeBtn: 2,
+								area: ["400px","650px"],
+								resize:!0,
+								shadeClose: !1,
+								shade:0,
+								content: $(".popcount"),
+								zIndex:10000,
+								success:function(){
+									layer.msg("在这个回调内把data数据塞入dom内")
+								}
+							});
+
+						})
+						//2.踢下线
+						$(".t-dow").on("click",function(){
+							var popa=layer.confirm('是否'+data.username+'踢下线', {
+								btn: ['确定','取消'] //按钮
+							}, function(){
+								//这里发请求 去删除
+								layer.msg("id为"+data.id+"被踢下线")
+
+							}, function(){
+								layer.close(popa);
+							});
+						})
+						//3.变更上级 t-change
+						$(".t-change").on("click",function(){
+
+							layer.open({
+								type: 1,
+								title :"变更上级",
+								closeBtn: 2,
+								area: ["400px","450px"],
+								resize:!0,
+								shadeClose: !1,
+								shade:0,
+								content: $(".changeparent"),
+								zIndex:10000,
+								success:function(){
+									layer.msg("在这个回调内把data数据塞入dom内")
+								}
+							});
+
+						})
+						//4.添加银行卡 addclip t-bank
+						$(".t-bank").on("click",function(){
+
+							layer.open({
+								type: 1,
+								title :"添加银行卡",
+								closeBtn: 2,
+								area: ["400px","350px"],
+								resize:!0,
+								shadeClose: !1,
+								shade:0,
+								content: $(".addclip"),
+								zIndex:10000,
+								success:function(){
+									layer.msg("在这个回调内把data数据塞入dom内")
+								}
+							});
+
+						})
+						//5.冻结下线 t-freeze
+						$(".t-freeze").on("click",function(){
+							var popa=layer.confirm('是否'+data.username+'冻结', {
+								btn: ['确定','取消'] //按钮
+							}, function(){
+								//这里发请求 去删除
+								layer.msg("id为"+data.id+"被冻结")
+
+							}, function(){
+								layer.close(popa);
+							});
+						})
+						//6.赠送彩金 t-money sendmoney
+						$(".t-money").on("click",function(){
+
+							layer.open({
+								type: 1,
+								title :"赠送彩金",
+								closeBtn: 2,
+								area: ["400px","450px"],
+								resize:!0,
+								shadeClose: !1,
+								shade:0,
+								content: $(".sendmoney"),
+								zIndex:10000,
+								success:function(){
+									layer.msg("在这个回调内把data数据塞入dom内")
+								}
+							});
+
+						})
+						//7.手工洗码 rinsemoney t-bath
+						$(".t-bath").on("click",function(){
+
+							layer.open({
+								type: 1,
+								title :"手工洗码",
+								closeBtn: 2,
+								area: ["400px","450px"],
+								resize:!0,
+								shadeClose: !1,
+								shade:0,
+								content: $(".rinsemoney"),
+								zIndex:10000,
+								success:function(){
+									layer.msg("在这个回调内把data数据塞入dom内")
+								}
+							});
+
+						})
+						//8.手动充值 toupmoney t-toup
+						$(".t-toup").on("click",function(){
+
+							layer.open({
+								type: 1,
+								title :"手动充值",
+								closeBtn: 2,
+								area: ["400px","450px"],
+								resize:!0,
+								shadeClose: !1,
+								shade:0,
+								content: $(".toupmoney"),
+								zIndex:10000,
+								success:function(){
+									layer.msg("在这个回调内把data数据塞入dom内")
+								}
+							});
+
+						})
+					}
+				});
+			}
+			else
+				if(obj.event === 'tiergrade'){
+					console.log(obj)
+					var data=obj.data;
+					//obj.data 是这个单元格内数据 作为参数在 弹窗层中传递 tiergrade
+					//这是一个很诡异的操作
+					layer.open({
+						shade:0,
+						type: 4,
+						tips: [3, '#D3BCBC'],
+						content: [$(".tiergradelist").html(), $(obj.tr[0]).find(".tiergrade ")],
+						time:15000,
+						success: function(layero, index){
+						}
+					});
+				}
+		});
+
+		var $ = layui.$, active = {
+			getCheckData: function(){ //获取选中数据
+				var checkStatus = table.checkStatus('useinfo')
+						,data = checkStatus.data;
+				layer.alert(JSON.stringify(data));
+			}
+			,getCheckLength: function(){ //获取选中数目
+				var checkStatus = table.checkStatus('useinfo')
+						,data = checkStatus.data;
+				layer.msg('选中了：'+ data.length + ' 个');
+			}
+			,isAll: function(){ //验证是否全选
+				var checkStatus = table.checkStatus('useinfo');
+				layer.msg(checkStatus.isAll ? '全选': '未全选')
+			}
+		};
+
+		$('.useinfo-btn .layui-btn').on('click', function(){
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+
+		//tab init
+		element.on('tab(demoTab)', function(data){
+			console.log(data);
+		});
+
+		/*
+		* bank table
+		*/
+		table.render({
+			elem: '#bank'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 80
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '账户名', sort: true, fixed: 'left'}
+				,{field:'username', title: '注册时间'}
+				,{field:'sex',  title: '银行', sort: true}
+				,{field:'city',  title: '城市'}
+				,{field:'sign', title: '开户行'}
+				,{field:'experience',  title: '省', sort: true}
+//				,{field:'wealth',  title: '财富', sort: true}
+//				,{field:'classify',  title: '职业'}
+				,{field:'score',  title: '修改时间', sort: true,}
+//				,{width:80,  title: '下级',align:'center', fixed: 'right', toolbar: '#subordinates'}
+				,{width:178,  title: '操作',align:'center', fixed: 'right', toolbar: '#bank-barDemo'}
+			]]
+//			,page: true
+		});
+		//监听工具条
+		table.on('tool(bank)', function(obj){
+			console.log(obj)
+			var data = obj.data;
+			if(obj.event === 'bankdetail'){
+				layer.msg('ID：'+ data.id + ' 的查看操作');
+			} else if(obj.event === 'bankdel'){
+				layer.confirm('真的删除行么', function(index){
+					obj.del();
+					layer.close(index);
+				});
+			} else if(obj.event === 'bankedit'){
+
+				layer.open({
+					type: 1,
+					title :"编辑银行卡",
+					closeBtn: 2,
+					area: ["400px","350px"],
+					resize:!0,
+					shadeClose: !1,
+					shade:0,
+					content: $(".addclip"),
+					zIndex:10000,
+					success:function(){
+						layer.msg("在这个回调内把data数据塞入dom内")
+					}
+				});
+
+//				layer.alert('编辑行：<br>'+ JSON.stringify(data))
+			}
+		});
+//		添加银行卡
+		$("#addbankcard").on("click",function(){
+			layer.open({
+				type: 1,
+				title :"添加银行卡",
+				closeBtn: 2,
+				area: ["400px","350px"],
+				resize:!0,
+				shadeClose: !1,
+				shade:0,
+				content: $(".addclip"),
+				zIndex:10000,
+				success:function(){
+				}
+			});
+		})
+
+		/*
+		 * loginInfo table
+		 */
+		table.render({
+			elem: '#loginInfo'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 80
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '登录时间', sort: true, fixed: 'left'}
+				,{field:'username', title: '登录位置'}
+				,{field:'sex',  title: '登录ip', sort: true}
+				,{field:'city',  title: '城市'}
+				,{field:'sign', title: '浏览器'}
+				,{field:'experience',  title: '浏览器引擎', sort: true}
+				,{field:'score',  title: '操作系统', sort: true,}
+				,{field:'classify',  title: '运营商'}
+				,{width:80,  title: '登录域名',align:'center', fixed: 'right', toolbar: '#loginInfo-look'}
+				,{width:80,  title: '同ip登录',align:'center', fixed: 'right', toolbar: '#loginInfo-lookip'}
+			]]
+//			,page: true
+		});
+		//监听工具条
+		table.on('tool(loginInfo)', function(obj){
+			console.log(obj)
+			var data = obj.data;
+			if(obj.event === 'loginInfotail'){
+			    //upinfolist
+
+				layer.open({
+					type: 1,
+					title :"登录域名",
+					closeBtn: 2,
+					area: ["400px","350px"],
+					resize:!0,
+					shadeClose: !1,
+					shade:0,
+					content: $(".upinfolist"),
+					zIndex:10000,
+					success:function(){
+						layer.msg("在这个回调内把data数据塞入dom内")
+					}
+				});
+
+//				layer.msg('ID：'+ data.id + ' 的查看操作');
+			} else if(obj.event === 'loginInfoedit'){
+				layer.open({
+					type: 1,
+					title :"同ip等领域",
+					closeBtn: 2,
+					area: ["400px","350px"],
+					resize:!0,
+					shadeClose: !1,
+					shade:0,
+					content: $(".upinfolist"),
+					zIndex:10000,
+					success:function(){
+						layer.msg("在这个回调内把data数据塞入dom内")
+					}
+				});
+//				layer.alert('编辑行：<br>'+ JSON.stringify(data))
+			}
+		});
+
+		/*
+		*优惠 cheap table
+		* */
+		table.render({
+			elem: '#cheap'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 80
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '优惠名称', sort: true, fixed: 'left'}
+				,{field:'username', title: '单号'}
+				,{field:'sex',  title: '金额', sort: true}
+				,{field:'city',  title: '返点'}
+				,{field:'sign', title: '层级'}
+				,{field:'experience',  title: '上级', sort: true}
+				,{field:'wealth',  title: '优惠类型', sort: true}
+				,{field:'classify',  title: '状态'}
+				,{field:'score',  title: '时间', sort: true,}
+//				,{width:80,  title: '下级',align:'center', fixed: 'right', toolbar: '#subordinates'}
+				,{width:178,  title: '操作',align:'center', fixed: 'right', toolbar: '#cheap-barDemo'}
+			]]
+			,page: true
+		});
+		//监听工具条
+		table.on('tool(cheap)', function(obj){
+			console.log(obj)
+			var data = obj.data;
+			if(obj.event === 'tabledetail'){
+				layer.msg('ID：'+ data.id + ' 的查看操作');
+			} else if(obj.event === 'cheapdel'){
+				layer.confirm('真的删除行么', function(index){
+					obj.del();
+					layer.close(index);
+				});
+			} else if(obj.event === 'tableedit'){
+				layer.alert('编辑行：<br>'+ JSON.stringify(data))
+			}
+		});
+
+		/*
+		*账务信息 moneylist table
+		* */
+		table.render({
+			elem: '#moneylist'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 80
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '单号', sort: true, fixed: 'left'}
+				,{field:'username', title: '游戏'}
+				,{field:'sex',  title: '期号', sort: true}
+				,{field:'city',  title: '类型'}
+				,{field:'sign', title: '变账前'}
+				,{field:'experience',  title: '金额', sort: true}
+				,{field:'wealth',  title: '时间', sort: true}
+				,{field:'classify',  title: '备注'}
+//				,{field:'score',  title: '时间', sort: true,}
+//				,{width:80,  title: '下级',align:'center', fixed: 'right', toolbar: '#subordinates'}
+//				,{width:178,  title: '操作',align:'center', fixed: 'right', toolbar: '#moneylist-barDemo'}
+			]]
+			,page: true
+		});
+		//监听工具条
+//		table.on('tool(moneylist)', function(obj){
+//			console.log(obj)
+//			var data = obj.data;
+//			if(obj.event === 'tabledetail'){
+//				layer.msg('ID：'+ data.id + ' 的查看操作');
+//			} else if(obj.event === 'moneylistdel'){
+//				layer.confirm('真的删除行么', function(index){
+//					obj.del();
+//					layer.close(index);
+//				});
+//			} else if(obj.event === 'tableedit'){
+//				layer.alert('编辑行：<br>'+ JSON.stringify(data))
+//			}
+//		});
+
+        /*
+        *提款订单 indent table indentdel
+        * */
+		table.render({
+			elem: '#indent'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 80
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '订单号', sort: true, fixed: 'left'}
+				,{field:'username', title: '姓名'}
+				,{field:'sex',  title: '金额', sort: true}
+				,{field:'city',  title: '手续费'}
+				,{field:'sign', title: '层级'}
+				,{field:'experience',  title: '银行名称', sort: true}
+				,{field:'wealth',  title: '银行卡号', sort: true}
+				,{field:'classify',  title: '开户行'}
+				,{field:'classify',  title: '出数账户'}
+				,{field:'classify',  title: '状态'}
+				,{field:'classify',  title: '订单时间'}
+				,{field:'classify',  title: '备注'}
+//				,{field:'score',  title: '时间', sort: true,}
+//				,{width:80,  title: '下级',align:'center', fixed: 'right', toolbar: '#subordinates'}
+				,{width:178,  title: '操作',align:'center', fixed: 'right', toolbar: '#indent-barDemo'}
+			]]
+			,page: true
+		});
+		table.on('tool(indent)', function(obj){
+			console.log(obj)
+			var data = obj.data;
+			if(obj.event === 'indentlock'){
+
+				layer.confirm('上锁操作', function(index){
+					obj.del();
+					layer.close(index);
+				});
+//				layer.msg('ID：'+ data.id + ' 的上锁');
+			} else if(obj.event === 'indentdel'){
+				layer.confirm('真的删除行么', function(index){
+					obj.del();
+					layer.close(index);
+				});
+			} else if(obj.event === 'indentconfirm'){
+				layer.confirm('确认操作', function(index){
+					obj.del();
+					layer.close(index);
+				});
+			}
+		});
+
+		/*
+		 *充值订单 addindent table addindent
+		 * */
+		table.render({
+			elem: '#addindent'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 80
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '订单号', sort: true, fixed: 'left'}
+				,{field:'username', title: '姓名'}
+				,{field:'sex',  title: '金额', sort: true}
+				,{field:'city',  title: '手续费'}
+				,{field:'sign', title: '层级'}
+				,{field:'experience',  title: '银行名称', sort: true}
+				,{field:'wealth',  title: '银行卡号', sort: true}
+				,{field:'classify',  title: '开户行'}
+				,{field:'classify',  title: '出数账户'}
+				,{field:'classify',  title: '状态'}
+				,{field:'classify',  title: '订单时间'}
+				,{field:'classify',  title: '备注'}
+//				,{field:'score',  title: '时间', sort: true,}
+//				,{width:80,  title: '下级',align:'center', fixed: 'right', toolbar: '#subordinates'}
+				,{width:178,  title: '操作',align:'center', fixed: 'right', toolbar: '#addindent-barDemo'}
+			]]
+			,page: true
+		});
+		table.on('tool(addindent)', function(obj){
+			console.log(obj)
+			var data = obj.data;
+			if(obj.event === 'addindentlock'){
+				layer.msg('ID：'+ data.id + ' 的上锁');
+			} else if(obj.event === 'addindentdel'){
+				layer.confirm('真的删除行么', function(index){
+					obj.del();
+					layer.close(index);
+				});
+			} else if(obj.event === 'addindentconfirm'){
+				layer.msg('ID：'+ data.id + ' 确定');
+
+//				layer.alert('编辑行：<br>'+ JSON.stringify(data))
+			}
+		});
+
+		/*查询状态切换*/
+		$(".indent-state li,.money-state li").on("click",function(){
+		    $(this).addClass("active").siblings().removeClass("active");
+		})
+
+		/*风险控制risktoday */
+		table.render({
+			elem: '#risktoday'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 160
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '用户名', sort: true,}
+				,{field:'username',title: '充值额'}
+				,{field:'sex',  title: '提款额', sort: true}
+				,{field:'city',  title: '充值比例'}
+			]]
+			,page: true
+		});
+		/*风险控制同ip risktodayip*/
+		table.render({
+			elem: '#risktodayip'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 160
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '用户名', sort: true,}
+				,{field:'username',title: '充值额'}
+				,{field:'sex',  title: '提款额', sort: true}
+				,{field:'city',  title: '充值比例'}
+			]]
+			,page: true
+		});
+		/*风险控制今日财务 risktodayip*/
+		table.render({
+			elem: '#risktodaymoney'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 160
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '时间', sort: true,}
+				,{field:'username',title: '充值'}
+				,{field:'sex',  title: '洗码', sort: true}
+				,{field:'city',  title: '优惠'}
+				,{field:'city',  title: '提现'}
+				,{field:'city',  title: '盈亏'}
+			]]
+			,page: true
+		});
+
+		/*风险控制今日盈亏 risktodayloss*/
+		table.render({
+			elem: '#risktodayloss'
+			,url: './start/json/table/user.js'
+			,cellMinWidth: 160
+//			,height: 332
+			,cols: [[
+//				{type:'checkbox', fixed: 'left'},
+				{field:'id', title: '彩种', sort: true,}
+				,{field:'username',title: '玩法'}
+				,{field:'sex',  title: '投注金额', sort: true}
+				,{field:'city',  title: '金额'}
+				,{field:'city',  title: '反水'}
+				,{field:'city',  title: '输赢'}
+			]]
+			,page: true
+		});
+
+
+
+
+
+	});
+
+</script>
+

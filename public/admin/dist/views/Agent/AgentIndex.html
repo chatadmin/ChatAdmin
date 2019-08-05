@@ -1,0 +1,362 @@
+<title>代理列表</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline" style="font-size: 20px;width: 100%">
+                        <div style="float: left">代理列表</div>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-inline layui-col-md-offset2 layui-form" lay-filter="component-form-element">
+                            <div class="layui-inline">
+                                <span>排序：</span>
+                                <button class="layui-btn layui-btn-sm index-sort" con="uid">默认排序</button>
+                                <button class="layui-btn layui-btn-sm index-sort" con="coin">账号金额</button>
+                                <button class="layui-btn layui-btn-sm index-sort" con="fanDian">返点</button>
+                                <button class="layui-btn layui-btn-sm index-sort" con="score">累积积分</button>
+                                <button class="layui-btn layui-btn-sm index-sort" con="zaixian">在线用户</button>
+                                <span>会员名：</span>
+                            </div>
+
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="会员名" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-index-start" autocomplete="off" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-index-end" autocomplete="off" name="toTime" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="indexForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentIndexList" lay-filter="AgentIndexList"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="ListAgent2" lay-filter="Agent-table-element2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-card-body">
+                <table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentIndexList2" lay-filter="AgentIndexList2"></table>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="system_link_paytype_operate">
+    <a class="layui-btn layui-btn-normal layui-btn-sm savepaytype" lay-event="savepaytype">保存</a>
+</script>
+
+<script type="text/html" id="system_link_paytype_enable">
+    <form>
+    <input type="checkbox" class="type{{ d.lid }}" lay-skin="switch" lay-text="代理|会员" {{# if(d.type == 1){ }} checked {{# } }} lay-filter="agent_link_switch" value="{{ d.type }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}">
+    </form>
+</script>
+
+<script type="text/html" id="system_link_paytype_fandian">
+    <input type="text" name="fanDian"  class="layui-input fanDian{{ d.lid }}" autocomplete="off" value="{{ d.fanDian }}">
+</script>
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form;
+        form.render(null, 'component-form-element');
+        //获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-index-start').attr('value', startDate);
+        var iii = layer.msg('loading');
+        //载入表格数据
+        table.render({
+            elem: '#AgentIndexList'
+            ,url: layui.setter.URL_ADMIN+'/Agent/agentlist?fromTime='+startDate
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'uid',align:'center', title: 'ID', width: 40},
+                {field:'username',align:'center', title: '用户名', width: 90},
+                {field:'nickname',align:'center', title: '昵称', width: 90},
+                {field:'source',align:'center', title: '来源', width: 90,templet: function(d){
+                    if(d.source == 1){return '代理添加'}else if(d.source == 2){return '后台添加'}else if(d.source == 3){return '微信推广'}else {return '未知来源'}
+                }},
+                {field:'bankName',align:'center', title: '姓名', width: 70},
+                {field:'registernum',align:'center', title: '注册用户', width: 80, templet: function(d){
+                    return '<a href="javascript:;" lay-href="Agent/listSub/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red">'+ d.registernum +'人</a>' ;
+                }},
+                {field:'rechargeAmount',align:'center', title: '存款', width: 80,templet: function(d){
+                    return '<a href="javascript:;" lay-href="Agent/depositList/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red">'+ d.rechargeAmount +'</a>' ;
+                }},
+                {field:'cashAmount',align:'center', title: '提现', width: 80,templet: function(d){
+                    return '<a href="javascript:;" lay-href="Agent/PutForwardList/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red">'+ d.cashAmount +'</a>' ;
+                }},
+                {field:'',align:'center', title: '投注', width: 80,templet: function(d){
+                    return '<a href="javascript:;" class="betAmount_'+d.uid+' numbers" ydata="'+d.betAmount+'" lay-href="Agent/BettingList/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red"><img src="../../sysadmin/images/loading.gif" /></a>' ;
+                }},
+                {field:'',align:'center', title: '中奖', width: 80,templet: function(d){
+                    return '<a href="javascript:;" class="zjAmount_'+d.uid+' numbers" ydata="'+d.zjAmount+'" lay-href="Agent/WinningThePrize/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red"><img src="../../sysadmin/images/loading.gif" /></a>' ;
+                }},
+                {field:'fanDian',align:'center', title: '佣金比例', width: 80,templet: function(d){
+                    return d.fanDian+'%'
+                }},
+                {field:'',align:'center', title: '佣金', width: 80,templet: function(d){
+                    return '<a href="javascript:;" class="fanDianAmount_'+d.uid+' numbers" lay-href="Agent/CommissionList/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red"><img src="../../sysadmin/images/loading.gif" /></a>' ;
+                }},
+                {field:'discount',align:'center', title: '优惠', width: 100,templet: function(d){
+                    var discount = d.discount;
+                    return '<a href="javascript:;" lay-href="Agent/DiscountList/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red">'+ discount.toFixed(2) +'</a>' ;
+                }},
+                {field:'coin',align:'center', title: '余额', width: 70,templet: function(d){
+                    var num = d.coin;
+                    if(num){return num.toFixed(2)}else {return num.toFixed(2)}
+                }},
+                {field:'',align:'center', title: '盈亏', width: 80,templet: function(d){
+                    return '<a href="javascript:;" class="yingkui_'+d.uid+' numbers"><img src="../../sysadmin/images/loading.gif" /></a>' ;
+                }},
+                {field:'line',align:'center', title: '状态', width: 70,templet: function(d){
+                    if(d.line == 1){return '在线'}else {return '离线'}
+                }},
+                {field:'onLineCount',align:'center', title: '在线用户', width: 80,templet: function(d){
+                    return '<a href="javascript:;" lay-href="Agent/OnLineList/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red">'+ d.onLineCount +'</a>' ;
+                }},
+                {field:'todayLoginCount',align:'center', title: '今日访问', width: 80,templet: function(d){
+                    return '<a href="javascript:;" lay-href="Agent/VisitList/uid='+d.uid+'/username='+d.username+'/type=1/fromTime='+$('#test-laydate-index-start').val()+'/toTime='+$('#test-laydate-index-end').val()+'" style="color: red">'+ d.todayLoginCount +'</a>' ;
+                }}
+                ,{field:'regTime',align:'center', title: '注册时间',templet: function(d){return admin.formatDates(d.regTime); }},
+                {align:'center', title: '操作',templet: function(d){
+                    return '<a class="layui-btn layui-btn-sm agrnt-list" uid="'+d.uid+'" href="javascript:;">链接</a>';
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+                layer.close(iii);
+                var uid = "";
+                for(var i in res.data){
+                    uid += res.data[i]['uid']+',';
+                }
+                uid = uid.substring(0,uid.length-1);
+                var fromTime = $('#test-laydate-index-start').val();
+                var toTime = $('#test-laydate-index-end').val();
+                if(fromTime == ""){
+                    fromTime = startDate;
+                } else{
+                    if( toTime == "" ){
+                        var coin_sql = " >= " + admin.formatTime(fromTime);
+                    }else {
+                        var coin_sql = " and actionTime between "+admin.formatTime(fromTime)+" and "+ admin.formatTime(toTime);
+                    }
+                    $.ajax({
+                        type:'post',//可选get
+                        data:{
+                            uid: uid,
+                            coin_sql:coin_sql
+                        },
+                        url:layui.setter.URL_ADMIN+"/Agent/todayUserBetAmount",//这里是接收数据的PHP程序
+                        dataType:'Json',//服务器返回的数据类型 可选XML ,Json jsonp script html text等
+                        success:function(msg){
+                            var data = msg.data;
+                            if(msg.code == 0){
+//                                $('.number').html('<img src="" />');
+                                for(var i in data){
+                                    var id=data[i]['key'];
+                                    var todayUserBetAmount = data[i]['todayUserBetAmount'];
+                                    var todayUserZjAmount = data[i]['todayUserZjAmount'];
+                                    var fanDianAmount = data[i]['fanDianAmount'];
+                                    var brokerageAmount = data[i]['brokerageAmount'];//优惠金额
+                                    // var Beydata = Number( $('.betAmount_'+id).attr('ydata') )+Number(todayUserBetAmount);
+                                    // var zjdata = Number( $('.zjAmount_'+id).attr('ydata') )+Number(todayUserZjAmount);
+                                    var Beydata = Number(todayUserBetAmount);
+                                    var zjdata = Number(todayUserZjAmount);
+
+                                    var yingkui = Number(zjdata - Beydata - brokerageAmount).toFixed(2);
+
+                                    $('.betAmount_'+id).html(Beydata);//投注
+                                    $('.zjAmount_'+id).html(zjdata);//中奖
+                                    $('.fanDianAmount_'+id).html(fanDianAmount);//优惠
+                                    $('.yingkui_'+id).html(yingkui);//盈亏
+                                }
+                            }else {
+                                $('.number').html('0');
+                            }
+
+                        }
+                    });
+                }
+
+                $('.agrnt-list').on('click',function () {
+                    var id = $(this).attr('uid');
+                    layer.open({
+                        type: 1
+                        ,title: '代理链接'
+                        ,shadeClose: true
+                        ,area: ['900px', '425px']
+                        ,content: $('#ListAgent2').html()
+                    });
+                    form.render(null, 'Agent-table-element2');
+
+
+                    table.render({
+                        elem: '#AgentIndexList2'
+                        ,url: layui.setter.URL_ADMIN+'/CountData/LinkList?id='+id
+                        ,cols: [[
+                            {field:'lid', title: 'ID',width:70}
+                            ,{field:'fanDian', title: '返点(%)',templet: '#system_link_paytype_fandian',width:150}
+                            ,{field:'regCode', title: '邀请码',width:120}
+                            ,{field:'linkList', title: '邀请链接',width:280}
+                            ,{field:'type', title: '状态',templet: '#system_link_paytype_enable',width:100}
+                            ,{field:'score',  title: '操作', width:100,templet: function(d){
+                                    return '<a class="layui-btn layui-btn-sm link-list" lid="'+d.lid+'" href="javascript:;">保存</a>';
+                                }}
+                        ]]
+                        ,done: function(res){
+                            //修改
+                            $('.link-list').on('click',function(){
+                                var id = $(this).attr('lid');
+                                var iii = layer.msg('loading');
+                                var fanDian = $('.fanDian'+id).val();
+                                $.ajax({
+                                    type: "POST",
+                                    url: layui.setter.URL_ADMIN+"/CountData/updateLink?id="+id,
+                                    async:false,
+                                    data : {'fanDian' : fanDian },
+                                    success: function(res){
+                                        var _obj = JSON.parse(res);
+                                        if(_obj.code == 0){
+                                            layer.msg(_obj.msg, {time: 1000});
+                                        }else{
+                                            layer.msg(_obj.msg, {time: 3000});
+                                            table.reload('AgentIndexList2');
+                                        }
+                                    }
+                                });
+                            });
+
+                            form.on('switch(agent_link_switch)', function(obj){
+                                var json = JSON.parse(decodeURIComponent($(this).data('json')));
+                                var iii = layer.msg('loading');
+                                var type = json.type;
+                                if(type == 1){
+                                    type = 0;
+                                }else {
+                                    type = 1;
+                                }
+                                admin.req({
+                                    url: layui.setter.URL_ADMIN+'/CountData/updateLink?id='+json.lid
+                                    ,data: {type:type}
+                                    ,type: 'post'
+                                    ,done: function(_obj){
+                                        if(_obj.code == 0){
+                                            layer.close(iii);
+                                        }else{
+                                            layer.msg(_obj.msg, {time: 3000});
+                                            table.reload('AgentIndexList2');
+                                        }
+
+                                    }
+                                });
+                            });
+                        }
+                    });
+                });
+            }
+        });
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-index-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-index-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(indexForm)', function(data){
+            iii = layer.msg('loading');
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime){
+                //执行重载
+                table.reload('AgentIndexList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+                layer.close(iii)
+            }
+        };
+        //按钮搜索
+        $('.index-sort').click(function () {
+            //执行重载
+            iii = layer.msg('loading');
+            var paixu = $(this).attr('con');
+            table.reload('AgentIndexList', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    paixu: paixu,
+                }
+                ,loading:true
+            });
+            layer.close(iii)
+        })
+
+
+
+    });
+
+
+</script>
+

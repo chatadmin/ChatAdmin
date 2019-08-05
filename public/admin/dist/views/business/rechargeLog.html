@@ -1,0 +1,370 @@
+<title>充值记录</title>
+<div class="">
+	<div class="layui-fluid">
+		<div class="layui-row ">
+			<div class="layui-col-md12">
+				<div class="layui-card">
+					<!--<ul class="layui-tab-title ">-->
+						<!--<li class="layui-this changeState" data-type="99">待处理</li>-->
+						<!--<li class="changeState" data-type="7">已接受</li>-->
+						<!--<li class="changeState" data-type="5">已拒绝</li>-->
+						<!--<li class="changeState" data-type="101">全部记录</li>-->
+					<!--</ul>-->
+					<div class="layui-card-header">
+						充值记录
+					</div>
+					<div class="layui-card-body">
+						<form>
+						<div class="layui-inline layui-form" lay-filter="component-form-element">
+							<div class="layui-inline">
+								<input type="text" name="username" placeholder="会员名" autocomplete="off" class="layui-input" size="15">
+							</div>
+							<div class="layui-inline">
+								<input type="text" name="rechargeId" placeholder="充值编号" autocomplete="off" class="layui-input" size="15">
+							</div>
+							<div class="layui-inline">
+								<span>时间：从</span>
+								<div class="layui-input-inline">
+									<input type="text" class="layui-input" id="test-laydate-RechargeLog-start" autocomplete="off" name="fromTime" placeholder="开始日期">
+								</div>
+							</div>
+							<div class="layui-inline">
+								<span>到</span>
+								<div class="layui-input-inline">
+									<input type="text" class="layui-input" id="test-laydate-RechargeLog-end" autocomplete="off" name="toTime" placeholder="结束日期">
+								</div>
+								<span>状态类型：</span>
+							</div>
+
+							<div class="layui-inline layui-form" lay-filter="component-form-element">
+								<select name="type" lay-verify="">
+									<option value="101">所有类型</option>
+									<option value="99" selected="">正在申请</option>
+									<option value="5">已忽略</option>
+									<option value="1">手动到账</option>
+									<option value="2">自动到账</option>
+									<option value="9">管理员充值</option>
+									<option value="3">自动到账充值失败</option>
+									<option value="4">注册赠送充值</option>
+									<option value="6">管理员扣款</option>
+									<option value="7">充值成功</option>
+								</select>
+							</div>
+
+							<div class="layui-inline layui-form" lay-filter="component-form-elements">
+								<select name="bank" lay-verify="" id="BankHome">
+									<option value="">选择收款类型</option>
+								</select>
+							</div>
+							<div class="layui-inline">
+								<button class="layui-btn" lay-submit lay-filter="listRechargeLogForm">查找</button>
+							</div>
+							<!-- <div class="layui-inline">
+								<button class="layui-btn" type="reset">重置</button>
+							</div> -->
+						</div>
+						</form>
+					</div>
+					<div class="layui-card-body">
+						<table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentListRechargeLogList" lay-filter="AgentListRechargeLogList"></table>
+					</div>
+					<div style="color: red;padding: 10px 15px"><span>本次统计充值总额：</span> <span id="RechargeLog-Total" style="font-size: 18px">0.00</span> 元 </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/html" id="RechargeLog">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<table class="layui-table layui-form" style="margin:0;" lay-filter="RechargeLog1-table-element">
+					<tr>
+						<td width="30%">用户名：</td><td>{{ d.username }}</td>
+					</tr>
+					<tr>
+						<td>充值金额：</td><td style="font-size: 15px;color: #00a0e9">{{ d.amount }}</td>
+					</tr>
+					{{# if( d.firstAmount > 0 ){ }}
+					<tr>
+						<td>充值赠送：</td><td>{{ d.firstAmount }} ({{ d.firstAmount_s }}%)</td>
+					</tr>
+					{{# } }}
+					{{# if( d.czzs > 0){ }}
+					<tr>
+						<td>每次充值赠送：</td><td>{{ d.meicizs }} ({{ d.czzs }}%)</td>
+					</tr>
+					{{# } }}
+					{{# if( d.zs_coin > 0){ }}
+					<tr>
+						<td>充值通道赠送：</td><td>{{ d.zs_money }} ({{ d.zs_coin }}%)</td>
+					</tr>
+					{{# } }}
+					<tr>
+						<td>实际到账：</td><td style="font-size: 20px;color: red">{{ d.rechargeAmount }}</td>
+					</tr>
+					<tr>
+						<td>备注：</td>
+						<td>
+							<textarea id="Determine" name="" style="width: 100%;height: 60px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="layui-btn Determine layui-btn-normal">确定</button>
+							<button class="layui-btn closeBtn layui-btn-primary">取消</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="RechargeLogListSubPop"></script>
+
+<script type="text/html" id="RechargeLog1">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<table class="layui-table layui-form" style="margin:0;" lay-filter="RechargeLog1-table-element">
+					<tr>
+						<td>备注：</td>
+						<td>
+							<textarea id="Determine-ignore" name="" style="width: 100%;height: 60px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="layui-btn Determine-ignore layui-btn-normal" style="margin-left: 180px;">确定</button>
+							<button class="layui-btn closeBtn layui-btn-primary">取消</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+<script>
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form','laytpl'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,laytpl= layui.laytpl;
+
+//获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-RechargeLog-start').attr('value', startDate);
+
+        //载入表格数据
+        table.render({
+            elem: '#AgentListRechargeLogList'
+            ,url: layui.setter.URL_ADMIN+'/Recharge/rechargeList'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'username',align:'center', title: '用户名', width: 130},
+                {field:'nickname',align:'center', title: '账号昵称', width: 120},
+                {field:'amount',align:'center', title: '充值金额', width: 120},
+                {field:'rechargeAmount',align:'center', title: '实际到账', width: 120},
+                {field:'bankNames',align:'center', title: '充值银行'},
+                {field:'typeid',align:'center', title: '充值类型',templet: function(d){
+                    if(d.typeid == 1){return '在线充值'}else if(d.typeid == 2){return '转账充值'}else if(d.typeid == 3){return '注册赠送'}else {return '未知'}
+                }},
+                {field:'status',align:'center', title: '状态', templet: function(d){
+                    return d.status ? d.status :""
+                }},
+                {field:'actionTime',align:'center', title: '时间',templet: function(d){return admin.formatDateNoYear(d.actionTime); }},
+                {field:'info',align:'center', title: '备注'},
+                {align:'center', width: 140, title: '操作',fixed: 'right',templet: function(d){
+                    if(d.caozuo == 1){
+                        return '<button class="layui-btn layui-btn-sm Account-handling layui-btn-xs layui-btn-normal" amount="'+ d.amount +'" con="'+d.id+'" user="'+d.username+'">处理</button>&nbsp;' +
+                            '<button class="layui-btn layui-btn-sm layui-btn-xs ignore" con="'+d.id+'">忽略</button>'
+					}else {
+                        return '-';
+					}
+
+                }}
+			]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                var _amount = res.amount;
+                $('#RechargeLog-Total').html(_amount);
+
+                //到账处理
+                $('.Account-handling').click(function () {
+                    var id = $(this).attr('con');
+                    $.post(layui.setter.URL_ADMIN+"/Recharge/rechargeOn?id="+id,function(res){
+                        var ress = JSON.parse(res);
+                        var data = ress.data;
+                        var rechargeAmount = Number(data.rechargeAmount);
+                        var getTpl = RechargeLog.innerHTML
+                            ,view = document.getElementById('RechargeLogListSubPop');
+                        laytpl(getTpl).render(data, function(html){
+                            view.innerHTML = html;
+                        });
+                        layer.open({
+                            title:'到账处理'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                            ,content: $('#RechargeLogListSubPop').html()
+                        });
+                        form.render(null, 'RechargeLog-table-element');
+
+                        $('.Determine').click(function () {
+                            var info = $('#Determine').val();
+                            $.ajax({
+                                type: "POST",
+                                url: layui.setter.URL_ADMIN+"/Recharge/rechargeHandle",
+                                data:{
+                                    id:id,
+                                    info:info,
+                                    rechargeAmount:rechargeAmount
+                                },
+                                success: function(res){
+                                    var data = JSON.parse(res);
+                                    if(data.code == 0){
+                                        table.reload('AgentListRechargeLogList');
+                                        layer.closeAll();
+                                    }
+                                }
+                            });
+                        });
+                    });
+
+                });
+
+                //拒绝
+                $('.ignore').click(function () {
+                    var id = $(this).attr('con');
+                        layer.open({
+                            title:'确定忽略？'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                            ,content: $('#RechargeLog1').html()
+                        });
+                        form.render(null, 'RechargeLog1-table-element');
+                        $('.Determine-ignore').click(function () {
+                            var info = $('#Determine-ignore').val();
+                            $.ajax({
+                                type: "POST",
+                                url: layui.setter.URL_ADMIN+"/Recharge/rechargeDelete",
+								data:{
+                                    id:id,
+                                    info:info
+								},
+                                success: function(res){
+                                    var data = JSON.parse(res);
+									if(data.code == 0){
+                                        table.reload('AgentListRechargeLogList');
+                                        layer.closeAll();
+									}
+                                }
+                            });
+                        });
+                });
+            }
+        });
+
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-RechargeLog-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-RechargeLog-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        var ii = "";
+        form.on('submit(listRechargeLogForm)', function(data){
+            ii = layer.msg('loading');
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,rechargeId = data.field.rechargeId.trim()
+                ,type = data.field.type.trim()
+                ,bank = data.field.bank.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime,rechargeId,type,bank);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime,rechargeId,type,bank){
+                //执行重载
+                table.reload('AgentListRechargeLogList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        rechargeId: rechargeId,
+                        type: type,
+                        bank: bank,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+                layer.close(ii);
+            }
+        };
+
+
+
+		//选项卡切换
+        $('.changeState').on('click', function(){
+            var type = $(this).data('type');
+            active['reloadList'].call(this, type);
+        });
+        $(document).on('click', '.closeBtn', function(){
+            layer.closeAll();
+        });
+
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Recharge/bankList'
+            ,done: function(res){
+                var _dom = '';
+                var data = res.bank;
+                for(var i in data){
+                    _dom += '<option value="'+data[i]["id"]+'">'+data[i]["title"]+'</option>'
+                }
+                $('#BankHome').append(_dom);
+                form.render('select');
+            }
+        });
+    });
+
+
+</script>
+

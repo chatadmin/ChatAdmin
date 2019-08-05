@@ -1,0 +1,286 @@
+<style>
+	#DGG_app .layui-msg-box { position:relative; }
+	#DGG_app .layui-msg-box a { color:#FFF; }
+	#DGG_app .layui-msg-box span { background:#FFF;color:#BBB; }
+	#DGG_app .layui-msg-box span.layui-msg-ignore { width:78px;height:28px;line-height:28px;position:absolute;top:31px;left:0;background:#FFF;border:1px solid #1e9fff;color:#888;display:none;font-size:12px; }
+</style>
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <!-- 头部区域 -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item layadmin-flexible" lay-unselect>
+        <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+          <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+        </a>
+      </li>
+      <li class="layui-nav-item layui-this layui-hide-xs layui-hide-sm layui-show-md-inline-block">
+        <a lay-href="" title="">
+          首页
+        </a>
+      </li>
+      <li class="layui-nav-item" lay-unselect>
+        <a href="javascript:;" layadmin-event="refresh" title="刷新">
+          <i class="layui-icon layui-icon-refresh-3"></i>
+        </a>
+      </li>
+    </ul>
+
+
+    <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+	  <li id="layui-msg-cz" class="layui-btn layui-bg-blue layui-msg-box" style="padding:0 30px 0 8px;visibility:hidden;display:inline-block;">
+	  	<a lay-href="Business/rechargeLog">新充值<span class="mp3"></span><span class="layui-badge">1</span></a>
+	  	<span class="layui-msg-ignore">忽略</span>
+	  </li>
+	  <li id="layui-msg-tx" class="layui-btn layui-bg-red layui-msg-box" style="padding:0 30px 0 8px;visibility:hidden;">
+	  	<a lay-href="Business/cashLog">新提款<span class="mp3"></span><span class="layui-badge">1</span></a>
+	  	<span class="layui-msg-ignore" style="border-color:#ff5722;">忽略</span>
+	  </li>
+      <li class="layui-nav-item" lay-unselect>
+        <a lay-href="app/message/" layadmin-event="message">
+          <i class="layui-icon layui-icon-notice"></i>
+          <!-- 如果有新消息，则显示小圆点 -->
+          <script type="text/html" template lay-url="./json/dgg_notice/new.js">
+          {{# if(d.data.newmsg){ }} 
+            <span class="layui-badge-dot"></span>
+          {{# } }}
+          </script>
+          
+        </a>
+      </li>
+      <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="javascript:;" layadmin-event="note">
+          <i class="layui-icon layui-icon-note"></i>
+        </a>
+      </li>
+      <li class="layui-nav-item" style="cursor: pointer">
+        <a id="clean">
+          清除缓存
+        </a>
+      </li>
+      <li class="layui-nav-item" lay-unselect>
+        <script type="text/html" template lay-url="../../admindgg/member/userinfo"
+        lay-done="layui.element.render('nav', 'layadmin-layout-right');">
+          <a href="javascript:;">
+            <cite>{{ d.data.username }}</cite>
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a lay-href="Manage/">管理员列表</a></dd>
+            <hr>
+            <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+          </dl>
+        </script>
+      </li>
+      
+      <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
+      </li>
+      <!-- <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+        <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
+      </li> -->
+    </ul>
+  </div>
+  
+  <!-- 侧边菜单 -->
+  <div class="layui-side layui-side-menu">
+    <div class="layui-side-scroll">
+
+      <script type="text/html" template lay-done="layui.element.render('nav', 'layadmin-system-side-menu');" id="TPL_layout">
+
+        <div class="layui-logo" lay-href="">
+          <span>{{ layui.setter.name || 'layuiAdmin' }}</span>
+        </div>
+        
+        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+        {{#
+          var path =  layui.router().path
+          ,pathURL = layui.admin.correctRouter(path.join('/'))
+          ,dataName = layui.setter.response.dataName;
+          
+          layui.each(d[dataName], function(index, item){ 
+            var hasChildren = typeof item.list === 'object' && item.list.length > 0
+            ,classSelected = function(){
+              var match = path[0] == item.name || (index == 0 && !path[0]) 
+              || (item.jump && pathURL == layui.admin.correctRouter(item.jump)) || item.spread;
+              if(match){
+                return hasChildren ? 'layui-nav-itemed' : 'layui-this';
+              }
+              return '';
+            }
+            ,url = (item.jump && typeof item.jump === 'string') ? item.jump : item.name;
+        }}
+          <li data-name="{{ item.name || '' }}" data-jump="{{ item.jump || '' }}" class="layui-nav-item {{ classSelected() }}">
+            <a href="javascript:;" {{ hasChildren ? '' : 'lay-href="'+ url +'"' }} lay-tips="{{ item.title }}" lay-direction="2">
+              <i class="layui-icon {{ item.icon }}"></i>
+              <cite>{{ item.title }}</cite>
+            </a>
+            {{# if(hasChildren){ }}
+              <dl class="layui-nav-child">
+              {{# layui.each(item.list, function(index2, item2){ 
+                var hasChildren2 = typeof item2.list == 'object' && item2.list.length > 0
+                ,classSelected2 = function(){
+                  var match = (path[0] == item.name && path[1] == item2.name) 
+                  || (item2.jump && pathURL == layui.admin.correctRouter(item2.jump)) || item2.spread;
+                  if(match){
+                    return hasChildren2 ? 'layui-nav-itemed' : 'layui-this';
+                  }
+                  return '';
+                }
+                ,url2 = (item2.jump && typeof item2.jump === 'string') 
+                  ? item2.jump 
+                : [item.name, item2.name, ''].join('/'), url2 = url2.substring(0,url2.length-1);
+              }}
+                <dd  data-name="{{ item2.name || '' }}"  data-jump="{{ item2.jump || '' }}" 
+                {{ classSelected2() ? ('class="'+ classSelected2() +'"') : '' }}>
+                  <a href="javascript:;" {{ hasChildren2 ? '' : 'lay-href="'+ url2 +'"' }}>{{ item2.title }}</a>
+                  {{# if(hasChildren2){ }}
+                    <dl class="layui-nav-child">
+                      {{# layui.each(item2.list, function(index3, item3){ 
+                        var match = (path[0] == item.name && path[1] == item2.name && path[2] == item3.name) 
+                        || (item3.jump && pathURL == layui.admin.correctRouter(item3.jump))
+                        ,url3 = (item3.jump && typeof item3.jump === 'string') 
+                          ? item3.jump 
+                        : [item.name, item2.name, item3.name].join('/')
+                      }}
+                        <dd data-name="{{ item3.name || '' }}"  data-jump="{{ item3.jump || '' }}" 
+                        {{ match ? 'class="layui-this"' : '' }}>
+                          <a href="javascript:;" lay-href="{{ url3 }}" {{ item3.iframe ? 'lay-iframe="true"' : '' }}>{{ item3.title }}</a>
+                        </dd>
+                      {{# }); }}
+                    </dl>
+                  {{# } }}
+                </dd>
+            {{# }); }}
+            </dl>
+            {{# } }}
+          </li>
+        {{# }); }}
+        </ul>
+      </script>
+    </div>
+  </div>
+  
+
+  <!-- 页面标签 -->
+  <script type="text/html" template lay-done="layui.element.render('nav', 'layadmin-pagetabs-nav')">
+    {{# if(layui.setter.pageTabs){ }}
+    <div class="layadmin-pagetabs" id="LAY_app_tabs">
+      <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-down">
+        <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:;"></a>
+            <dl class="layui-nav-child layui-anim-fadein">
+              <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+              <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+              <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+            </dl>
+          </li>
+        </ul>
+      </div>
+      <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+        <ul class="layui-tab-title" id="LAY_app_tabsheader">
+          <li lay-id="/"><i class="layui-icon layui-icon-home"></i></li>
+        </ul>
+      </div>
+    </div>
+    {{# } }}
+  </script>
+  
+  
+  <!-- 主体内容 -->
+  <div class="layui-body" id="LAY_app_body">
+    <div class="layadmin-tabsbody-item layui-show"></div>
+  </div>
+  
+  <!-- 辅助元素，一般用于移动设备下遮罩 -->
+  <div class="layadmin-body-shade" layadmin-event="shade"></div>
+  
+</div>
+<script>
+layui.use(['admin'], function(){
+    var setRemindData = function(ss){
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Business/getRemind?states='+ss			//查看/处理
+            ,done: function(res){
+            }
+        });
+    };
+    var $ = layui.$, admin = layui.admin;
+	$('.layui-msg-box').hover(function(){
+		$(this).find('.layui-msg-ignore').show();
+	},function(){$(this).find('.layui-msg-ignore').hide();});
+
+	$('#layui-msg-cz').click(function(){
+		$(this).css('visibility', 'hidden').find('.mp3').html('');
+        setRemindData(1);
+	});
+	$('#layui-msg-tx').click(function(){
+		$(this).css('visibility', 'hidden').find('.mp3').html('');
+        setRemindData(2);
+	});
+
+    $('.layui-msg-ignore').click(function(){	//点击忽略
+    	$(this).parent().css('visibility', 'hidden').find('.mp3').html('');
+    });
+    $('.layui-msg-ignores').click(function(){	//点击忽略
+        $(this).css('visibility', 'hidden');
+    });
+
+    var data = '';
+    admin.req({
+        url: layui.setter.URL_ADMIN+'/user/setting'			//查看/处理
+        ,done: function(res){
+            data = res.data;
+        }
+    });
+    $('#TPL_layout').attr('lay-url',layui.setter.URL_ADMIN+'/CountData/getJs?v={{ layui.admin.v }}');
+
+    $('#clean').on('click',function () {
+        layer.confirm('确定清除缓存吗？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            admin.req({
+                url:layui.setter.URL_ADMIN+'/data/delClean'
+                ,done: function(res){
+                    layer.msg(res.msg);
+                }
+            });
+        }, function(){
+            //layer.msg('已取消操作', {time: 1000});
+        });
+    });
+	//获取充值/提现提醒
+  	var getRemindData = function(){
+  		admin.req({
+			url: layui.setter.URL_ADMIN+'/Business/getRemind'			//查看/处理
+			,done: function(res){
+				if(res.flag == 3){	//全部提醒
+					$('#layui-msg-cz,#layui-msg-tx').css('visibility', 'visible');
+					if($('#layui-msg-cz').find('.mp3').is(':empty')) {
+					    $('#layui-msg-cz').find('.mp3').html('<audio autoplay="autoplay" style="display:none;" loop="loop"><source src="src/style/sound/cz.mp3" type="audio/mp3" /></audio>');
+                    }
+					if($('#layui-msg-tx').find('.mp3').is(':empty')) {
+					    $('#layui-msg-tx').find('.mp3').html('<audio autoplay="autoplay" style="display:none;" loop="loop"><source src="src/style/sound/tx.mp3" type="audio/mp3" /></audio>');
+                    }
+				}else if(res.flag == 1) {
+                    $('#layui-msg-tx').css('visibility', 'hidden').find('.mp3').html('');
+				    $('#layui-msg-cz').css('visibility', 'visible').find('.mp3').html('<audio autoplay="autoplay" style="display:none;" loop="loop"><source src="src/style/sound/cz.mp3" type="audio/mp3" /></audio>');
+                } else if(res.flag == 2) {
+                    $('#layui-msg-cz').css('visibility', 'hidden').find('.mp3').html('');
+				    $('#layui-msg-tx').css('visibility', 'visible').find('.mp3').html('<audio autoplay="autoplay" style="display:none;" loop="loop"><source src="src/style/sound/tx.mp3" type="audio/mp3" /></audio>');
+                }else if(res.flag == 6){
+                    $('#layui-msg-cz').css('visibility', 'hidden').find('.mp3').html('');
+                    $('#layui-msg-tx').css('visibility', 'hidden').find('.mp3').html('');
+                }else if(res.flag == 4){
+                    $('#layui-msg-tx').css('visibility', 'hidden').find('.mp3').html('');
+                }else if(res.flag == 5){
+                    $('#layui-msg-cz').css('visibility', 'hidden').find('.mp3').html('');
+                }
+			}
+		});
+  	}
+  	getRemindData();	//获取充提提醒
+  	setInterval(getRemindData, 10000);
+});
+</script>

@@ -1,0 +1,117 @@
+
+<title>微信设置</title>
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-header">微信登录设置</div>
+    <div class="layui-card-body" style="padding: 15px;" id="system_settings_wxsetting_div">
+    </div>
+  </div>
+</div>
+<script type="text/html" id="system_settings_wxsetting_sc">
+<div class="layui-form" lay-filter="system_settings_wxsetting">
+        <div class="layui-form-item">
+          <label class="layui-form-label">公众号ID</label>
+          <div class="layui-col-md2">
+            <input type="text" name="wxappid" lay-verify="required" autocomplete="off" placeholder="公众号APPID" class="layui-input" value="{{ d.wxappid || '' }}">
+          </div>		  
+		  <div class="layui-form-mid layui-word-aux">&nbsp;请输入公众号APPID</div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">公众号KEY</label>
+          <div class="layui-col-md2">
+            <input type="text" name="wxseckey" lay-verify="required" placeholder="公众号KEY" autocomplete="off" class="layui-input" value="{{ d.wxseckey || '' }}">
+          </div>
+		  <div class="layui-form-mid layui-word-aux">&nbsp;请输入公众号KEY</div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">公众号域名</label>
+            <div class="layui-col-md2">
+              <input type="text" name="wxdomain" autocomplete="off" class="layui-input" value="{{ d.wxdomain || '' }}">
+            </div>
+			 <div class="layui-form-mid layui-word-aux">&nbsp;不带http://，需要在微信公众平台后台绑定,仅此域名会调用微信登陆</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">微信返点</label>
+            <div class="layui-col-md1">
+              <input type="text" name="wxfandian" lay-verify="number"  autocomplete="off" class="layui-input" value="{{ d.wxfandian || '' }}">
+            </div>
+			 <div class="layui-form-mid layui-word-aux">% 微信代理默认返点，必须少于目前系统最大返点（{{ d.fanDianMax }}%）</div>
+        </div>	
+        <div class="layui-form-item">
+            <label class="layui-form-label">推广文字1</label>
+            <div class="layui-col-md3">
+              <input type="text" name="wxtuiguang" autocomplete="off" class="layui-input" value="{{ d.wxtuiguang || '' }}">
+            </div>
+			<div class="layui-form-mid layui-word-aux">&nbsp;仅限一行，微信推广财神图下方显示</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">推广文字2</label>
+            <div class="layui-col-md3">
+              <input type="text" name="wxtuiguang2" autocomplete="off" class="layui-input" value="{{ d.wxtuiguang2 || '' }}">
+            </div>
+			<div class="layui-form-mid layui-word-aux">&nbsp;仅限一行，微信推广财神图下方显示</div>
+        </div>	
+        <div class="layui-form-item">
+          <label class="layui-form-label">绑定/创建</label>
+          <div class="layui-input-block">
+            <input type="radio" name="wxBindAccount" value="0" title="不开启" {{#  if(d.wxBindAccount!= 1){ }} checked {{#  } }} >
+            <input type="radio" name="wxBindAccount" value="1" title="开启"  {{#  if(d.wxBindAccount== 1){ }} checked {{#  } }}>
+          </div>
+		  <div class="layui-form-mid layui-word-aux"> 开启后，用户首次从微信授权登录后需绑定或创建账号（可日后在PC或手机浏览器登录账号），未开启将自动帮用户注册账号</div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">下级类型</label>
+          <div class="layui-input-block">
+            <input type="radio" name="wxUserType" value="0" title="代理" {{#  if(d.wxUserType!= 1){ }} checked {{#  } }} >
+            <input type="radio" name="wxUserType" value="1" title="普通用户" {{#  if(d.wxUserType == 1){ }} checked {{#  } }} >
+          </div>
+		  <div class="layui-form-mid layui-word-aux">设置通过邀请二维码注册的用户是否为代理，设置为普通用户则普通用户获取的邀请链接为上级的二维码图片</div>		  
+        </div>       
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <div class="layui-footer">
+              <button class="layui-btn" lay-submit="" lay-filter="system_settings_wxsetting_submit">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</script>
+<script>
+layui.use(['admin', 'form', 'laytpl'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,element = layui.element
+  ,laytpl = layui.laytpl,layer = layui.layer
+  ,form = layui.form;
+  
+  
+  admin.req({
+	url: layui.setter.URL_ADMIN+'/system/settings'
+   ,done: function(res){
+		$('#system_settings_wxsetting_div').html(laytpl($('#system_settings_wxsetting_sc').html()).render(res.data));
+		form.render(null, 'system_settings_wxsetting');
+		form.on('submit(system_settings_wxsetting_submit)', function(data){
+			var iii = layer.msg('loading');
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/system/updatesettings'
+				,data: data.field
+				,type: 'post'
+				,done: function(res){
+					layer.close(iii)
+					if(res.code>0){
+						layer.msg(res.msg, {icon: 5});
+					}else{
+						layer.msg(res.msg, {icon: 1});
+						setTimeout(function(){	
+							layer.closeAll();
+						},1000);		
+					}
+				}
+			});	
+		})		
+   }
+  }); 	
+});
+</script>

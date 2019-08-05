@@ -1,0 +1,140 @@
+<title>添加角色</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">添加角色</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;" lay-filter="addJurisd-table-element1">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入角色名称" class="layui-input" style="width: 30%;">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">设置权限</label>
+                        <input type="checkbox" name="" title="全选" lay-filter="allQXX" class="allQX" lay-skin="primary" >
+                    </div>
+                    <!--<div class="layui-inline">-->
+                        <!--<button class="layui-btn layui-btn-sm layui-btn-normal" con="1" id="AddDisplay">展开权限列表</button>-->
+                    <!--</div>-->
+                </div>
+                <div id="AddJurList">
+                    <!--<div class="layui-form-item">-->
+                        <!--<label class="layui-form-label">业务流水</label>-->
+                        <!--<div class="layui-input-block">-->
+                            <!--<input type="checkbox" name="" title="全选" lay-filter="allQX" class="allQX" lay-skin="primary" >-->
+                            <!--<input type="checkbox" name="" title="写作" lay-skin="primary" >-->
+                            <!--<input type="checkbox" name="" title="发呆" lay-skin="primary">-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="addJurForm" class="layui-btn">立即提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','layer','form','jquery'], function(){
+        var $ = layui.jquery, layer = layui.layer,form = layui.form ,admin = layui.admin;
+
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Menu/get_menu',
+            done: function(res){
+                var data = res.data;
+                var _dom = "";
+                for(var i in data){
+                    _dom += '<div class="layui-form-item">'+
+                        '<label class="layui-form-label">'+data[i]["title"]+'</label>'+
+                        '<div class="layui-input-block">'+
+                        '<input type="checkbox" value="'+data[i]["id"]+'" title="必选" lay-filter="allQX" class="allQX" lay-skin="primary" checked>';
+                        var list = data[i]['list'];
+                        for(var j in list){
+                            _dom += '<input type="checkbox" lay-filter="QXpa" value="'+list[j]["id"]+'" title="'+list[j]["title"]+'" lay-skin="primary" >'
+                        }
+                    _dom += '</div></div>';
+                }
+                $('#AddJurList').html('');
+                $('#AddJurList').html(_dom);
+                form.render('checkbox');
+            }
+        });
+
+
+
+
+        //全选
+        form.on('checkbox(allQX)', function(data){
+            var child = $(this).nextAll('input[type="checkbox"]');
+            child.each(function(index, item){
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+
+        form.on('checkbox(allQXX)', function(data){
+            var child = $('input[type="checkbox"]');
+            child.each(function(index, item){
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+
+
+        //单选
+        form.on('checkbox(QXpa)', function(data){
+            var child = $(this).siblings('input[type="checkbox"]');
+            child.eq(0).attr('checked',true);
+            form.render('checkbox');
+        });
+
+        //消息提交发送
+        $("#addJurForm").on("click",function () {
+            var mid = "";
+            var id = $("input[type='checkbox']:checked");//权限选择
+            var name = $("input[name='name']").val();
+            for(var i=1 ;i < id.length ; i++){
+                mid += id.eq(i).val()+",";
+            }
+            mid = mid.substring(0,mid.length-1);
+            if(name != ""){
+                $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: layui.setter.URL_ADMIN+"/Menu/addRole",//url
+                    data: {
+                        mid:mid,
+                        name:name
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            $('input[name="name"]').val('');
+                            $("input[type='checkbox']").removeAttr('checked')
+                            form.render('checkbox');
+                            layer.msg(data.msg, {time: 1000},function(){
+                                location.hash = '/Manage/PermissionsList';
+                            });
+                        }else {
+                            layer.msg(data.msg, {time: 1000});
+                        }
+                    }
+                })
+            }else {
+                layer.msg('角色名称不能为空', {time: 1000});
+            }
+        });
+    });
+
+
+</script>
+

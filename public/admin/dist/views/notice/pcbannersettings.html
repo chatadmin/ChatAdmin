@@ -1,0 +1,70 @@
+<title>PC顶部通栏</title>
+
+    <div class="">
+        <div class="layui-fluid">
+            <div class="layui-row ">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">PC顶部通栏大图</div>
+                        <div class="layui-card-body">
+                            <div class="layui-card-body">
+                                <div class="layui-upload-drag" id="test-upload-drag">
+                                    <i class="layui-icon"></i>
+                                    <p>点击上传，或将文件拖拽到此处</p>
+                                </div><input class="layui-upload-file" type="file" accept="undefined" name="file">
+                            </div>
+                            <blockquote class="layui-elem-quote">图片规格：1180x219，文件大小：300KB以内（点击图片更换）</blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+
+//    console.log(layui.setter.URL_ADMIN);
+    layui.use(['jquery','admin', 'upload'], function(){
+        var $ = layui.jquery,upload = layui.upload,admin = layui.admin;
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Activity/get_info',
+            done: function(res){
+                var _data = res.data;
+                $('#test-upload-drag').html('<img class="layui-upload-img" id="test-upload-normal-img_pc" src="'+_data.pcBanner+'" >');
+                //拖拽上传
+                upload.render({
+                    elem: '#test-upload-drag'
+                    ,url: layui.setter.URL_ADMIN+'/Information/pcBanner'
+                    ,before: function(obj){
+                        //预读本地文件示例，不支持ie8
+                        layer.msg('图片上传中。。。');
+                        obj.preview(function(index, file, result){
+                            $('#test-upload-drag').html('<img src="'+result+'" >');
+                        });
+                    }
+                    ,done: function(res){
+                        if(res.code == 0 ){
+                            layer.msg(res.msg, {time: 1000},function(){
+                                layer.closeAll();
+                            });
+                        }else {
+                            layer.msg(res.msg, {time: 1000});
+                        }
+                    }
+                });
+            }
+        });
+
+
+    });
+
+
+//    获取图片路径
+    layui.use(['admin'], function(){
+        var $ = layui.jquery, admin = layui.admin;
+
+    });
+
+
+</script>
+

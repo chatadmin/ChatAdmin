@@ -1,0 +1,501 @@
+<title>优惠活动管理</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div style="float: left">优惠活动管理</div>
+                        <div style="float: right;">
+                            <button class="layui-btn layui-btn-sm addActivitys layui-btn-normal" >
+                                添加活动
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="bannerList5" lay-filter="bannerList5"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="ListActivity1" lay-filter="Activity-table-element1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form">
+                <form enctype="multipart/form-data" id="addActivityForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="Activity-title" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input" style="width: 80%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">活动简介</label>
+                        <div class="layui-input-block">
+                            <textarea type="text" name="description"  placeholder="" autocomplete="off" class="layui-input" style="width: 80%;height: 60px"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">活动内容</label>
+                        <div class="layui-input-block">
+                            <textarea type="text" id="add_activity" name="content"  placeholder="" autocomplete="off" class="layui-input" style="width: 80%;height: 60px"></textarea>
+                        </div>
+                    </div>
+
+                    <style>
+                        .file{cursor: pointer;float: left;  width: 102px;height: 40px;  padding: 10px 5px;  border: 1px dashed #e2e2e2;  background-color: #fff;  text-align: center;  cursor: pointer;  color: #999;  display: inline-block;}
+                        .file input{cursor: pointer;display: block;width: 102px;height: 100%;z-index: 9;position:absolute;top: 0;margin-left: 0;opacity: 0}
+                        .file img{cursor: pointer;height: 45px;position:relative;top: 0;margin-left: 0;margin-top: -72px;width: 102px;}
+                    </style>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上传图片</label>
+                        <div class="layui-input-block" style="height: 50px">
+                            <div class="file">
+                                <div class="surplus">
+                                    <i class="layui-icon" style="font-size: 30px; color: #009688;"></i>
+                                    <p style="font-size: 10px;">点击上传</p></div>
+                                <input type="file" name="link" placeholder="" id="Activity-img1">
+                                <img src="" alt="" id="Activity-img2">
+                            </div>
+                            <div class="layui-inline" style="float: left;height:40px;line-height: 40px;padding: 10px 5px;"> *推荐图片规格：680x170 </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="layui-startime-Activity" readonly="readonly" name="startime"  placeholder="开始时间" class="layui-input" style="width: 50%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="layui-endtime-Activity" readonly="readonly" name="endtime"  placeholder="结束时间" class="layui-input" style="width: 50%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">排序</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="sort" value="1"  placeholder="排序" autocomplete="off" class="layui-input" style="width: 30%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="display: none">
+                        <label class="layui-form-label">nodeId</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="nodeId" value="4"  placeholder="" autocomplete="off" class="layui-input"  style="width: 10%;">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="display: none">
+                        <label class="layui-form-label"></label>
+                        <div class="layui-input-block">
+                            <input type="text" name="typeid" value="13"  placeholder="" autocomplete="off" class="layui-input"  style="width: 10%;">
+                        </div>
+                    </div>
+                </form>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="NoticeActivityForm" lay-submit lay-filter="NoticeActivityForm"  class="layui-btn layui-btn-normal">立即提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/html" id="ListActivity2" lay-filter="Activity-table-element2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12  layui-form">
+                <form enctype="multipart/form-data" id="updateActivityForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="update-Activity-title" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input" style="width: 80%">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">活动简介</label>
+                        <div class="layui-input-block">
+                            <textarea type="text" name="description"  placeholder="" autocomplete="off" class="layui-input" style="width: 80%;height: 60px"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">活动内容</label>
+                        <div class="layui-input-block">
+                            <textarea type="text" name="content" id="update_activity"  placeholder="" autocomplete="off" class="layui-input" style="width: 80%;height: 60px"></textarea>
+                        </div>
+                    </div>
+
+                    <style>
+                        .update-file{cursor: pointer;float: left;  width: 102px;height: 40px;  padding: 10px 5px;  border: 1px dashed #e2e2e2;  background-color: #fff;  text-align: center;  cursor: pointer;  color: #999;  display: inline-block;}
+                        .update-file input{cursor: pointer;display: block;width: 102px;height: 100%;z-index: 9;position:absolute;top: 0;margin-left: 0;opacity: 0}
+                        .update-file img{cursor: pointer;height: 45px;position:relative;top: 0;margin-left: 0;margin-top: -72px;width: 102px;}
+                    </style>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">点击上传</label>
+                        <div class="layui-input-block" style="height: 50px">
+                            <div class="update-file">
+                                <div class="surplus" style="opacity: 0">
+                                    <i class="layui-icon" style="font-size: 30px; color: #009688;"></i>
+                                    <p style="font-size: 10px;">点击上传</p></div>
+                                <input type="file" name="link"  placeholder="" id="update-Activity-img1">
+                                <img src="" alt="" id="update-Activity-img2">
+                            </div>
+                            <div class="layui-inline" style="float: left;height:40px;line-height: 40px;padding: 10px 5px;"> *推荐图片规格：680x170</div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="update-layui-startime-Activity" readonly="readonly" name="startime"  placeholder="开始时间" class="layui-input" style="width: 50%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="update-layui-endtime-Activity" readonly="readonly" name="endtime"  placeholder="结束时间" class="layui-input" style="width: 50%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">排序</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="sort" value="1"  placeholder="排序" autocomplete="off" class="layui-input" style="width: 30%">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="display: none">
+                        <label class="layui-form-label">nodeId</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="nodeId" value="4"  placeholder="" autocomplete="off" class="layui-input"  style="width: 10%;">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="display: none">
+                        <label class="layui-form-label"></label>
+                        <div class="layui-input-block">
+                            <input type="text" name="typeid" value="13"  placeholder="" autocomplete="off" class="layui-input"  style="width: 10%;">
+                        </div>
+                    </div>
+                </form>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="update-NoticeActivityForm" lay-submit lay-filter="update-NoticeActivityForm"  class="layui-btn layui-btn-normal">提交修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','table','form','laydate','jquery','layedit'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,form = layui.form ,laydate = layui.laydate,jquery = layui.jquery,layedit = layui.layedit;
+
+        //载入表格数据
+        table.render({
+            elem: '#bannerList5'
+            ,url: layui.setter.URL_ADMIN+'/Information/get_all_info?typeid=13'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'id',align:'center', title: 'ID', width: 130},
+                {field:'title',align:'center', title: '活动名称'}
+                ,{field:'startime',align:'center', title: '展示开始时间',  sort: true,templet: function(d){return admin.formatDates(d.startime); }}
+                ,{field:'endtime',align:'center', title: '展示结束时间',templet: function(d){return admin.formatDates(d.endtime); }}
+                ,{field:'addTime',align:'center', title: '添加时间',templet: function(d){return admin.formatDates(d.addTime); }}
+                ,{align:'center', title: '操作',width: 200,  fixed: 'right',templet: function(d){
+                    var str = '';
+                    str += '<a class="layui-btn layui-btn-sm activity-update"  style="color: #fbfbfb" href="javascript:;" update="'+d.id+'">修改</a>';
+                    str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="layui-btn layui-btn-danger layui-btn-sm btn_del" del="'+d.id+'">删除</button>';
+                    return str;
+                }}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                //删除操作
+                layui.use(['jquery',], function(){
+                    var $= layui.jquery;
+                    $(function(){
+                        $('.btn_del').on('click',function(){
+                            var id = $(this).attr('del');
+                            layer.confirm('确定删除所选项吗？', {
+                                btn: ['确定删除','取消'] //按钮
+                            }, function(){
+                                $.post(layui.setter.URL_ADMIN+"/Information/deleteBanner?id="+id,function(res){
+                                    var _obj = JSON.parse(res);
+                                    if(_obj.code == 0){
+                                        layer.msg(_obj.msg, {time: 1000});
+                                        table.reload('bannerList5',{});
+                                    }else{
+                                        layer.msg(_obj.msg, {time: 1000});
+                                    }
+                                });
+                            }, function(){
+                                //layer.msg('已取消操作', {time: 1000});
+                            });
+                        });
+                    });
+                });
+
+                var index = "";
+                //修改
+                $('.activity-update').on('click',function () {
+                    var id = $(this).attr('update');
+                    $.ajax({
+                        type:'post',
+                        url:layui.setter.URL_ADMIN+'/Information/get_info?id='+id,
+                        dataType:'json',
+                        success:function(res){
+                            var data = res.data;
+                            $('input[name="title"]').val(data[0]['title']);
+                            $('textarea[name="description"]').val(data[0]['description']);
+                            $('textarea[name="content"]').val(data[0]['content']);
+                            $('#update-Activity-img2').attr('src',data[0]['link']);
+                            $('input[name="startime"]').val(admin.formatDates(data[0]['startime']));
+                            $('input[name="endtime"]').val(admin.formatDates(data[0]['endtime']));
+                            $('input[name="sort"]').val(data[0]['sort']);
+                            //编辑器图片上传 置于最前
+                            layedit.set({
+                                uploadImage: {
+                                    url: layui.setter.URL_ADMIN+'/Information/file' //接口url
+                                    ,type: 'post' //默认post
+                                }
+                            });
+                            //构建一个默认的编辑器
+                            index = layedit.build('update_activity');
+                        }
+                    });
+
+                    layer.open({
+                        title:'修改活动'
+                        ,type: 1
+                        ,shadeClose: true
+                        ,area: ['800px', '90%']
+                        ,content: $('#ListActivity2').html()
+                    });
+                    form.render(null, 'Activity-table-element2');
+
+                    //获取当前日期
+                    var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+                    //防止开始日期被重置为空
+                    $('#update-layui-startime-Activity').attr('value', startDate);
+
+                    //开始日期
+                    var insStart = laydate.render({
+                        elem: '#update-layui-startime-Activity'
+                        ,done: function(value, date){
+                            //更新结束日期的最小日期
+                            insEnd.config.min = lay.extend({}, date, {
+                                month: date.month - 1
+                            });
+                        }
+                        ,value: startDate 	//赋值当前日期
+                    });
+
+                    //结束日期
+                    var insEnd = laydate.render({
+                        elem: '#update-layui-endtime-Activity'
+                        ,done: function(value, date){
+                            //更新开始日期的最大日期
+                            insStart.config.max = lay.extend({}, date, {
+                                month: date.month - 1
+                            });
+                        }
+                    });
+
+
+                    //图片预览
+                    $("#update-Activity-img1").change(function(){
+                        var objUrl = admin.getObjectURL(this.files[0]) ;
+                        if (objUrl)
+                        {
+                            $("#update-Activity-img2").attr("src", objUrl);
+                            $("#update-Activity-img2").removeClass("hide");
+                        }
+                    }) ;
+
+                    //上传修改文件
+                    layui.use(['jquery'], function(){
+                        var $ = layui.jquery;
+                        $("#update-NoticeActivityForm").click(function(){
+                            var data = new FormData($( "#updateActivityForm" )[0]);
+                            data.append("content", layedit.getContent(index));
+                            if($('#update-Activity-title').val()){
+                                if($('#update-layui-startime-Activity').val()){
+                                    if($('#update-layui-endtime-Activity').val()){
+                                        $("#update-NoticeActivityForm").unbind();
+                                        layer.msg('图片上传中。。。');
+                                        $.ajax({
+                                            type:'post',
+                                            url:layui.setter.URL_ADMIN+'/Information/doAddActivity?id='+id,
+                                            cache: false,    //上传文件不需缓存
+                                            processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
+                                            contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                                            data:data,
+                                            dataType:'json',
+                                            success:function(res){
+                                                if(res.code == 0 ){
+                                                    layer.msg(res.msg, {time: 1000},function(){
+                                                        layer.closeAll();
+                                                        table.reload('bannerList5',{});
+                                                    });
+                                                }else {
+                                                    layer.msg(res.msg, {time: 1000},function(){
+                                                        layer.closeAll();
+                                                    });
+                                                }
+                                            }
+                                        })
+                                    }else {
+                                        layer.msg('结束时间不能为空', {time: 1000});
+                                    }
+                                }else {
+                                    layer.msg('起始时间不能为空', {time: 1000});
+                                }
+                            }else {
+                                layer.msg('标题不能为空', {time: 1000});
+                            }
+                        })
+                    });
+                });
+
+            }
+        });
+        //增加
+        $('.addActivitys').click(function () {
+            layer.open({
+                title:'添加活动'
+                ,type: 1
+                ,shadeClose: true
+                ,area: ['800px', '90%']
+                ,content: $('#ListActivity1').html()
+            });
+            form.render(null, 'Activity-table-element1');
+
+            //获取当前日期
+            var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+            //防止开始日期被重置为空
+            $('#test-laydate-start').attr('value', startDate);
+
+            //开始日期
+            var insStart = laydate.render({
+                elem: '#layui-startime-Activity'
+                ,done: function(value, date){
+                    //更新结束日期的最小日期
+                    insEnd.config.min = lay.extend({}, date, {
+                        month: date.month - 1
+                    });
+                }
+                ,value: startDate 	//赋值当前日期
+            });
+
+            //结束日期
+            var insEnd = laydate.render({
+                elem: '#layui-endtime-Activity'
+                ,done: function(value, date){
+                    //更新开始日期的最大日期
+                    insStart.config.max = lay.extend({}, date, {
+                        month: date.month - 1
+                    });
+                }
+            });
+
+            //编辑器图片上传 置于最前
+            layedit.set({
+                uploadImage: {
+                    url: layui.setter.URL_ADMIN+'/Information/file' //接口url
+                    ,type: 'post' //默认post
+                }
+            });
+            //构建一个默认的编辑器
+            var index = layedit.build('add_activity');
+
+
+            //图片预览
+            $("#Activity-img1").change(function(){
+                var objUrl = admin.getObjectURL(this.files[0]) ;
+                if (objUrl)
+                {
+                    $("#Activity-img2").attr("src", objUrl);
+                    $('.surplus').css('opacity','0');
+                    $("#Activity-img2").removeClass("hide");
+                }
+            }) ;
+
+            //上传新增文件
+            layui.use(['jquery'], function(){
+                var $ = layui.jquery;
+                $("#NoticeActivityForm").click(function(){
+                    var data = new FormData($( "#addActivityForm" )[0]);
+                    data.append("content", layedit.getContent(index));
+                    if($('#Activity-title').val()){
+                        if($('#layui-startime-Activity').val()){
+                            if($('#layui-endtime-Activity').val()){
+                                $("#NoticeActivityForm").unbind();
+                                layer.msg('图片上传中。。。');
+                                $.ajax({
+                                    type:'post',
+                                    url:layui.setter.URL_ADMIN+'/Information/doAddActivity',
+                                    cache: false,    //上传文件不需缓存
+                                    processData: false, //需设置为false。因为data值是FormData对象，不需要对数据做处理
+                                    contentType: false, //需设置为false。因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                                    data:data,
+                                    dataType:'json',
+                                    success:function(res){
+                                        if(res.code == 0 ){
+                                            layer.msg(res.msg, {time: 1000},function(){
+                                                layer.closeAll();
+                                                table.reload('bannerList5',{});
+                                            });
+                                        }else {
+                                            layer.msg(res.msg, {time: 1000},function(){
+                                                layer.closeAll();
+                                            });
+                                        }
+                                    }
+                                })
+                            }else {
+                                layer.msg('结束时间不能为空', {time: 1000});
+                            }
+                        }else {
+                            layer.msg('起始时间不能为空', {time: 1000});
+                        }
+                    }else {
+                        layer.msg('标题不能为空', {time: 1000});
+                    }
+                })
+            });
+        });
+
+
+
+    });
+
+
+</script>
+

@@ -1,0 +1,151 @@
+<title>修改角色权限</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">修改角色权限</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;" lay-filter="updateJurisd-table-element1">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入角色名称" class="layui-input" style="width: 30%;">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">设置权限</label>
+                        <input type="checkbox" name="" title="全选" lay-filter="allQXXX" class="allQXXX" lay-skin="primary" >
+                    </div>
+                </div>
+                <div id="UpdateJurList">
+
+
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="UpdateJurForm" class="layui-btn">立即修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','layer','form','jquery'], function(){
+        var $ = layui.jquery, layer = layui.layer,form = layui.form ,admin = layui.admin;
+        var router = layui.router();
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Menu/get_menu',
+            done: function(res){
+                var data = res.data;
+                var _dom = "";
+                for(var i in data){
+                    _dom += '<div class="layui-form-item">'+
+                        '<label class="layui-form-label">'+data[i]["title"]+'</label>'+
+                        '<div class="layui-input-block">'+
+                        '<input type="checkbox" value="'+data[i]["id"]+'" title="必选" lay-filter="allQX" class="allQX" lay-skin="primary">';
+                    var list = data[i]['list'];
+                    for(var j in list){
+                        _dom += '<input type="checkbox" lay-filter="QXpass" value="'+list[j]["id"]+'" title="'+list[j]["title"]+'" lay-skin="primary" >'
+                    }
+                    _dom += '</div></div>';
+                }
+                // $('#UpdateJurList').html('');
+                $('#UpdateJurList').html(_dom);
+                form.render('checkbox');
+            }
+        });
+
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Menu/get_role?id='+router.search.id,
+            done: function(res){
+                var data = res.role;
+                var nole =  new Array();
+                nole = data.mid.split(",");
+                var id = $("input[type='checkbox']");
+                for(var a in id){
+                    for(var b in nole){
+                        if(id.eq(a).val() == nole[b]){
+                            id.eq(a).attr('checked','checked');
+                        }
+                    }
+                }
+                $("input[name='name']").val(data.name);
+                form.render('checkbox');
+            }
+        });
+
+
+        //全选
+        var abc = form.on('checkbox(allQX)', function(data){
+            var child = $(this).nextAll('input[type="checkbox"]');
+            child.each(function(index, item){
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+            form.render('checkbox',act);
+
+        });
+
+        form.on('checkbox(allQXXX)', function(data){
+            var child = $('input[type="checkbox"]');
+            child.each(function(index, item){
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+
+        //单选
+        var act = form.on('checkbox(QXpass)', function(data){
+            var child = $(this).siblings('input[type="checkbox"]');
+            child.eq(0).attr('checked','checked');
+            form.render('checkbox');
+            form.render('checkbox',abc);
+        });
+
+        //消息提交修改
+        $("#UpdateJurForm").on("click",function () {
+            var mid = "";
+            var id = $("input[type='checkbox']:checked");//权限选择
+            var name = $("input[name='name']").val();
+            for(var i=0 ;i < id.length ; i++){
+                mid += id.eq(i).val()+",";
+            }
+            mid = mid.substring(0,mid.length-1);
+            console.log(mid);
+            if(name != ""){
+                $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: layui.setter.URL_ADMIN+"/Menu/addRole?id="+router.search.id,//url
+                    data: {
+                        mid:mid,
+                        name:name
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            $('input[name="name"]').val('');
+                            $("input[type='checkbox']").removeAttr('checked')
+                            form.render('checkbox');
+                            layer.msg(data.msg, {time: 1000},function(){
+                                location.hash = '/Manage/PermissionsList';
+                            });
+                        }else {
+                            layer.msg(data.msg, {time: 1000});
+                        }
+                    }
+                })
+            }else {
+                layer.msg('角色名称不能为空', {time: 1000});
+            }
+        });
+    });
+
+
+</script>
+
+

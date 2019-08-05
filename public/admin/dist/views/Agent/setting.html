@@ -1,0 +1,100 @@
+<title>代理模式设置</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px">代理模式设置</div>
+            <div class="layui-card-body layui-form" style="padding: 50px;" lay-filter="component-form-element">
+
+                <div class="layui-form-item" id="member">
+                    <label class="layui-form-label">模式选择</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input type="radio" name="agentMode" value="0" class="layui-input">金字塔普通返点模式
+                        </div>
+                        <div class="layui-inline">
+                            （按上级代理返点比例给上级、上上级返点）
+                        </div>
+
+                    </div>
+                </div>
+                <div class="layui-form-item" >
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input type="radio" name="agentMode" value="1" class="layui-input" >金字塔降倍率返点模式
+                        </div>
+                        <div class="layui-inline">
+                            （按上级代理返点比例给下级降低赔率，这部分赔率返给上级、上上级，用户中奖才会返点）
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item" >
+                    <div class="layui-input-block">※ 温馨提示</div>
+                    <div class="layui-input-block">1, 金字塔降倍率的返点赔率不同，返点越高赔率越低。</div>
+                    <div class="layui-input-block">2, 代理可获得佣金等于下级返点的值，如下级返点4，代理可获得下级中奖金额的4%，即下级中奖100元，代理可获得4元。</div>
+                    <div class="layui-input-block">3, 下级返点值设得越高，下级的赔率就越低，建议给下级设置的返点不要过高。</div>
+                </div>
+
+                <div class="layui-form-item" style="padding: 30px">
+                    <div class="layui-input-block">
+                        <button id="setting-btn" lay-submit lay-filter="setting-btn"  class="layui-btn">保存修改设置</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //搜索隐藏显示
+    layui.use(['admin','form','jquery'], function(){
+        var $ = layui.jquery, form = layui.form ,admin = layui.admin;
+        form.render('radio');
+
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Activity/get_info',
+            done: function(res){
+                var data = res.data;
+                if(data.role_ids == 11){
+                    if(data.agentMode == 1){
+                        $('input[name="agentMode"]').eq(1).attr('checked',true);
+                    }else {
+                        $('input[name="agentMode"]').eq(0).attr('checked',true);
+                    }
+                }else {
+                    if(data.agentMode == 1){
+                        $('input[name="agentMode"]').eq(1).attr('checked',true);
+                        $('input[name="agentMode"]').eq(0).attr('disabled','disabled');
+                    }else {
+                        $('input[name="agentMode"]').eq(0).attr('checked',true);
+                        $('input[name="agentMode"]').eq(1).attr('disabled','disabled');
+                    }
+                }
+                form.render('radio');
+            }
+        });
+
+
+        //消息提交发送
+        $("#setting-btn").on("click",function () {
+            var agentMode = $('input[name="agentMode"]:checked').val();
+                $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: layui.setter.URL_ADMIN+"/Agent/agentMode",//url
+                    data: {
+                        agentMode:agentMode,
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {time: 1000});
+                        }else {
+                            layer.msg(data.msg, {time: 1000});
+                        }
+                    }
+                })
+        });
+    });
+
+</script>
+

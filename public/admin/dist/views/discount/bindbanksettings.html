@@ -1,0 +1,60 @@
+<title>首次绑卡赠送</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">首次绑定银行卡赠送活动设置</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        首次绑定银行卡送：
+                    </div>
+                    <div class="layui-inline">
+                        <input type="text" id="number" name="huoDongBindBank" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input">
+
+                    </div>
+                    <div class="layui-inline">
+                        元，如果为0则关闭活动
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="bandForm" lay-submit lay-filter="bandForm"  class="layui-btn layui-bg-blue">保存修改配置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    //    获取赠送金额
+    layui.use(['admin'], function(){
+        var $ = layui.jquery, admin = layui.admin;
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Activity/get_info',
+            done: function(res){
+                var _data = res.data;
+                $('#number').val(_data.huoDongBindBank);
+            }
+        })
+    });
+
+    //    修改赠送金额
+    layui.use(['form'], function(){
+        var $ = layui.$, form = layui.form;
+        form.on('submit(bandForm)', function(data){
+            $.post(layui.setter.URL_ADMIN+"/Activity/huoDongBindBank",data.field,function(res){
+                var _obj = JSON.parse(res);
+                if(_obj.code == 0){
+                    layer.msg(_obj.msg, {time: 2000});
+                }else{
+                    layer.msg(_obj.msg, {time: 2000});
+                }
+            });
+        })
+    });
+</script>

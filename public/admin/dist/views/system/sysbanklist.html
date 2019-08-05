@@ -1,0 +1,233 @@
+
+
+  <title>银行设置</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>系统设置</cite></a>
+      <a><cite>银行设置</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+			<div class="systemt_sysbanklist_operate_btn" style="margin-bottom: 10px;" >			
+			  <button class="layui-btn">添加银行</button>
+			</div>			  
+            <table class="layui-hide" id="system_sysbanklist" lay-filter="system_sysbanklist"></table>
+			<script type="text/html" id="system_sysbanklist_operate">
+				  <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">修改</a>		
+				  <!--<a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</a>-->
+			</script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+	<script type="text/html" id="system_sysbanklist_location">
+		{{#  if(d.location == 0){ }}
+			<span style="color: #c662ff;">显示</span>
+		{{#  } else{ }}
+			<span style="color: #ff5b3c;">不显示</span>
+		{{#  } }}	   
+	</script>
+	<script type="text/html" id="system_sysbanklist_isDelete">
+	   <input type="checkbox" name="isDelete" lay-skin="switch" lay-text="开|关" {{# if(d.isDelete ==0){ }} checked {{# } }} lay-filter="system_sysbanklist_isdelete_switch" value="{{ d.location }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}">
+	</script>
+
+ <script type="text/html" id="system_sysbanklist_edit">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-card layui-form">
+				<div class="layui-card-body layui-row layui-col-space10" >  
+					<div class="layui-form-item">
+					  <label class="layui-form-label">银行名称：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="name" autocomplete="off" class="layui-input "  value="{{ d.name || '' }}">
+						<input type="hidden" name="id" value="{{ d.id || '' }}"/>
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">银行网址：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="home" autocomplete="off" class="layui-input "  value="{{ d.home || '' }}">
+					  </div>
+					</div>					
+					<div class="layui-form-item">
+					  <label class="layui-form-label">银行顺序：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="sort" autocomplete="off" class="layui-input " value="{{ d.sort || '' }}">
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">前台显示：</label>
+					  <div class="layui-input-block">
+							<input type="radio" name="location" value="0" title="显示" {{# if(d.location ==0){ }} checked {{# } }}>
+							<input type="radio" name="location" value="1" title="不显示" {{# if(d.location ==1){ }} checked {{# } }}>
+					  </div>
+					</div>	
+					{{# if(d.showisdelete ==1){ }}
+					<div class="layui-form-item">
+					  <label class="layui-form-label">状态：</label>
+					  <div class="layui-input-block">
+							<input type="radio" name="isDelete" value="0" title="显示" checked>
+							<input type="radio" name="isDelete" value="1" title="不显示">
+					  </div>
+					</div>	
+					{{# } }}	
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn layui-btn-normal system_sysbanklist_edit_layer" lay-submit lay-filter="system_sysbanklist_edit_layer">立即提交</button>
+							<button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+						</div>
+					</div>				
+				</div>  
+			</div>  
+		</div>   
+	</div> 
+  </script> 	
+  <script>
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$, admin = layui.admin
+    ,table = layui.table,laytpl = layui.laytpl, form = layui.form;
+    var active = {
+		reloaDataSysbanklist:function(){
+			var iii = layer.msg('loading');
+			 table.render({
+			  elem: '#system_sysbanklist'
+			  ,url: layui.setter.URL_ADMIN+'/system/sysbanklist'
+			  ,cols: [[
+				{field:'id', title: 'ID', sort: true, width:80}
+				,{field:'name', title: '名称'}
+				,{field:'home',title: '地址'}
+				,{field:'sort', title: '排序', sort: true, width:80}
+				,{field:'location', title: '前台显示' ,templet: '#system_sysbanklist_location', width:80}
+				,{field:'isDelete', title: '开关',templet: '#system_sysbanklist_isDelete', width:80}
+				,{field:'score', width:120, title: '操作', toolbar: '#system_sysbanklist_operate', width:130}
+			  ]]
+			  ,page: {
+				  layout: ['count', 'prev', 'page', 'next', 'skip']
+			  },done: function(res){
+					layer.close(iii);
+			   }
+			});		
+		}
+	}; 
+	active['reloaDataSysbanklist'].call(this);
+	
+    form.on('switch(system_sysbanklist_isdelete_switch)', function(obj){
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+		var iii = layer.msg('loading');
+		admin.req({
+			url: layui.setter.URL_ADMIN+'/system/switchBankIsDelete'
+		   ,data: {id:json.id,pname:json.name,status:json.isDelete}
+		   ,type: 'post'
+		   ,done: function(res){
+			   layer.close(iii);
+				if(res.msg) {
+					layer.msg(res.msg, {icon: 2});
+					setTimeout(function(){	
+						active['reloaDataSysbanklist'].call(this);
+					},2000);
+				}						
+		   }
+		});
+    });	
+
+   table.on('tool(system_sysbanklist)', function(obj){
+      var data = obj.data;
+		 if(obj.event === 'delete'){	 
+			  layer.confirm('确定删除吗？', {
+				btn: ['确定','取消'] //按钮
+			  }, function(){
+				var iii = layer.msg('loading');	
+				 var data = obj.data;
+				 admin.req({
+					url: layui.setter.URL_ADMIN+'/system/deleteBank'
+					,data: {id:data.id}
+					,type: 'post'
+					,done: function(res){
+						layer.close(iii)	
+						obj.del();		
+						layer.msg(res.msg, {icon: 1});
+						setTimeout(function(){	
+							layer.closeAll();
+						},1000);	
+					}
+				});
+				return false;
+			  }, function(){
+				
+			  });
+		 }else if(obj.event === 'edit'){
+			var that = obj;
+		  	layer.open({
+					title: '编辑银行',
+					type: 1
+					,shadeClose: true
+					,area: admin.screen() < 2 ? ['80%', '300px'] : ['480px', 'auto']
+					,content: laytpl($('#system_sysbanklist_edit').html()).render(data)
+					,success: function(layero, index){
+						form.render('radio');
+						form.on('submit(system_sysbanklist_edit_layer)', function(data){
+							system_sysbanklist_edit_layer(data,that);
+						})
+					}
+			});
+      }
+	 }
+	 )
+	 
+	function system_sysbanklist_edit_layer(data,that){
+		var iii = layer.msg('loading');
+		var data = data.field;
+  		admin.req({
+			url: layui.setter.URL_ADMIN+'/system/updatebanklist'
+			,data: data
+			,type: 'post'
+			,done: function(res){
+				layer.close(iii)
+				if(res.code>0){
+					layer.msg(res.msg, {icon: 5});
+				}else{
+					layer.closeAll();
+					var iii2 = layer.msg(res.msg, {icon: 1});
+					if(that==1) active['reloaDataSysbanklist'].call(this);
+					else {
+						that.update({
+							name: data.name,home:data.home,sort:data.sort,location:data.location
+						});
+					}
+					setTimeout(function(){	
+						layer.close(iii2);
+					},1000);		
+				}
+			}
+		});
+	}	
+	$('.systemt_sysbanklist_operate_btn .layui-btn').on('click',function(){ 
+		var data_res={name:'',home:'',sort:'',isDelete:0,location:0,showisdelete:1};
+		layer.open({
+				title: '添加银行',
+				type: 1
+				,shadeClose: true
+				,area: admin.screen() < 2 ? ['80%', '300px'] : ['480px', 'auto']
+				,content: laytpl($('#system_sysbanklist_edit').html()).render(data_res)
+				,success: function(layero, index){
+					form.render('radio');
+					form.on('submit(system_sysbanklist_edit_layer)', function(data){
+						var that='1';
+						system_sysbanklist_edit_layer(data,that);
+					})
+				}
+		});	
+    });	
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});	 
+  });
+  </script>

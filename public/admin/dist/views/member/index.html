@@ -1,0 +1,3076 @@
+<style type="text/css">
+.tiergrade{ border: 1px solid #E8CECE; font-size: 14px; display: inline-block; line-height: 0; padding: 10px; 
+.tiergradelist{overflow: hidden;}
+.tire{width: 40px;  display: inline-block;}
+</style>
+  <title>用户中心</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>用户管理</cite></a>
+      <a><cite>用户列表</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">
+          	<div style="float:left;">用户列表</div>
+          	<div style="float:left;margin-left: 20px;"><a id="member_index_rechargeUser" style="cursor: pointer;">充值用户 <span class="clear rechargeUser">0</span></a> &nbsp; &nbsp; <a id="member_index_norechargeUser" style="cursor: pointer;">未充值用户 <span class="clear norechargeUser">0</span></a></div>
+          	<div class="member_index_operator_search" style="float:right;margin-left: 20px;"><button class="layui-btn layui-btn-normal" data-type="addUser">添加会员</button></div>
+          	</div>
+          <div class="layui-card-body">
+          <div class="layui-form">
+            <div class=" layui-form" style="margin-bottom: 10px;">
+				
+              <div class="layui-inline">
+			  <div class="layui-input-inline">
+                <input class="layui-input" name="username" autocomplete="off" placeholder="用户名">
+              </div>
+              </div>
+              
+              <div class="layui-inline">
+				 <div class="layui-input-inline">
+                <input class="layui-input" name="name" autocomplete="off" placeholder="真实姓名">
+				</div>
+              </div>
+                <div class="layui-inline">
+                  <label class="layui-form-label">注册时间：</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="fromtime" class="layui-input" id="member_search_starttime" placeholder="开始日期">
+                  </div>
+                   -
+                  <div class="layui-input-inline">
+                    <input type="text" name="totime" class="layui-input" id="member_search_endtime" placeholder="结束日期">
+                  </div>
+                </div>	
+             <div class="layui-inline">
+				<button class="layui-btn"  lay-submit="" lay-filter="member_index_searching" style="float:float;">搜索</button>
+				<label class="layui-form-label" style="float:right;"><a href="javascript:void(0);" id="member_more_search_button">更多搜索</a></label>
+			 </div>	
+            </div>
+			<div id="member_more_search" style="display:none">
+            <div style="margin-bottom: 10px;">
+              
+              <div class="layui-inline">
+			  <div class="layui-input-inline">
+                <input class="layui-input" id="member_index_parent_blank" name="parent" autocomplete="off" placeholder="上级代理">
+              </div>
+              </div>
+              
+              <div class="layui-inline">
+			  <label class="layui-form-label" style="width:50px;"> 状态：</label>
+			  <div class="layui-input-inline" style="width:180px">
+				<select name="onlinestatus" lay-verify="" lay-filter="member_index_search_select">
+				  <option value="0">请选择</option>
+				  <option value="1">在线</option>
+				  <option value="2">离线</option>
+				</select>
+              </div>
+              </div>
+              
+              <div class="layui-inline">
+			  <label class="layui-form-label" style="width:50px;"> 类型：</label>
+			  <div class="layui-input-inline" style="width:180px">
+				<select name="usertype" lay-verify="" lay-filter="member_index_search_select">
+				  <option value="0">请选择</option>
+				  <option value="1">普通会员</option>
+				  <option value="2">代理会员</option>
+				  <option value="3">测试账号</option>
+				</select>
+              </div>		
+              </div>
+              <div class="layui-inline">
+			  <label class="layui-form-label" style="width:50px;"> 层级：</label>
+                  <div class="layui-input-inline" style="width:63px">
+                    <input type="text" class="layui-input" name="userlevelmin">
+                  </div>
+                   -
+                  <div class="layui-input-inline" style="width:63px">
+                    <input type="text" class="layui-input" name="userlevelmax">
+                  </div>
+              </div>
+              
+               <div class="layui-inline">
+			  <label class="layui-form-label" style="width:50px;"> 返点：</label>
+                  <div class="layui-input-inline" style="width:63px">
+                    <input type="text" class="layui-input" name="userfandianmin">
+                  </div>
+                   -
+                  <div class="layui-input-inline" style="width:63px">
+                    <input type="text" class="layui-input" name="userfandianmax">
+                  </div>
+              </div>
+              <div class="layui-inline" style="vertical-align:top;">
+				<button class="layui-btn"  lay-submit="" lay-filter="member_index_searching_return">返回</button>
+				</div>
+            </div>				
+            </div>				
+            </div>
+            <table class="layui-hide" id="member_index_list" lay-filter="member_index_list"></table> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+	<script type="text/html" id="member_index_tiergrade">
+		<a class="tiergrade"  lay-event="tiergrade" title="层级">{{ d.usergrade }}</a>
+	</script>
+	
+	<!---用户层级模板--->
+	<script type="text/html" id="member_index_tiergrade_layer">
+		<style type="text/css">
+		.tire{width: 50px; color:#000; display: inline-block;text-align:center}
+		</style>	
+		<ul class="tiergradelist">
+			<li><span class="tire">层级</span> <span class="tire">用户名</span></li>
+			{{#  layui.each(d.data, function(index, item){ }}
+				<li><span class="tire">{{ index }}</span> <span class="tire">{{ item.username }}</span></li>
+			 {{#  }); }}
+		</ul>	
+	</script>
+
+	<!---用户设置菜单模板--->	
+	<script type="text/html" id="member_index_usersetting_layer">
+		<style type="text/css">
+			.eit{ cursor: pointer;font-size:15px;color:#000;padding-bottom:5px}
+			.icon-right{ padding-right: 10px;}
+		</style>	
+		<ul class="tool—list">
+		<li class="eit t-count" rel="count"><i class="layui-icon icon-right">&#xe63c;</i><span>统计</span></li>
+		<li class="eit t-dow" rel="dow"><i class="layui-icon layui-icon-close icon-right"></i><span>踢下线</span></li>
+		<li class="eit t-change" rel="change"><i class="layui-icon layui-icon-up icon-right"></i><span>变更等级</span></li>
+		<li class="eit t-bank" rel="bank"><i class="layui-icon layui-icon-auz icon-right"></i><span>添加银行</span></li>
+		<li class="eit t-freeze" rel="freeze"><i class="layui-icon layui-icon-tips icon-right"></i><span>冻结账户</span></li>
+		<li class="eit t-money" rel="money"><i class="layui-icon layui-icon-rmb icon-right"></i><span>赠送彩金</span></li>
+		<li class="eit t-bath" rel="bath"><i class="layui-icon layui-icon-cellphone icon-right"></i><span>手工洗码</span></li>
+		<li class="eit t-toup" rel="toup"><i class="layui-icon layui-icon-return icon-right"></i><span>手工充值</span></li>
+	</ul>
+	</script>
+	
+	<!--列表操作3图标-->
+	<script type="text/html" id="member_index_useinfo_bar">
+	<button class="layui-btn layui-btn-primary layui-btn-xs member_index_showsonuser" lay-event="showsonuser"><i class="layui-icon">&#xe770;</i></button>
+	<button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="userinfo"><i class="layui-icon">&#xe642;</i></button>
+	<button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="showusersetting"><i class="layui-icon">&#xe65f;</i></button>
+	</script>	
+	
+	<!--添加会员弹出框-->
+<script type="text/html" id="member_index_addnewuser">
+    <div class="layui-form" lay-filter="member_index_addnewuser_from">
+        <div class="layui-card-body">
+			<div class="layui-form-item">
+				<label class="layui-form-label">账号类型</label>
+				<div class="layui-input-inline">
+					<select name="type"lay-filter="member_index_addnewuser_select">
+					  <option value="0" selected>会员</option>
+					  <option value="1">代理</option>
+					  <option value="9">测试会员</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="username" required  lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">密码</label>
+				<div class="layui-input-inline">
+					<input type="password" id="newpass" name="password" required  lay-verify="pass" placeholder="请输入密码" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">确认密码</label>
+				<div class="layui-input-inline">
+					<input type="password" required lay-verify="repass" placeholder="请再次输入密码" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div style="display:none" id="member_index_useragentDIV">
+			<div class="layui-form-item">
+				<label class="layui-form-label">推荐码</label>
+				<div class="layui-input-inline">
+					<input type="text" name="rCode" placeholder="4-6位数字,留空则自动生成" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">返点比例</label>
+				<div class="layui-input-inline ">
+					<input id="member_index_dailifandian" lay-verify="fanDian" type="text" name="fanDian"  placeholder="设置代理返点" autocomplete="off" class="layui-input layui-col-sm6" >
+				</div>
+			</div>
+			<div class="layui-form-item" id="agentModeOneTips" style="display:none">
+			<label class="layui-form-label"></label>
+				<div class="layui-input-inline " id="showAgentModeOneTips">
+					<div style="float:right;cursor: pointer;">关于降赔率返点设置>></div>
+				</div>
+			</div>
+			</div>			
+			</div>
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="member_index_addnewuser_submit">确定</button>
+				  <button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+				</div>
+			  </div>
+			</div>
+		</div>
+		</div>
+	</script>	
+	<!--统计弹出-->
+	<script type="text/html" id="member_index_setting_count">
+	<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-body" style="padding: 15px;">
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="username" required  readonly  lay-verify="required" value="{{ d.username }}" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label">投注总额</label>
+				<div class="layui-input-inline">
+				  <input type="tel" value="{{ d.betAmount || '--' }}"  readonly  autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label">中奖总额</label>
+				<div class="layui-input-inline">
+				  <input type="text" value="{{ d.zjAmount || '--' }}" readonly  autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label">总返点</label>
+				<div class="layui-input-inline">
+				  <input type="tel" value="{{ d.fanDianAmount || '--' }}"  readonly  autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label">总佣金</label>
+				<div class="layui-input-inline">
+				  <input type="text" value="{{ d.brokerageAmount || '--' }}"  readonly autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			</div>
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label">充值</label>
+				<div class="layui-input-inline">
+				  <input type="tel" value="{{ d.rechargeAmount || '--' }}"  readonly  autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label">提现</label>
+				<div class="layui-input-inline">
+				  <input type="text" value="{{ d.cashAmount || '--' }}" readonly  autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				<label class="layui-form-label">优惠</label>
+				<div class="layui-input-inline">
+				  <input type="tel" value="{{ d.activeAmount || '--' }}"  readonly  autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			  <div class="layui-inline">
+				<label class="layui-form-label">余额</label>
+				<div class="layui-input-inline">
+				  <input type="text" value="{{ d.coin || '--' }}" readonly autocomplete="off" class="layui-input">
+				</div>
+			  </div>
+			</div>	
+			<div class="layui-form-item">
+				<label class="layui-form-label">个人总结算</label>
+				<div class="layui-input-inline">
+					 <input type="text" value="{{ d.allCount || '--' }}" readonly autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button type="reset" class="layui-btn layui-btn-primary closeBtn">关闭</button>
+				</div>
+			  </div>
+			</div>	
+			</div>	
+			</div>	
+	</div>	
+  </script>
+  
+ 	<!--变更上级弹出框-->
+<script type="text/html" id="member_index_changeParent">
+    <div class="layui-form" lay-filter="member_index_changeParent_from">
+	<div class="layui-card">
+        <div class="layui-card-body" style="margin:5px 15px">
+			<div class="layui-form-item">
+				<label class="layui-form-label">账号类型</label>
+				<div class="layui-input-inline">
+				{{#  if(d.type == 0){ }}
+								<select name="type"lay-filter="member_index_changeParent_select">
+								  <option value="0" selected>会员</option>
+								  <option value="1">代理</option>
+								</select>
+				{{#  } else if(d.type == 1){ }}
+					<div class="layui-form-mid layui-word-aux">代理</div>
+				{{#  } else if(d.type == 9){ }}
+					<div class="layui-form-mid layui-word-aux">测试会员</div>
+				{{#  } else{ }}
+					<div class="layui-form-mid layui-word-aux">数据异常</div>
+				{{#  } }}			
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">会员等级</label>
+				<div class="layui-input-inline">
+					<select name="userlevel"lay-filter="member_index_changeParent_select">
+					  {{#  layui.each(d.level, function(index, item){ }}
+					  <option value="{{ item.level }}" {{#  if(d.userRealLevel==item.level){ }} selected {{#  } }} >LEVEL {{ item.level }}</option>
+					  {{#  }); }}
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注：</label>
+				<div class="layui-input-inline">
+					 <textarea lay-verify="required" name="attach" placeholder="请输入内容，记录到管理日志" class="layui-textarea"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="member_index_changeParent_from_submit">确定</button>
+				  <button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+				</div>
+			  </div>
+			</div>
+		</div>
+		</div>
+	</div>
+	</script>
+ 	<!--添加银行弹出框-->
+<script type="text/html" id="member_index_addbank">
+    <div class="layui-form" lay-filter="member_index_addbank_from">
+	<div class="layui-card">
+        <div class="layui-card-body">
+			<div class="layui-form-item">
+				<label class="layui-form-label">持卡人：</label>
+				<div class="layui-input-inline">
+					 <input type="text" value="{{ d.userBank.username || '' }}"  lay-verify="required" name="username"  autocomplete="off" class="layui-input">
+					 <input type="hidden" name="id" value="{{ d.userBank.id || '' }}" />
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">银行：</label>
+				<div class="layui-input-inline">
+					<select name="bankId" id="member_index_addbank_from_bankselect">
+					  {{#  layui.each(d.banks, function(index, item){ }}
+					  <option value="{{ item.id }}" {{ d.userBank.bankId == item.id ? 'selected' : '' }}>{{ item.name }}</option>
+					  {{#  }); }}
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">开户网点：</label>
+				<div class="layui-input-inline">
+					 <input type="text" value="{{ d.userBank.countname || '' }}"  lay-verify="required" name="countname" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">银行卡号：</label>
+				<div class="layui-input-inline">
+					 <input type="text" value="{{ d.userBank.account || '' }}" lay-verify="number" name="account"  autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否默认：</label>
+				<div class="layui-input-inline">
+					<input type="radio" name="is_default" value="1" {{ d.userBank.is_default == 1 ? 'checked' : '' }} title="默认" checked>
+						<input type="radio" name="is_default" value="0" {{ d.userBank.is_default == 0 ? 'checked' : '' }} title="非默认" >
+				</div>
+			</div>			
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="member_index_addbank_submit">确定</button>
+				  <button type="reset" class="layui-btn layui-btn-primary closeBtnOne">取消</button>
+				</div>
+			  </div>
+			</div>
+		</div>
+		</div>
+	</div>
+	</script>	
+	<!--赠送彩金弹出框(洗码，充值公用)-->
+<script type="text/html" id="member_index_activitymoney">
+    <div class="layui-form" lay-filter="member_index_activitymoney_from">
+	<div class="layui-card">
+        <div class="layui-card-body" style="margin:10px 15px">
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型</label>
+				<div class="layui-input-inline">
+					<input type="radio" name="user" value="2" title="用户名" checked>
+						<input type="radio" name="user" value="1" title="UserID" >
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名/UID</label>
+				<div class="layui-input-inline">
+					 <input type="text" value="{{ d.username || '' }}"  lay-verify="required" name="uid" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">{{ d.actionTitle || '' }}</label>
+				<div class="layui-input-inline">
+					 <input type="text" lay-verify="number" placeholder="{{ d.actionTips || '' }}" name="amount" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-inline">
+					  <textarea name="xima_info" placeholder="请输入备注内容" class="layui-textarea"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+			  <div class="layui-input-block">
+				<div class="layui-footer">
+				  <button class="layui-btn" lay-submit="" lay-filter="member_index_activitymoney_submit">确定</button>
+				  <button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+				</div>
+			  </div>
+			</div>
+		</div>
+		</div>
+	</div>
+	</script>
+	<!--用户信息主弹框-->
+  <script type="text/html" id="member_index_userinfo">
+  <style>
+	.condition .layui-inline {
+		margin: 0 0 7px 0;
+	}
+	.wrap {
+		padding: 15px 0 0 0;
+	}
+
+	.text-more {
+		text-align: center;
+		line-height: 38px;
+		cursor: pointer;
+	}
+	.layui-tab-card{border-width:0px;box-shadow:0 0px 0px 0 rgba(0,0,0,.1)}
+	a.ibig{ cursor: pointer;font-size:x-large;}
+	.layui-tab-card > .layui-tab-title .layui-this{
+		/*background:#474E53 ;*/
+		background:#719BB9 ;
+	    color:#ffffff;
+	    font-weight: bold;
+	}
+	.layui-card .layui-tab{border-radius: 5px;}
+	.usedata .layui-this{
+		/*background: #D7E3F7;
+		color: #ffffff;*/
+	}
+	.usedata>li{ margin-right: 15px; border-top-left-radius: 8px; border-top-right-radius: 8px;}
+	a.look{color: #527CC4; font-size: 14px; cursor: pointer;}
+	/*#userPopup{max-width: 1190px;}*/
+	/*.scopedc{ max-width: 12%;}*/
+	.scopedc .layui-input{padding: 0;display: inline-block; width: 40%;}
+	.layui-body{overflow-y: scroll;}
+	.ccc .layui-form-mid{margin: 0;}
+	.green{color: green}
+	.red{color: red}
+	.gray{color: gray}
+
+	.indent-state,.money-state{list-style: none; width: 100%; overflow: hidden;}
+	.indent-state li,.money-state li{ float: left; padding:10px; margin:10px; cursor:pointer;}
+	.indent-state .active,.money-state .active{background:#E0EBFD;border-radius: 5px; }
+
+	.left_cc{overflow: hidden;}
+
+	.left_cc.onrs{overflow:inherit;}
+
+	.layui-header{z-index: 999;}
+	/*给父级增加 层级权重 用于弹框显示*/
+	.layui-body{z-index: 10001;}
+
+	.hlt{float: left;}
+	.hrt{ float: right;}
+	.hurdle{ background: #E1F0FF; padding: 15px; height: 50px; line-height: 20px;}
+	.layui-inline{text-align: center;}
+	.layui-tab-item{overflow: visible;}
+	.peoplecount{border: 1px solid #E0E0E0; padding: 8px 0;}
+	.pttq{ padding: 8px 0;}
+	.baseinfow{padding-left: 5px;}
+	.ccc .layui-tab-content{min-height: 400px;}
+	.ttt.layui-input{ width: 50%;}
+	.btcenter{text-align: center;}
+	.qxx{position: relative;}
+	#addbankcard{margin-bottom: 5px;}
+	.coomargin{margin: 8px 0;}
+	legend.core{font-size: 16px;}
+    .clear{color: red;}
+	.tow_1{width: 49%;float:left;}
+	#unfold{background: none;text-align: left; display: block; float: none;}
+	.tiergrade{ border: 1px solid #E8CECE; font-size: 14px; display: inline-block; line-height: 0; padding: 10px; cursor: pointer;}
+	.tiergradelist{overflow: hidden;}
+	.tire{width: 40px;  display: inline-block;}
+	.directinput{height: 20px;}
+  </style>
+	<div class="layui-tab layui-tab-card ccc" lay-filter="member_index_userinfo">
+		<ul id="tzz" class="layui-tab-title layui-bg-black">
+			<li class="layui-this">会员信息</li>
+			<li lay-id="fin">账务变更</li>
+			<li lay-id="tongji">盈亏统计</li>
+			<li lay-id="cztx">充值提现</li>
+			<li lay-id="yxjl">游戏记录</li>
+			<!--li lay-id="ykfx">盈亏风险</li-->
+
+		</ul>
+		<div class="layui-tab-content">
+			<div class="layui-tab-item layui-show" des="1">
+				<div class="layui-tab" lay-filter="member_userinf_tab_son">
+						<div id="member_userinfo_addbankcard" style="float:right;display:none"><button class="layui-btn layui-btn-warm">添加银行卡</button></div>
+						<div id="member_user_tab_ul">
+						<ul class="layui-tab-title usedata">
+							<li class="layui-this" lay-id="userinfo">基本信息</li>
+							<li lay-id="bankcard">银行卡</li>
+							<li lay-id="logininfo">登录信息</li>
+							<li lay-id="activity">优惠信息</li>
+						</ul>
+						</div>
+						<div class="layui-tab-content">						
+						<div class="layui-tab-item layui-show " >
+										<div class="layui-col-md12  wrap">
+
+											<div class="top layui-col-md12">
+												<div class="layui-form left_cc layui-col-md8 condition" style="padding:0 10px 0;">
+
+													<div class="layui-inline layui-col-md3 layui-col-sm4">
+														<label class="layui-form-label">来源</label>
+														 <div class="layui-form-mid layui-word-aux">{{#  if(d.source==1){ }}
+																代理
+															{{#  } else{ }}
+															{{# if(d.source==2){ }}
+																后台
+															{{#  } else{ }}
+																前台
+															{{#  } }}
+															{{#  } }}</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">uid</label>
+														<div class="layui-form-mid layui-word-aux">
+															{{ d.uid || '' }}
+															<input type="hidden" name="uid" value="{{ d.uid || '' }}" />
+															<input type="hidden" name="username" value="{{ d.username || '' }}" />
+														</div>
+													</div>
+													
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">用户名</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.username || '' }}
+														</div>
+													</div>
+													
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">余额</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.coin || '0.00' }}
+														</div>															
+													</div>
+
+
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">类型</label>
+															{{#  if(d.type==9){ }}
+															<div class="layui-form-mid layui-word-aux directinput" >
+																测试账号
+															</div>		
+															{{#  } else{ }}
+																{{#  if(d.type==1){ }}
+																<div class="layui-form-mid layui-word-aux directinput" >
+																	代理
+																</div>
+																{{#  } else{ }}																
+																	<div class="layui-input-block">
+																	<select name="type" lay-verify="required">
+																		<option value="0" {{#  if(d.type==0){ }} selected {{#  } }}>会员</option>
+																		<option value="1" {{#  if(d.type==1){ }} selected {{#  } }}>代理</option>
+																	</select>
+																	</div>
+																	{{#  } }}
+															{{#  } }}
+													</div>
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">积分</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.score || '0' }}
+														</div>														
+													</div>
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">洗码量</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.otherData.data.xima || '0.000' }}
+														</div>
+													</div>
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">冻结金额</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.fcoin || '0.00' }}
+														</div>														
+													</div>
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">真实姓名</label>
+														<div class="layui-input-block">
+															<input type="text" name="name" value="{{ d.name || '' }}" autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">昵称</label>
+														<div class="layui-input-block">
+															<input type="text" name="nickname" value="{{ d.nickname || '' }}" autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">上级</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.parentName || '无' }}
+														</div>																
+													</div>
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">层级</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.usergrade || '0' }}
+														</div>													
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">登录密码</label>
+														<div class="layui-input-block">
+															<input type="text" name="password" placeholder="不修改请留空"
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">提款密码</label>
+														<div class="layui-input-block">
+															<input type="text" name="coinPassword" placeholder="不修改请留空"
+																   autocomplete="off" class="layui-input">
+														</div>
+													</div>
+
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">等级</label>
+														<div class="layui-input-block">
+															<input type="number" name="grade" value="{{ d.grade ||  d.otherData.data.grade2 }}"  lay-verify="number" autocomplete="off" class="layui-input dateselect2">
+														</div>
+													</div>
+
+													<div class="layui-inline layui-col-md3  layui-col-sm4">
+														<label class="layui-form-label">返点</label>
+														<div class="layui-input-block">
+															<input type="text" name="fanDian" value="{{ d.fanDian || '' }}" placeholder="0-{{ d.parentfanDian || '' }}%" autocomplete="off" class="layui-input">
+														</div>
+													</div>						
+															<div class="layui-inline layui-col-md3  layui-col-sm4">
+																<label class="layui-form-label">邮箱</label>
+																<div class="layui-input-block">
+																	<input type="text" name="email" lay-verify="email" value="{{ d.email || '' }}"  placeholder="请填写邮箱地址"
+																		   autocomplete="off" class="layui-input">
+																</div>
+															</div>
+
+															<div class="layui-inline layui-col-md3  layui-col-sm4">
+																<label class="layui-form-label">微信号</label>
+																<div class="layui-input-block">
+																	<input type="text" name="wechat" value="{{ d.wechat || '' }}"  placeholder="微信号"
+																		   autocomplete="off" class="layui-input">
+																</div>
+															</div>
+
+															<div class="layui-inline layui-col-md3  layui-col-sm4">
+																<label class="layui-form-label">QQ号</label>
+																<div class="layui-input-block">
+																	<input type="text" name="qq" lay-verify="number"  value="{{ d.qq || '' }}"  placeholder="请填写QQ"
+																		   autocomplete="off" class="layui-input">
+																</div>
+															</div>
+
+															<div class="layui-inline layui-col-md3  layui-col-sm4">
+																<label class="layui-form-label">手机号</label>
+																<div class="layui-input-block">
+																	<input type="text" name="mobile" value="{{ d.mobile || '' }}" lay-verify="phone" placeholder="请填写手机号"
+																		   autocomplete="off" class="layui-input">
+																</div>
+															</div>
+															<!----自定义字段区---->
+															<div id="member_params_auto">
+															</div>
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">注册IP</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.regIP || '' }}
+														</div>														
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">最后登录IP</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.lastIP || '' }}
+														</div>														
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">注册时间</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.regTime || '' }}
+														</div>														
+													</div>
+
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">最后登录</label>
+														<div class="layui-form-mid layui-word-aux directinput" >
+															{{ d.lastLogin || '' }}
+														</div>														
+													</div>
+													
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">备注</label>
+														<div class="layui-input-block">
+															<input type="text" name="attach" required lay-verify="required" placeholder="备注会记录在管理员操作日志"
+																	  autocomplete="off" class="layui-input" />
+														</div>
+													</div>
+													<style>
+													.layui-form-radio { float:left; }
+													</style>
+													<div class="layui-inline layui-col-md6  layui-col-sm6">
+														<label class="layui-form-label">操作</label>
+														<div class="layui-input-block">
+															<input type="radio" name="enable" {{#  if(d.enable==1){ }} checked {{#  } }} value="1" title="开启">
+															<input type="radio"  name="enable" {{#  if(d.enable==0){ }} checked {{#  } }} value="0" title="冻结" >
+														</div>
+													</div>
+
+													<!--div class="hurdle layui-col-sm12 layui-inline">
+														<span class="hlt">风险控制</span>
+														<span class="hrt">风险等级: 低  ></span>
+													</div-->
+
+
+													<div class="form_decide layui-col-sm12 layui-inline" style="margin-top:30px;">
+														<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="member_index_userinfo_submit">保存</button>
+														<button class="layui-btn layui-btn-primary closeBtn">取消</button>
+													</div>
+
+												</div>
+
+												<div class="right_cc baseinfow layui-col-md4">
+
+													<div class="layui-inline peoplecount layui-col-md6  layui-col-sm6">
+														<div class="">
+															同ip提款人数：{{ d.otherData.data.sameIpCash || '0'}}
+														</div>
+													</div>
+
+													<div class="layui-inline peoplecount layui-col-md6  layui-col-sm6">
+														<div class="">
+															关联人数：0
+														</div>
+													</div>
+
+													<div class=" pttq  layui-col-sm12">
+														<div class="" style="height:25px;line-height:25px;">
+															<strong>财务信息</strong>
+														</div>
+														<style>
+															.layui-table td, .layui-table th {padding:10px 5px;}
+														</style>
+														<table class="layui-table" style="margin-top:0;">
+															<!--<colgroup>-->
+																<!--<col width="150">-->
+																<!--<col width="200">-->
+																<!--<col>-->
+															<!--</colgroup>-->
+															<thead>
+															<tr>
+																<th>时间</th>
+																<th>充值</th>
+																<th>提现</th>
+																<th>投注</th>
+																<th>中奖</th>
+																<th>盈亏</th>
+															</tr>
+															</thead>
+															<tbody>
+														{{#  layui.each(d.otherData.data.fdata, function(index, item){ }}
+																<tr>
+																<td>{{ item.timeat }}</td>
+																<td>{{ item.rAmount || '0.00' }}</td>
+																<td>{{ item.cAmount || '0.00' }}</td>
+																<td>{{ item.betAmount || '0.00' }}</td>
+																<td>{{ item.winAmount || '0.00' }}</td>
+																<td>{{ item.ykAmount || '0.00' }}</td>
+															</tr>							
+															{{#  }); }}		
+															</tbody>
+														</table>
+														<div class="" style="height:25px;line-height:25px;">
+															<strong>投注信息</strong>
+														</div>
+														<div class="layui-form  " lay-filter="member_userinfo_lottery_form" style="margin:0;">
+
+															<div class="layui-inline layui-col-md12  layui-col-sm12">
+																<label class="layui-form-label layui-col-sm3">玩法</label>
+																<div class="layui-col-sm4">
+															 <select  name="lotterytype" lay-verify="required"lay-filter="member_userinfo_lotterytype">
+															 	{{#  layui.each(d.otherData.data.lotterytype, function(index, item){ }}
+																		<option value="{{ item.id }}">{{ item.name }}</option>
+																{{#  }); }}	
+																	</select>
+																</div>								
+																<div class="layui-col-sm4">
+																	<select id="member_userinfo_lottery_change2" name="type" lay-verify="required"  lay-filter="member_userinfo_lottery_change">
+																	{{#  layui.each(d.otherData.data.lotteryson, function(index, item){ }}
+																		<option value="{{ item.id }}">{{ item.title }}</option>
+																	{{#  }); }}	
+																	</select>
+																</div>
+
+																<table class="layui-table" id="member_userinfo_betinfo" lay-filter="member_userinfo_betinfo"></table>
+
+															</div>
+
+
+
+														</div>
+													</div>
+
+
+												</div>
+
+
+											</div>
+										</div>
+						</div>
+						<!--银行卡-->
+						<div class="layui-tab-item">
+							<table class="layui-hide" id="member_userinfo_tab_bankcard" lay-filter="member_userinfo_tab_bankcard"></table>
+						</div>	
+						<!--登陆信息-->
+						<div class="layui-tab-item">
+						<div class="layui-form">
+						  <div class="layui-inline">
+						  <label class="layui-form-label"> IP：</label>
+						  <div class="layui-input-inline">
+							<input class="layui-input" name="loginIP" autocomplete="off">
+						  </div>
+						  </div>	
+							<div class="layui-inline">
+							  <label class="layui-form-label">登陆时间：</label>
+							  <div class="layui-input-inline">
+								<input type="text" name="fromTime" class="layui-input" id="member_login_search_starttime" placeholder="开始日期">
+							  </div>
+							   -
+							  <div class="layui-input-inline">
+								<input type="text" name="toTime" class="layui-input" id="member_login_search_endtime" placeholder="结束日期">
+							  </div>
+							</div>
+							<button class="layui-btn"  lay-submit="" lay-filter="member_login_index_searching">搜索</button>							
+						</div>
+							<table class="layui-hide" id="member_login_index_list" lay-filter="member_login_index_list"></table> 
+						</div>	
+						<!--优惠-->
+						<div class="layui-tab-item">
+						<div class="layui-form">	
+							<div class="layui-inline">
+							  <label class="layui-form-label">赠送时间：</label>
+							  <div class="layui-input-inline">
+								<input type="text" name="fromTime" class="layui-input" id="member_activity_search_starttime" placeholder="开始日期">
+							  </div>
+							   -
+							  <div class="layui-input-inline">
+								<input type="text" name="toTime" class="layui-input" id="member_activity_search_endtime" placeholder="结束日期">
+							  </div>
+							</div>              
+							<div class="layui-inline">
+							  <label class="layui-form-label"> 优惠类型：</label>
+							  <div class="layui-input-inline" style="width:180px">
+								<select name="type" lay-verify="">
+								  <option value="4">用户注册赠送</option>
+								  <option value="5">充值券赠送</option>
+								  <option value="6">每日反水活动</option>
+								  <option value="7">后台赠送彩金</option>
+								</select>
+							  </div>
+							  </div>
+							<button class="layui-btn"  lay-submit="" lay-filter="member_activity_index_searching">搜索</button>							
+						</div>
+							<table class="layui-hide" id="member_activity_index_list" lay-filter="member_activity_index_list"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!---账变--->
+			<div class="layui-tab-item">
+				<div class="layui-form" lay-filter="member_fin_index_searching_form">	            
+					<div class="layui-inline">
+					  <label class="layui-form-label"> 类型：</label>
+					  <div class="layui-input-inline" style="width:180px">
+						<select name="liqType" lay-verify="" id="member_fin_index_liqType">
+						</select>
+					  </div>
+					 </div>
+					<div class="layui-inline">
+					  <label class="layui-form-label">时间：</label>
+					  <div class="layui-input-inline">
+						<input type="text" name="fromTime" class="layui-input" id="member_fin_search_starttime" placeholder="开始日期">
+					  </div>
+					   -
+					  <div class="layui-input-inline">
+						<input type="text" name="toTime" class="layui-input" id="member_fin_search_endtime" placeholder="结束日期">
+					  </div>
+					</div> 
+					  <div class="layui-inline">
+						<label class="layui-form-label">资金：</label>
+						<div class="layui-input-inline" style="width: 100px;">
+						  <input type="text" name="price_min" placeholder="￥" autocomplete="off" class="layui-input">
+						</div>
+						-
+						<div class="layui-input-inline" style="width: 100px;">
+						  <input type="text" name="price_max" placeholder="￥" autocomplete="off" class="layui-input">
+						</div>
+					  </div>				
+					<div class="layui-inline">
+					  <label class="layui-form-label"> 彩种：</label>
+					  <div class="layui-input-inline" style="width:180px">
+						<select name="type" lay-verify="" id="member_fin_index_type">
+						</select>
+					  </div>
+					 </div>		
+				<div class="layui-inline" style="vertical-align:top">	
+					<div class="layui-input-inline">
+					<button class="layui-btn"  lay-submit="" lay-filter="member_fin_index_searching">搜索</button>	
+					</div>							
+				</div>							
+				</div>
+					<table class="layui-hide" id="member_fin_index_list" lay-filter="member_fin_index_list"></table>			
+			</div>
+			<!---盈亏统计--->
+			<div class="layui-tab-item">
+				<div class="layui-form" lay-filter="member_tongji_index_searching_form">
+					<div class="layui-inline">
+					  <label class="layui-form-label">时间：</label>
+					  <div class="layui-input-inline">
+						<input type="text" name="fromTime" class="layui-input" id="member_tongji_search_starttime" placeholder="开始日期">
+					  </div>
+					   -
+					  <div class="layui-input-inline">
+						<input type="text" name="toTime" class="layui-input" id="member_tongji_search_endtime" placeholder="结束日期">
+					  </div>
+					</div> 		
+					<div class="layui-inline" style="vertical-align:top">	
+					<div class="layui-input-inline">					
+						<button class="layui-btn"  lay-submit="" lay-filter="member_tongji_index_searching">搜索</button>
+					</div>
+					</div>
+					<div class="layui-inline"><label class="layui-form-label" style="width:220px">总盈亏：<span id="member_tongji_count_zyk">0.00</span></label>	</div> 									
+				</div>
+					<table class="layui-hide" id="member_tongji_index_list" lay-filter="member_tongji_index_list"></table>			
+			</div>
+			<!----------充值提现----->
+			<div class="layui-tab-item">
+					<div class="layui-tab" lay-filter="member_userinf_cztx_tab_son">
+						<div id="member_user_cztx_tab_ul">
+						<ul class="layui-tab-title usedata">
+							<li class="layui-this" lay-id="tikuan">提款记录</li>
+							<li lay-id="chongzhi">充值记录</li>
+							<li lay-id="jifen">积分兑换</li>
+						</ul>
+						</div>
+						<div class="layui-tab-content">			
+						<!-----------提款--->						
+						<div class="layui-tab-item layui-show ">
+							<div class="layui-tab layui-tab-brief" lay-filter="member_index_userinfo_cztx_tab">
+							<ul class="layui-tab-title" id="member_index_userinfo_cztx_tab_title">
+								<li class="layui-this" lay-id="1">待处理</li>
+								<li lay-id="2">处理中</li>
+								<li lay-id="0">已通过</li>
+								<li lay-id="4">已拒绝</li>
+								<li lay-id="9">全部</li>
+							</ul>
+								<div class="layui-tab-content">	
+								  <div class="layui-card-body layui-col-space10 layui-form" lay-filter="member_cztx_index_searching_form">
+									<div class="layui-inline">
+										<input type="text" name="amount" placeholder="金额" autocomplete="off" class="layui-input" size="8">
+									</div>
+									<div class="layui-inline layui-form">
+										<select id="member_index_userinfo_cztx_bankList" name="bankId" lay-verify="">
+											<option value="">提现银行</option>
+										</select>
+									</div>
+									<div class="layui-inline">
+										<input type="text" name="bankNo" placeholder="银行卡号" autocomplete="off" class="layui-input">
+									</div>
+									<div class="layui-inline">
+									  <div class="layui-input-inline">
+										<input type="text" class="layui-input" id="member_index_userinfo_cztx_start" name="fromTime" placeholder="开始日期">
+									</div>
+									</div>
+									<div class="layui-inline">
+									  <div class="layui-input-inline">
+										<input type="text" class="layui-input" id="member_index_userinfo_cztx_end" name="toTime" placeholder="结束日期">
+									  </div>
+									</div>
+									<div class="layui-inline">
+										<button class="layui-btn" lay-submit lay-filter="member_cztx_index_searching" id="member_userinfo_cztx_tx_submit">查询</button>
+									</div>
+									</div>								
+									<div class="layui-tab-item layui-show ">
+										<table class="layui-hide" id="member_userinfo_cztx_tx" lay-filter="member_userinfo_cztx_tx"></table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!------------------------充值----->
+						<div class="layui-tab-item">
+								<div class="layui-inline layui-form" lay-filter="member_usreinfo_cztx_cz_form">
+									<div class="layui-inline">
+										<input type="text" name="rechargeId" placeholder="充值编号" autocomplete="off" class="layui-input" size="15">
+									</div>
+									<div class="layui-inline">
+										<span>时间：从</span>
+										<div class="layui-input-inline">
+											<input type="text" class="layui-input" id="member_index_userinfo_cztx_cz_start" autocomplete="off" name="fromTime" placeholder="开始日期">
+										</div>
+									</div>
+									<div class="layui-inline">
+										<span>到</span>
+										<div class="layui-input-inline">
+											<input type="text" class="layui-input" id="member_index_userinfo_cztx_cz_end" autocomplete="off" name="toTime" placeholder="结束日期">
+										</div>
+										<span>状态类型：</span>
+									</div>
+
+									<div class="layui-inline">
+										<select name="type" lay-verify="">
+											<option value="101">所有类型</option>
+											<option value="99" selected="">正在申请</option>
+											<option value="5">已忽略</option>
+											<option value="1">手动到账</option>
+											<option value="2">自动到账</option>
+											<option value="9">管理员充值</option>
+											<option value="3">自动到账充值失败</option>
+											<option value="4">注册赠送充值</option>
+											<option value="6">管理员扣款</option>
+											<option value="7">充值成功</option>
+										</select>
+									</div>
+									<div class="layui-inline">
+										<select name="bank" lay-verify="" id="member_usreinfo_cztx_cz_BankHome">
+
+										</select>
+									</div>
+									<div class="layui-inline">
+										<button class="layui-btn" lay-submit lay-filter="member_usreinfo_cztx_cz_submit">查找</button>
+									</div>
+								</div>
+								<table class="layui-hide layui-form layui-border-box layui-table-view" id="member_usreinfo_cztx_cz_log" lay-filter="member_usreinfo_cztx_cz_log"></table>
+						</div>
+						<!--优惠-->
+						<div class="layui-tab-item">
+							<div class="layui-inline layui-form" lay-filter="member_usreinfo_point_form">
+								<div class="layui-inline">
+									<span>时间：从</span>
+									<div class="layui-input-inline">
+										<input type="text" class="layui-input" id="member_index_userinfo_point_start" autocomplete="off" name="fromTime" placeholder="开始日期">
+									</div>
+								</div>
+								<div class="layui-inline">
+									<span>到</span>
+									<div class="layui-input-inline">
+										<input type="text" class="layui-input" id="member_index_userinfo_point_end" autocomplete="off" name="toTime" placeholder="结束日期">
+									</div>
+								</div>
+
+								<div class="layui-inline">
+									<button class="layui-btn" lay-submit lay-filter="member_usreinfo_point_submit">查找</button>
+								</div>
+							</div>	
+							<table class="layui-hide layui-form layui-border-box layui-table-view" id="member_usreinfo_BusinessPointList" lay-filter="member_usreinfo_BusinessPointList"></table>
+						</div>
+					</div>
+				</div>			
+			</div>
+			<!------------------投注记录--------->
+			<div class="layui-tab-item">
+                        <div class="layui-inline layui-form" lay-filter="member_userinfo_betlog">
+                            <div class="layui-inline">
+                                <input type="text" name="actionNo" placeholder="期号" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <input type="text" name="id" placeholder="单号" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="member_userinfo_betlog_timestart" autocomplete="off" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="member_userinfo_betlog_timeend" autocomplete="off" name="toTime" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-form" lay-filter="component-form-element">
+                                <select id="member_usreinfo_BetsLogList1" bet="1"  name="type" lay-verify="">
+
+                                </select>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit lay-filter="member_usreinfo_listBetsLogForm">查找</button>
+                            </div>
+                        </div>	
+						<table class="layui-hide layui-border-box layui-table-view" id="member_usreinfo_BusinessBetsLogList" lay-filter="member_usreinfo_BusinessBetsLogList"></table>						
+			</div>
+		</div>
+	</div>					
+  </script>
+	<script type="text/html" id="member_userinfo_bankcard_bar">
+		  <a class="layui-btn layui-btn-sm" lay-event="edit">修改</a>		
+		  <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</a>
+	</script>
+	<script type="text/html" id="member_userinfo_login_sameip">
+		  <a class="layui-btn layui-btn-sm" lay-event="show">查看</a>		
+	</script>	
+	<script type="text/html" id="member_userinfo_login_sameip_list">
+	<div class="layui-card-body">
+	<table class="layui-hide" id="member_userinfo_sameip_list" lay-filter="member_userinfo_sameip_list"></table>
+	</div>
+	</script>
+	<script type="text/html" id="member_userinfo_cztx_tx_operate">
+	<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">查看</a>
+	{{#  if(d.state == 1 || d.state == 2){ }}
+	<a class="layui-btn layui-btn-xs" lay-event="dealWith">处理</a>
+	{{#  } }}
+	</script>
+	<script type="text/html" id="member_userinfo_cztx_tx_state">
+	{{#  if(d.state == 0){ }}
+		<span style="color: #c662ff;">已通过</span>
+	{{#  } else if(d.state == 1){ }}
+		<span style="color: #F581B1;">待处理</span>
+	{{#  } else if(d.state == 2){ }}
+		<span style="color: #F581B1;">处理中</span>
+	{{#  } else if(d.state == 4){ }}
+		<span style="color: #ff5b3c;">已拒绝</span>
+	{{#  } }}
+	</script>	
+<script type="text/html" id="member_fin_loginfo_bet">
+<div class="layui-fluid">
+    <div class="layui-form">
+
+ <div class="layui-row">
+    <div class="layui-col-md12">   
+      <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+              <label class="layui-form-label">号码：</label>
+              <div class="layui-input-block">
+					  <textarea name="text" class="layui-textarea" readonly style="min-height:60px;">{{ d.actionData }}</textarea>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>  	
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+	<div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">单号：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.wjorderId }}</div>
+            </div>			
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">发起人：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.username }}</div>
+            </div>		
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">彩种：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.typeTitle }}</div>
+            </div>	
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">期号：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.actionNo }}</div>
+            </div>			
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">开奖号：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.lotteryNo || '--' }}</div>
+            </div>		
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">订单状态：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.status }}</div>
+            </div>	
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">投注：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.betCont }}</div>
+            </div>	
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">上级返点：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.fanDianAmount || '--' }}</div>
+            </div>				
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md6">   
+      <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">投注数量：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.actionNum }}</div>
+            </div>		
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">中奖注数：</label>
+                  <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.zjCount || '--' }}</div>
+            </div>
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">赔率-返点：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.fanDian }}</div>
+            </div>
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">玩法：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.playedName }}</div>
+            </div>           
+			<div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">投注时间：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.actionTime }}</div>
+            </div>
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">来源：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.betType }}</div>
+            </div>
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">中奖：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.bonus }}</div>
+            </div>	
+            <div class="layui-form-item" style="margin-bottom:0px">
+              <label class="layui-form-label">个人盈亏：</label>
+				<div class="layui-form-mid layui-word-aux">{{ d.ykAmount }}</div>
+            </div>				
+        </div>
+      </div>
+    </div>
+  </div>
+	<center><button class="layui-btn closeBtnNew">关闭</button></center> 
+  </div>  
+</div>
+  </script> 	
+  <script type="text/html" id="member_fin_loginfo_recharge">
+<div class="layui-fluid">
+    <div class="layui-form">
+ <div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">用户：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.username }}</div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">充值金额：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.amount }}</div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">充值前资金：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.coin }}</div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">充值时间：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.rechargeTime }}</div>
+              </div>
+            </div>
+			<center><button class="layui-btn closeBtnNew">关闭</button></center>
+        </div>
+    </div>
+  </div>
+</div>
+  </script> 
+ <script type="text/html" id="member_fin_loginfo_cash">
+<div>
+    <div class="layui-form">
+ <div class="layui-row">
+    <div class="layui-col-md12">   
+      <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">用户：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.user }}</div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">实际提现金额：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux"><font color="red">{{ d.amount }} 元</font></div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">提现前资金：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.coin }}</div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">银行：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.bankName }}</div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">账号：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.account }}</div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">开户名：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.username }}</div>
+              </div>
+            </div>			
+            <div class="layui-form-item">
+              <label class="layui-form-label" style="width:120px">提现时间：</label>
+              <div class="layui-input-block">
+				<div class="layui-form-mid layui-word-aux">{{ d.actionTime }}</div>
+              </div>
+            </div>	
+        </div>
+      </div>
+    </div>
+	<center><button class="layui-btn closeBtnNew">关闭</button></center>
+  </div>
+</div>
+  </script> 
+ <script type="text/html" id="member_userinfo_cztx_viewCash">
+	<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+	<div class="layui-col-md12">
+	<table class="layui-table layui-form" lay-filter="member_userinfo_cztx_viewCash_table" style="margin:0;">
+		<tr>
+			<td>银行姓名</td><td>{{ d.bankName }}</td>
+		</tr>
+		<tr>
+			<td>开户行</td><td>{{ d.openBank }}</td>
+		</tr>
+		<tr>
+			<td width="80">开户姓名</td><td>{{ d.user }}</td>
+		</tr>
+		<tr>
+			<td>银行账号</td><td>{{ d.bankNo || '' }}</td>
+		</tr>
+		<tr>
+			<td>提现金额</td><td>￥{{ d.toAmount}}</td>
+		</tr>
+		<tr>
+			<td>手续费</td><td>￥{{ d.fee }}</td>
+		</tr>
+		<tr>
+			<td>实际金额</td><td style="color:red;">￥{{ d.amount }}</td>
+		</tr>
+		<tr>
+			<td>提交时间</td><td>{{ d.addTime }}</td>
+		</tr>
+		{{# if(d.state == 0 || d.state == 4){ }}
+		<tr>
+			<td>处理时间</td><td>{{ d.okTime }}</td>
+		</tr>
+		<tr>
+			<td>处理结果</td>
+			<td>
+				{{#  if(d.state == 0){ }}
+				<font style="color: #c662ff;">已通过</font>
+				{{#  } else if(d.state == 1){ }}
+				<font style="color: #F581B1;">待处理</font>
+				{{#  } else if(d.state == 2){ }}
+				<font style="color: #F581B1;">处理中</font>
+				{{#  } else if(d.state == 4){ }}
+				<font style="color: #ff5b3c;">已拒绝</font>
+				{{#  } }}
+			</td>
+		</tr>
+		<tr>
+			<td>备注</td><td>{{ d.info }}</td>
+		</tr>
+		{{# } }}
+		{{# if(d.type == 'dealWith'){ }}<input type="hidden" name="id" value="{{ d.id }}">
+		<tr>
+			<td>处理结果</td>
+			<td align="left" style="padding:0 15px;">
+				<div class="layui-inline" lay-filter="member_userinfo_cztx_viewCash_radio">
+            		<input type="radio" name="state" value="0" title="通过" checked="">
+            		<input type="radio" name="state" value="4" title="拒绝">
+            	</div>
+			</td>
+		</tr>
+		<tr>
+			<td>备注</td>
+			<td align="left"><textarea name="info" style="min-height:50px;" class="layui-textarea" placeholder="可留空，用户可见" /></td>
+		</tr>
+		<tr>
+			<td align="center"></td>
+			<td align="left"><button lay-submit lay-filter="goDealWith" class="layui-btn layui-btn-normal">提交处理</button><button class="layui-btn closeBtnNew">关闭</button></td>
+		</tr>
+		{{# }else{ }}
+		<tr>
+			<td colspan="2" align="center"><button class="layui-btn closeBtnNew">关闭</button></td>
+		</tr>
+		{{# } }}
+	</table>
+	</div>
+	</div>
+	</div>
+  </script> 
+  
+<script type="text/html" id="member_userinfo_RechargeLog">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<table class="layui-table layui-form" style="margin:0;" lay-filter="RechargeLog1-table-element">
+					<tr>
+						<td>用户名：</td><td>{{ d.username }}</td>
+					</tr>
+					<tr>
+						<td>充值金额：</td><td style="font-size: 15px;color: #00a0e9">{{ d.amount }}</td>
+					</tr>
+					{{# if( d.firstAmount > 0 ){ }}
+					<tr>
+						<td>充值赠送：</td><td>{{ d.firstAmount }} ({{ d.firstAmount_s }}%)</td>
+					</tr>
+					{{# } }}
+					{{# if( d.czzs > 0){ }}
+					<tr>
+						<td>每次充值赠送：</td><td>{{ d.meicizs }} ({{ d.czzs }}%)</td>
+					</tr>
+					{{# } }}
+					{{# if( d.zs_coin > 0){ }}
+					<tr>
+						<td>充值通道赠送：</td><td>{{ d.zs_money }} ({{ d.zs_coin }}%)</td>
+					</tr>
+					{{# } }}
+					<tr>
+						<td>实际到账：</td><td style="font-size: 20px;color: red">{{ d.rechargeAmount }}</td>
+					</tr>
+					<tr>
+						<td>备注：</td>
+						<td>
+							<textarea id="Determine" name="" style="width: 100%;height: 60px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="layui-btn Determine">确定</button>
+							<button class="layui-btn closeBtnNew">取消</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</script> 
+
+<script type="text/html" id="member_userinfo_RechargeLog1">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<table class="layui-table layui-form" style="margin:0;" lay-filter="RechargeLog1-table-element">
+					<tr>
+						<td>备注：</td>
+						<td>
+							<textarea id="member_usreinfo_Determine-ignore" lay-verify="required" name="" style="width: 100%;height: 60px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="layui-btn member_usreinfo_Determine-ignore" style="margin-left: 180px;">确定</button>
+							<button class="layui-btn closeBtnNew">取消</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</script> 
+<script type="text/html" id="member_userinfo_yxjl_ListBetsLog2">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="BetsLog-table-element2">
+                    <tr>
+                        <td style="text-align: center">号码：</td><td colspan="2"> {{ d.number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">单号：</td><td>{{ d.wjorderId }}</td>
+                        <td style="text-align: center">投注数量：</td><td>{{ d.actionNum }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">发起人：</td><td>{{ d.username }}</td>
+                        <td style="text-align: center">中奖注数：</td><td>{{ d.multiple }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">彩种：	</td><td>{{ d.species }}</td>
+                        <td style="text-align: center">赔率－返点：	</td><td>{{ d.bonusProp }}-{{ d.fanDian }}%</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">期号：	</td><td>{{ d.actionNo }}</td>
+                        <td style="text-align: center">玩法：</td><td>{{ d.play }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开奖号：</td><td>{{ d.lotteryNo }}</td>
+                        <td style="text-align: center">投注时间：</td><td>{{ d.actionTime }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">订单状态：</td><td>{{ d.status }}</td>
+                        <td style="text-align: center">来源：</td>
+                        {{# if( d.betType == 0 ){ }}
+                        <td>web</td>
+                        {{# }else if( d.betType == 1 ){ }}
+                        <td>手机</td>
+                        {{# }else if( d.betType == 2 ){ }}
+                        <td>APP</td>
+						{{# }else if( d.betType == 3 ){ }}
+						 <td>微信</td>
+						{{# }else { }} 
+						<td>未知</td>
+                        {{# } }}
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">投注：</td><td>{{ d.betCont }}</td>
+                        <td style="text-align: center">中奖：</td><td>{{ d.zjbonus }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">返点：</td><td>{{ d.fanDianAmount }}</td>
+                        <td style="text-align: center">个人盈亏：</td><td>{{ d.profit }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+		<center><button class="layui-btn closeBtnNew">关闭</button></center>
+    </div>
+</script>
+<script type="text/html" id="member_usreinfo_ListBetsLog1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="BetsLog-table-element1">
+                    <tr>
+                        <td style="text-align: center">号码：</td><td colspan="3"><input value="{{ d.number }}" type="text" name="actionData" lay-verify="required" autocomplete="off" placeholder="请输入标题" class="layui-input"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">单号：</td><td>{{ d.wjorderId }}</td>
+                        <td style="text-align: center">投注数量：</td><td>{{ d.actionNum }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">发起人：</td><td>{{ d.username }}</td>
+                        <td style="text-align: center">中奖注数：</td><td>{{ d.multiple }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">彩种：	</td><td>{{ d.species }}</td>
+                        <td style="text-align: center">赔率－返点：	</td><td>{{ d.bonusProp }} - {{ d.fanDian }}%</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">期号：	</td><td>{{ d.actionNo }}</td>
+                        <td style="text-align: center">玩法：</td><td>{{ d.play }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开奖号：</td><td>{{ d.lotteryNo }}</td>
+                        <td style="text-align: center">投注时间：</td><td>{{ d.actionTime }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">订单状态：</td><td style="color: #c33e4f">{{ d.status }}</td>
+                        <td style="text-align: center">来源：</td>
+                        {{# if( d.betType == 0 ){ }}
+                        <td>web</td>
+                        {{# }else if( d.betType == 1 ){ }}
+                        <td>手机</td>
+                        {{# }else if( d.betType == 2 ){ }}
+                        <td>APP</td>
+						{{# }else if( d.betType == 3 ){ }}
+						 <td>微信</td>
+						{{# }else { }} 
+						<td>未知</td>
+                        {{# } }}
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">投注：</td><td>{{ d.betCont }}</td>
+                        <td style="text-align: center">中奖：</td><td>{{ d.zjbonus }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">返点：</td><td>{{ d.fanDianAmount }}</td>
+                        <td style="text-align: center">个人盈亏：</td><td>{{ d.profit }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: center">
+                            <button class="layui-btn layui-btn-sm member_usreinfo_submit-betsLog" cid="'+ d.id +'" uid="'+ d.uid +'"  style="color: #fbfbfb">确认修改</button>
+                            <button class="layui-btn layui-btn-sm closeBtnNew" cid="'+ d.id +'" uid="'+ d.uid +'"  style="color: #fbfbfb">取消</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, element = layui.element;
+	var fanDianMax,agentMode;
+    $('#member_more_search_button').on('click',function(){
+		$('#member_more_search').toggle(200);
+	})
+    //开始日期
+    var insStart = laydate.render({
+      elem: '#member_search_starttime'
+      ,done: function(value, date){
+        //更新结束日期的最小日期
+        insEnd.config.min = lay.extend({}, date, {
+          month: date.month - 1
+        });
+        
+        //自动弹出结束日期的选择器
+       insEnd.config.elem[0].focus();
+      }
+    });
+    
+    //结束日期
+    var insEnd = laydate.render({
+      elem: '#member_search_endtime'
+      ,done: function(value, date){
+        //更新开始日期的最大日期
+        insStart.config.max = lay.extend({}, date, {
+          month: date.month - 1
+        });
+      }
+    });
+
+
+	
+    var active = {
+		reloaDataMemberlist:function(data){
+			var iii = layer.msg('loading');
+			table.render({
+			  elem: '#member_index_list'
+			  ,url: layui.setter.URL_ADMIN+'/member/getmembers'
+			  ,where: {data:data}
+			  ,method: 'post'
+			  ,cols: [[
+				{field:'uid', title: 'ID', width:60, sort: true}
+				,{field:'username', title: '用户名', minWidth:120}
+				,{field:'name', title: '姓名'}
+				,{field:'parentName', title: '上级',templet: function(d){ if(d.parentName!=null){ return d.parentName;} else {return '-';} }, width:120}
+				,{field:'usergrade', title: '层级', toolbar: '#member_index_tiergrade', width:50}
+				,{field:'fanDian', title: '返点', width:80}
+				,{field:'type', title: '类型',templet: function(d){ if(d.type==1){ return'代理';}else if(d.type==9){return '测试';} else {return '会员';} }, width:60}
+				,{field:'source', title: '来源', templet: function(d){ if(d.source==1){ return'代理';}else if(d.source==2){return '后台';} else if(d.source == 3){return '前台';} }, width:60}
+				,{field:'rechargeAmount', title: '存款总额', width: 100}
+				,{field:'cashAmount', title: '提款总额', width: 100}
+				,{field:'online', title: '状态', templet: function(d){ if(d.enable==0){ return '已冻结';} else{ if(d.online>0){ return'<font color="#FF0000">在线</font>';}else {return '离线';} }},width:60}
+				,{field:'regtime', title: '注册时间', minWidth:115}
+				,{field:'lastLoginFrom', title: '登录来源', templet: function(d){ if(d.lastLoginFrom==1){ return'PC';}else if(d.lastLoginFrom==2){return '手机';}else if(d.lastLoginFrom==3){return '微信';}else if(d.lastLoginFrom==4){return 'APP';} else {return '未知';} }, width:80}
+				,{field:'wealth', title: '操作', width:160, toolbar: '#member_index_useinfo_bar', fixed: 'right'}
+			  ]]
+			  ,page: {
+					layout: ['count', 'prev', 'page', 'next', 'skip']
+				},done: function(res){
+					layer.close(iii);	
+					$(".member_index_showsonuser").hover(function(){
+						var showson = layer.tips('查看下级', this,{tips: 4});
+					},function(){
+						layer.close(layer.index);
+					});
+					form.render('select');
+					//otherdata
+					if(typeof(res.otherData)!='undefined'){
+						$('.layui-card-header .rechargeUser').html('('+res.otherData.rechargeMemberCount+')');
+						$('.layui-card-header .norechargeUser').html('('+(res.otherData.memberCount-res.otherData.rechargeMemberCount)+')');
+						fanDianMax = res.otherData.fanDianMax;
+						agentMode = res.otherData.agentMode;
+					}
+				 }
+			});	
+		},reloadBetInfo:function(data){
+			 table.render({
+			  elem: '#member_userinfo_betinfo'
+			  ,where: data
+			  ,url: layui.setter.URL_ADMIN+'/member/getbetinfouser'
+			  ,cols: [[
+				{field:'actionTime', title: '时间', templet: function(d){return admin.formatDate(d.actionTime); }, minWidth:155}
+				,{field:'betAmount', title: '投注',width:100}
+				,{field:'zjAmount',title: '中奖',width:100}
+				,{field:'yk', title: '投注盈亏',width:105, templet: function(d){
+					if(d.betAmount>d.zjAmount) return '<font color="red">-'+(d.betAmount-d.zjAmount)+'</font>';
+				    else return '<font color="green">'+(d.zjAmount-d.betAmount)+'</font>'; }}
+			  ]]
+			});		
+		},reloadLoginLog:function(data){
+			 table.render({
+			  elem: '#member_login_index_list'
+			  ,where: data
+			  ,url: layui.setter.URL_ADMIN+'/member/getloginlog'
+			  ,limit:8
+			  ,cols: [[
+			   {field:'loginTime', title: '登陆时间', templet: function(d){return admin.formatDate(d.loginTime); }}
+			   ,{field:'country', title: '登陆位置'}
+				,{field:'loginIP', title: '登陆IP'}
+				,{field:'browser', title: '浏览器'}
+				,{field:'os',title: '操作系统'}
+				,{field:'area', title: '网络'}
+				,{field:'loginDomain', title: '登录域名'}
+				,{field:'bat', width:130, title: '同IP登陆', toolbar: '#member_userinfo_login_sameip'}
+			  ]],page: {
+					layout: ['count', 'prev', 'page', 'next', 'skip']
+				}
+			});			
+		},reloadActivityLog:function(data){
+			 table.render({
+			  elem: '#member_activity_index_list'
+			  ,where: data
+			  ,url: layui.setter.URL_ADMIN+'/member/getactivitylog'
+			  ,limit:8
+			  ,cols: [[
+			     {field:'username', title: '用户名'}
+				,{field:'state', title: '优惠类型', templet: function(d){if(d.state==4)return '用户注册赠送';else if(d.state==5) return '充值券赠送';else if(d.state==6) return '每日反水活动';else if(d.state==7) return '后台赠送彩金'; }}
+				,{field:'rechargeId', title: '单号'}
+				,{field:'amount',title: '金额'}
+				,{field:'info', title: '备注'}
+				,{field:'rechargeTime', title: '赠送时间', templet: function(d){return admin.formatDate(d.rechargeTime); }}
+			  ]],page: {
+					layout: ['count', 'prev', 'page', 'next', 'skip']
+				}
+			});			
+		},reloadUserCoinLog:function(data){
+			 var iii = layer.msg('loading');
+			 table.render({
+			  elem: '#member_fin_index_list'
+			  ,where: data
+			  ,url: layui.setter.URL_ADMIN+'/member/getusercoinlog'
+			  ,limit:10
+			  ,cols: [[
+			     {field:'username', title: '用户名', templet: function(d){if(d.type==9)return d.username+'(测试号)';else  return d.username; }}
+				,{field:'info', title: '账变类型'}
+				,{field:'danhao', title: '单号', templet: function(d){ if(typeof(d.danhao)!='undefined' && d.danhao!=0) return '<a href="javascript:void(0);" class="member_fin_log_view" rel="'+d.extfield0+'"  logtype="'+d.logtype+'" >'+d.danhao+'<i class="layui-icon">&#xe655;</i></a>';else return '--';}}
+				,{field:'ltype',title: '游戏', templet: function(d){if(d.ltype && d.ltype!='0')return d.ltype;else  return '--'; }}
+				,{field:'playedName',title: '玩法', templet: function(d){if(d.playedName)return d.playedName;else  return '--'; }}
+				,{field:'actionNo', title: '期号', templet: function(d){if(d.actionNo) return d.actionNo;else  return '--'; }}
+				,{field:'coin', title: '资金'}
+				,{field:'userCoin', title: '余额'}
+				,{field:'actionTime', title: '时间', templet: function(d){return admin.formatDate(d.actionTime); }}
+			  ]],page: {
+					layout: ['count', 'prev', 'page', 'next', 'skip']
+				},done: function(res){
+					layer.close(iii);
+					$(".member_fin_log_view").on('click',function(){
+						var relaid = $(this).attr('rel'),tpl,width='500px';
+						var logtype = $(this).attr('logtype');
+						if(logtype=='bet'){
+							tpl='member_fin_loginfo_bet';
+							width = '800px';
+						}
+						else if(logtype=='recharge') tpl='member_fin_loginfo_recharge';
+						else if(logtype=='cash') tpl='member_fin_loginfo_cash'; 
+						if(tpl){
+							admin.req({
+								url: layui.setter.URL_ADMIN+'/member/getcoinloginfo'
+								,data: {relaid:relaid,logtype:logtype}
+								,type: 'post'
+								,done: function(res2){
+									layer.open({
+									  type: 1
+									  ,closeBtn:0
+									  ,shadeClose: true
+									   ,area: admin.screen() < 2 ? ['80%', '500px'] : [width, '500px']
+									  ,content: laytpl($('#'+tpl).html()).render(res2.data)
+									});
+								}
+							});
+						}						
+					});						
+					//otherdata
+					if(typeof(res.otherData)!='undefined'){
+						var htmltype='<option value="0">请选择彩种</option>',htmlltype = '<option value="0">选择类型</option>';
+					   for(val in res.otherData.ltype){
+						   htmlltype += '<option value="'+val+'">'+res.otherData.ltype[val]+'</option>';
+					   }	
+					   $('#member_fin_index_liqType').html(htmlltype);
+					   for(val in res.otherData.lotterys){
+						   htmltype += '<option value="'+res.otherData.lotterys[val].id+'">'+res.otherData.lotterys[val].title+'</option>';
+					   }
+					   $('#member_fin_index_type').html(htmltype);						   
+					   form.render('select','member_fin_index_searching_form');
+					}
+				 }
+			});			
+		},reloadTongJiLog:function(data){
+			 table.render({
+			  elem: '#member_tongji_index_list'
+			  ,where: data
+			  ,url: layui.setter.URL_ADMIN+'/member/gettongjilog'
+			  ,limit:8
+			  ,cols: [[
+			     {field:'actionDate', title: '日期'}
+				,{field:'rechargeAmount', title: '存款'}
+				,{field:'cashAmount', title: '提现'}
+				,{field:'betAmount',title: '投注'}
+				,{field:'zjAmount', title: '中奖'}
+				,{field:'ykAmount', title: '盈亏'}
+			  ]],page: {
+					layout: ['count', 'prev', 'page', 'next', 'skip']
+				},done:function(res){
+					$('#member_tongji_count_zyk').html(res.otherData);
+				}
+			});			
+		},reloadCashLog:function(data){
+			table.render({
+			  elem: '#member_userinfo_cztx_tx'
+			  ,url: layui.setter.URL_ADMIN+'/business/cashlog'
+			  ,where: data
+			  ,cols: [[
+				{field:'user', title: '用户名', width: 120}
+				,{field:'toCachAmount', title: '金额', width: 100, sort: true}
+				,{field:'name', title: '姓名', width: 90}
+				,{field:'fee', title: '手续费', width: 100}
+				,{field:'bankName', title: '银行名称', width: 120}
+				,{field:'uname', title: '出款账户', width: 80}
+				,{field:'account', title: '银行卡号', width: 200}
+				,{field:'state', title: '状态', templet: '#member_userinfo_cztx_tx_state', width: 85}
+				,{field:'addTime', title: '提交时间', templet: function(d){return admin.formatDate(d.addTime); }, width:155}
+				,{field:'info', title: '备注'}
+				,{width:120, align:'center', title: '操作', toolbar: '#member_userinfo_cztx_tx_operate', fixed: 'right'}
+			  ]]
+			  ,page: {
+				  layout: ['count', 'prev', 'page', 'next', 'skip']
+			  }
+			});		
+		},reloadRechargeLog:function(data){
+            admin.req({
+                url: layui.setter.URL_ADMIN+'/recharge/bankList'
+                ,type: 'post'
+                ,done: function(res){
+                    var _dom = '<option value="">选择收款类型</option>';
+                    var data = res.bank;
+                    for(var i in data){
+                        _dom += '<option value="'+data[i]["id"]+'">'+data[i]["title"]+'</option>';
+                    }
+                    $('#member_usreinfo_cztx_cz_BankHome').append(_dom);
+                    form.render('select','member_usreinfo_cztx_cz_form');
+                }
+            });
+
+			var olddata = data;
+			table.render({
+            elem: '#member_usreinfo_cztx_cz_log'
+            ,url: layui.setter.URL_ADMIN+'/recharge/rechargelist'
+            ,where:data
+			,limit :8
+            ,cols: [[
+                {field:'uid',align:'center', title: 'UserID', width: 70},
+                {field:'username',align:'center', title: '用户名', width: 100},
+                {field:'amount',align:'center', title: '充值金额', width: 120},
+                {field:'rechargeAmount',align:'center', title: '实际到账', width: 120},
+                {field:'rechargeId',align:'center', title: '充值编号', width: 120},
+                {field:'bankNames',align:'center', title: '充值银行'},
+                {field:'typeid',align:'center', title: '充值类型',templet: function(d){
+                    if(d.typeid == 1){return '在线充值'}else if(d.typeid == 2){return '转账充值'}else if(d.typeid == 3){return '注册赠送'}else {return '未知'}
+                }},
+                {field:'status',align:'center', title: '状态', templet: function(d){
+                    return d.status ? '<font style="color: #00a368;"> '+ d.status +' </font>' :""
+                }},
+                {field:'info',align:'center', title: '备注'},
+                {field:'actionTime',align:'center', title: '时间',templet: function(d){return admin.formatDate(d.actionTime); }},
+                {align:'center', width: 200, title: '操作',fixed: 'right',templet: function(d){
+                    if(d.caozuo == 1){
+                        return '<button class="layui-btn layui-btn-sm Account-handling" amount="'+ d.amount +'" con="'+d.id+'" user="'+d.username+'">到账处理</button> &nbsp;' +
+                            ' <button class="layui-btn layui-btn-sm ignore" con="'+d.id+'">忽略</button>'
+					}else {
+                        return '--';
+					}
+
+                }}
+			]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+
+
+                //到账处理
+                $('.Account-handling').click(function () {
+                    var id = $(this).attr('con');
+                    $.post(layui.setter.URL_ADMIN+"/Recharge/rechargeOn?id="+id,function(res){
+                        var ress = JSON.parse(res);
+                        var data = ress.data;
+                        var rechargeAmount = Number(data.rechargeAmount);
+                        layer.open({
+                            title:'到账处理'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                            ,content: laytpl($('#member_userinfo_RechargeLog').html()).render(data)
+                        });
+                        form.render(null, 'RechargeLog-table-element');
+
+                        $('.Determine').click(function () {
+                            var info = $('#Determine').val();
+                            $.ajax({
+                                type: "POST",
+                                url: layui.setter.URL_ADMIN+"/Recharge/rechargeHandle",
+                                data:{
+                                    id:id,
+                                    info:info,
+                                    rechargeAmount:rechargeAmount
+                                },
+                                success: function(res){
+                                    var data = JSON.parse(res);
+                                    if(data.code == 0){
+                                        table.reload('member_usreinfo_cztx_cz_log');
+                                        layer.close(layer.index);
+                                    }
+                                }
+                            });
+                        });
+                    });
+
+                });
+
+                //拒绝
+                $('.ignore').click(function () {
+                    var id = $(this).attr('con');
+                        layer.open({
+                            title:'确定忽略？'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                            ,content: $('#member_userinfo_RechargeLog1').html()
+                        });
+                        $('.member_usreinfo_Determine-ignore').click(function () {
+                            var info = $('#member_usreinfo_Determine-ignore').val();
+							if(!info) {
+								layer.msg('备注是必填的', {icon: 5});
+								return false;
+							}
+                            $.ajax({
+                                type: "POST",
+                                url: layui.setter.URL_ADMIN+"/Recharge/rechargeDelete",
+								data:{
+                                    id:id,
+                                    info:info
+								},
+                                success: function(res){
+                                    var data = JSON.parse(res);
+									if(data.code == 0){
+                                        table.reload('member_usreinfo_cztx_cz_log');
+                                        layer.close(layer.index);
+									}
+                                }
+                            });
+                        });
+                });
+            }
+        });		
+		},reloadPointLog:function(data){
+			table.render({
+				elem: '#member_usreinfo_BusinessPointList'
+				,url: layui.setter.URL_ADMIN+'/BusinessWater/pointList'
+				,where:data
+				,cols: [[
+					{field:'id',align:'center', title: '单号'},
+					{field:'userName',align:'center', title: '用户名'},
+					{field:'score',align:'center', title: '积分'},
+					{field:'coin',align:'center', title: '兑换现金'},
+					{field:'changeTime',align:'center', title: '时间',templet: function(d){return admin.formatDate(d.changeTime); }},
+				]]
+				,page: {
+					layout: ['count', 'prev', 'page', 'next', 'skip']
+				}
+			});		
+		},reloadUserinfoBetInfo:function(data){
+			var iii = layer.msg('loading');
+			table.render({
+				elem: '#member_usreinfo_BusinessBetsLogList'
+				,url: layui.setter.URL_ADMIN+'/BusinessWater/betlog'
+				,where:data
+				,cols: [[
+					{field:'wjorderId',align:'center', title: '单号', width: 200,templet: function(d){
+						return '<a href="javascript:;" con="'+ d.id +'" class="member_usreinfo_betsLog-Statistics" style="color: #1E9FFF">'+d.wjorderId+'</a>'
+					}},
+					{field:'username',align:'center', title: '用户名', width: 150},
+					{field:'actionTime',align:'center', title: '投注时间',templet: function(d){return admin.formatDate(d.actionTime); }},
+					{field:'species',align:'center', title: '彩种', width: 150},
+					{field:'play',align:'center', title: '玩法', width: 100},
+					{field:'actionNo',align:'center', title: '期号', width: 120},
+					{field:'bonusProp',align:'center', title: '倍数', width: 70},
+					{field:'actionNum',align:'center', title: '注数', width: 70},
+					{field:'number_t',align:'center', title: '投注号码', width: 100},
+					{field:'money',align:'center', title: '投注金额', width: 120},
+					{field:'state',align:'center', title: '中奖金额', width: 120},
+					{field:'fanDianAmount',align:'center', title: '返点', width: 120},
+					{align:'center', title: '操作', width: 120,fixed: 'right',templet: function(d){
+						return '<a class="layui-btn layui-btn-sm member_usreinfo_update-betsLog" cid="'+ d.id +'" uid="'+ d.uid +'"  style="color: #fbfbfb" href="javascript:;">修改</a>';
+					}}
+				]]
+				,page: {
+					layout: ['count', 'prev', 'page', 'next', 'skip']
+				}
+				,done: function(res){
+					layer.close(iii);
+					var speciess = res.type;
+					var _species = "";
+					if($('#member_usreinfo_BetsLogList1').attr('bet') == 1){
+						_species += '<option value="">全部彩种</option>';
+						for(var i in speciess){
+							_species += ' <option value="'+ speciess[i]["id"] +'">'+ speciess[i]["title"] +'</option>'
+						}
+						$('#member_usreinfo_BetsLogList1').html(_species);
+						$('#member_usreinfo_BetsLogList1').attr('bet','2')
+					}
+					form.render('select');
+
+
+					//修改
+					$('.member_usreinfo_update-betsLog').click(function () {
+						var id = $(this).attr('cid');
+						$.post(layui.setter.URL_ADMIN+"/Agent/betInfo?id="+id,function(res){
+							var ress = JSON.parse(res);
+							var data = ress.data;
+							data.actionTime = admin.formatDate(data.actionTime);
+							var layedit = layer.open({
+								title:'修改投注信息'
+								,type: 1
+								,shadeClose: true
+								,area: admin.screen() < 2 ? ['80%', '800px'] : ['800px', 'auto']
+								,content: laytpl($('#member_usreinfo_ListBetsLog1').html()).render(data)
+							});
+
+
+							$('.member_usreinfo_submit-betsLog').click(function () {
+								var actionData = $('input[name="actionData"]').val().trim();
+								var betid = data['id'];
+								var username = data['username'];
+								var uid = data['uid'];
+								$.ajax({
+									type:'post',
+									url:layui.setter.URL_ADMIN+'/BusinessWater/betinfoUpdateed',
+									data:{
+										actionData:actionData,
+										betid:betid,
+										username:username,
+										uid:uid
+									},
+									dataType:'json',
+									success:function(res){
+										if(res.code == 0 ){
+											layer.msg(res.msg, {time: 1000},function () {
+												layer.close(layedit);
+												table.reload('member_usreinfo_BusinessBetsLogList',{});
+											});
+										}else {
+											layer.msg(res.msg, {time: 1000});
+										}
+									},
+									error:function(){
+										alert("请求失败")
+									}
+								})
+							});
+						});
+					});
+					
+					//查看
+					$('.member_usreinfo_betsLog-Statistics').click(function () {
+						var id = $(this).attr('con');
+						$.post(layui.setter.URL_ADMIN+"/Agent/betInfo?id="+id,function(res){
+							var ress = JSON.parse(res);
+							var data = ress.data;
+							data.actionTime = admin.formatDate(data.actionTime);
+							layer.open({
+								title:'投注信息'
+								,type: 1
+								,shadeClose: true
+								,area: admin.screen() < 2 ? ['80%', '800px'] : ['800px', 'auto']
+								,content: laytpl($('#member_userinfo_yxjl_ListBetsLog2').html()).render(data)
+							});
+						});
+					});
+
+				}
+			})		
+		}
+	}; 
+	
+	//主列表载入
+	active['reloaDataMemberlist'].call(this,{init:1});
+	
+	//监听工具条
+	table.on('tool(member_index_list)', function(obj){
+		var data = obj.data,that=this,thatdata=obj;
+		if(obj.event === 'tiergrade'){//显示层级关系
+			if(data.usergrade==0){
+				 layer.tips('<font color="#000">该会员已经是顶级了</font>', this,{tips:[2,'#fff']});
+			}
+			else{
+				//var loading = layer.tips('<i class="layui-icon layui-anim-rotate layui-anim-loop" style="display:inline-block">&#xe63e;</i>', this);
+				admin.req({
+					url: layui.setter.URL_ADMIN+'/member/getparents'
+					,data: {ids:data.parents}
+					,type: 'post'
+					,done: function(res){
+						layer.open({
+						  type: 4
+						  ,tips:[2,'#fff']
+						  ,area: ['200px', 'auto']
+						  ,closeBtn:0
+						  ,shadeClose: true
+						  ,content: [laytpl($('#member_index_tiergrade_layer').html()).render(res), that] 
+						});
+					}
+				});			
+  	
+			}			
+		}else if(obj.event === 'showsonuser'){//显示下级用户
+			$('#member_index_norechargeUser').attr('style','cursor: pointer;');
+			$('#member_index_rechargeUser').attr('style','cursor: pointer;');	
+			active['reloaDataMemberlist'].call(this,{parent:obj.data.username});
+			$('#member_index_parent_blank').val(obj.data.username);
+			$('#member_more_search').fadeIn();
+		}else if(obj.event === 'showusersetting'){//显示设置弹出层
+			layer.open({
+			  type: 4
+			  ,shadeClose: true
+			  ,tips:[2,'#fff']
+			  ,closeBtn:0
+			  ,content: [$('#member_index_usersetting_layer').html(), this] 
+			  ,success:function(layero,index){
+					if(data.enable==0) $('.tool—list .t-freeze').find('span').html('解冻账户');
+					$('.tool—list .eit').on('click',function(){
+						var settype = $(this).attr('rel');
+						settingProcess(data,settype,thatdata);
+					})
+			  }
+			});
+		}else if(obj.event === 'userinfo'){//主弹框，用户信息
+			var that = data;
+			var iii = layer.msg('loading');
+			admin.req({//用户详情框获取一些特殊的信息
+				url: layui.setter.URL_ADMIN+'/member/getothermsg'
+				,data: {uid:data.uid}
+				,type: 'post'
+				,done: function(res){
+					layer.close(iii);
+					data.otherData = res;
+					layer.open({
+					  type: 1
+					  ,title:false
+					  ,shadeClose: true
+					  ,scrollbar: false 
+					  ,area: admin.screen() < 2 ? ['95%', '650px'] : ['85%', '650px']
+					  ,content: laytpl($('#member_index_userinfo').html()).render(data)
+					  ,success:function(layero,index){
+						form.render();
+						active['reloadBetInfo'].call(this,{uid:data.uid,typeid:25});//默认显示江苏快三投注
+						/*/自定义字段不用了
+						if(typeof(res.data.labels)!='undefined'){
+							var html = '';
+						   for(val in res.data.labels){
+								html += '<div class="layui-inline layui-col-md3  layui-col-sm4"><label class="layui-form-label">'+res.data.labels[val].label+'</label><div class="layui-input-block"><input type="text" name="label['+res.data.labels[val].id+']" value="'+''+'" placeholder="请填写'+res.data.labels[val].label+'"  autocomplete="off" class="layui-input"></div></div>';
+						   }
+						   $('#member_params_auto').html(html);
+						}*/		
+						//切换彩种
+						form.on('select(member_userinfo_lottery_change)', function(data){
+							active['reloadBetInfo'].call(this,{uid:that.uid,typeid:data.value});
+						}); 	
+						//切换彩种分类
+						form.on('select(member_userinfo_lotterytype)', function(data){
+							admin.req({
+								url: layui.setter.URL_ADMIN+'/lotterys/type'
+								,data: {typec:data.value}
+								,done: function(res){
+								
+									var options ='';
+									var nowtypeid=0;
+								   for(val in res.data){
+									if(nowtypeid==0) nowtypeid=res.data[val].id;
+									   options += '<option value="'+res.data[val].id+'">'+res.data[val].title+'</option>';
+								   }	
+								   $('#member_userinfo_lottery_change2').html(options);
+								   form.render(null,'member_userinfo_lottery_form');
+								   active['reloadBetInfo'].call(this,{uid:that.uid,typeid:nowtypeid});
+								}
+							});								
+						}); 						
+						
+						form.on('submit(member_index_userinfo_submit)', function(data){
+							data.field.uid = that.uid;
+							admin.req({
+								url: layui.setter.URL_ADMIN+'/member/userupdateed'
+								,data: data.field
+								,type: 'post'
+								,done: function(res){
+									if(res.code>0){
+										layer.msg(res.msg, {icon: 5});
+									}else{
+										layer.msg(res.msg, {icon: 1});
+										thatdata.update(data.field);
+										setTimeout(function(){	
+											layer.closeAll();
+										},2000);		
+									}
+								}
+							});
+						})	
+						 element.on('tab(member_index_userinfo)', function(obj){
+							var action = $(this).attr('lay-id');
+							if(action=='fin'){
+								active['reloadUserCoinLog'].call(this,{uid:that.uid,init:1});
+									//获取当前日期,默认7天前
+									$('#member_fin_search_starttime').attr('value', GetDateStr(-7));
+									//开始日期
+									var insStart = laydate.render({
+									  elem: '#member_fin_search_starttime'
+									  ,done: function(value, date){
+										//更新结束日期的最小日期
+										insEnd.config.min = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+										
+										//自动弹出结束日期的选择器
+									   insEnd.config.elem[0].focus();
+									  }
+									});
+									
+									//结束日期
+									var insEnd = laydate.render({
+									  elem: '#member_fin_search_endtime'
+									  ,done: function(value, date){
+										//更新开始日期的最大日期
+										insStart.config.max = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+									  }
+									});	
+									form.on('submit(member_fin_index_searching)', function(data){
+										data.field.uid = that.uid;
+										active['reloadUserCoinLog'].call(this,data.field);
+									})									
+							}else if(action=='tongji'){
+										var insStart = laydate.render({
+									  elem: '#member_tongji_search_starttime'
+									  ,done: function(value, date){
+										//更新结束日期的最小日期
+										insEnd.config.min = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+										
+										//自动弹出结束日期的选择器
+									   insEnd.config.elem[0].focus();
+									  }
+									});
+									
+									//结束日期
+									var insEnd = laydate.render({
+									  elem: '#member_tongji_search_endtime'
+									  ,done: function(value, date){
+										//更新开始日期的最大日期
+										insStart.config.max = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+									  }
+									});								
+									active['reloadTongJiLog'].call(this,{uid:that.uid});
+									form.on('submit(member_tongji_index_searching)', function(data){
+										data.field.uid = that.uid;
+										active['reloadTongJiLog'].call(this,data.field);
+									})										
+							}else if(action == 'cztx'){
+								active['reloadCashLog'].call(this,{username:that.username});
+								//获取提现银行
+								admin.req({
+									url: layui.setter.URL_ADMIN+'/Business/getBankList'
+								   ,done: function(res){
+									   var options = '';
+									   for(val in res.data){
+										   options += '<option value="'+res.data[val].id+'">'+res.data[val].name+'</option>';
+									   }
+									   $('#member_index_userinfo_cztx_bankList').append(options);
+										//生成下拉框元素
+										form.render('select', 'member_cztx_index_searching_form');
+								   }
+								});	
+								
+								$('#member_index_userinfo_cztx_start').attr('value',  GetDateStr(0));
+									var insStart = laydate.render({
+									  elem: '#member_index_userinfo_cztx_start'
+									  ,done: function(value, date){
+										//更新结束日期的最小日期
+										insEnd.config.min = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+										
+										//自动弹出结束日期的选择器
+									   insEnd.config.elem[0].focus();
+									  }
+									});
+									
+									//结束日期
+									var insEnd = laydate.render({
+									  elem: '#member_index_userinfo_cztx_end'
+									  ,done: function(value, date){
+										//更新开始日期的最大日期
+										insStart.config.max = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+									  }
+									});		
+									
+									form.on('submit(member_cztx_index_searching)', function(data){
+										data.field.username = that.username;
+										data.field.state = $('#member_index_userinfo_cztx_tab_title .layui-this').attr('lay-id');
+										active['reloadCashLog'].call(this,data.field);
+									})
+
+									//监听提现状态选项卡
+									element.on('tab(member_index_userinfo_cztx_tab)', function(obj){
+										$('#member_userinfo_cztx_tx_submit').click();
+										//$('.layui-input').val('');
+										//var state = $(this).attr('lay-id');
+										//active['reloadCashLog'].call(this,{username:that.username,state:state});
+									})
+									
+									//监听充值记录，积分兑换选项卡
+									element.on('tab(member_userinf_cztx_tab_son)', function(obj){
+										$('#member_userinfo_cztx_tx_submit').click();
+										var action = $(this).attr('lay-id');
+										if(action=='chongzhi'){
+											$('#member_index_userinfo_cztx_cz_start').attr('value',  GetDateStr(-7));
+												var insStart = laydate.render({
+												  elem: '#member_index_userinfo_cztx_cz_start'
+												  ,done: function(value, date){
+													//更新结束日期的最小日期
+													insEnd.config.min = lay.extend({}, date, {
+													  month: date.month - 1
+													});
+													
+													//自动弹出结束日期的选择器
+												   insEnd.config.elem[0].focus();
+												  }
+												});
+												
+												//结束日期
+												var insEnd = laydate.render({
+												  elem: '#member_index_userinfo_cztx_cz_end'
+												  ,done: function(value, date){
+													//更新开始日期的最大日期
+													insStart.config.max = lay.extend({}, date, {
+													  month: date.month - 1
+													});
+												  }
+												});											
+											active['reloadRechargeLog'].call(this,{username:that.username,type:99,fromTime:GetDateStr(-7)});
+											form.on('submit(member_usreinfo_cztx_cz_submit)', function(data){
+												data.field.username = that.username;
+												active['reloadRechargeLog'].call(this,data.field);
+												return false;
+											});											
+										}else if(action=='jifen'){
+											$('#member_index_userinfo_point_start').attr('value',  GetDateStr(-7));
+												var insStart = laydate.render({
+												  elem: '#member_index_userinfo_point_start'
+												  ,done: function(value, date){
+													//更新结束日期的最小日期
+													insEnd.config.min = lay.extend({}, date, {
+													  month: date.month - 1
+													});
+													
+													//自动弹出结束日期的选择器
+												   insEnd.config.elem[0].focus();
+												  }
+												});
+												
+												//结束日期
+												var insEnd = laydate.render({
+												  elem: '#member_index_userinfo_point_end'
+												  ,done: function(value, date){
+													//更新开始日期的最大日期
+													insStart.config.max = lay.extend({}, date, {
+													  month: date.month - 1
+													});
+												  }
+												});											
+											active['reloadPointLog'].call(this,{username:that.username,fromTime:GetDateStr(-7)});
+											form.on('submit(member_usreinfo_point_submit)', function(data){
+												data.field.username = that.username;
+												active['reloadPointLog'].call(this,data.field);
+												return false;
+											});											
+										}
+									})
+									table.on('tool(member_userinfo_cztx_tx)', function(obj){
+										var data = obj.data;
+										if(obj.event === 'view'){
+                                            data.addTime = admin.formatDate(data.addTime);
+                                            admin.req({
+                                                url: layui.setter.URL_ADMIN+'/Business/cashDetail/'+obj.event+'/'+data.id			//查看/处理
+                                                ,done: function(res){
+                                                    var data = res.data;
+                                                    layer.open({
+                                                        title:'提现信息'
+                                                        ,type: 1
+                                                        ,shadeClose: true
+                                                        ,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+                                                        ,content: laytpl($('#member_userinfo_cztx_viewCash').html()).render(data)
+                                                    });
+                                                    form.render(null, 'cash-table-element');
+                                                    form.render(null, 'member_userinfo_cztx_viewCash_table');
+                                                    form.render(null, 'member_userinfo_cztx_viewCash_radio');
+                                                }
+                                            });
+
+                                        }else if(obj.event === 'dealWith'){
+											var conBox = layer.confirm('确定要处理?', function(index){
+												data.type='dealWith';
+												data.addTime = admin.formatDate(data.addTime);
+												layer.close(conBox);
+												admin.req({
+													url: layui.setter.URL_ADMIN+'/Business/cashDetail/'+obj.event+'/'+data.id			//查看/处理
+													,done: function(res){
+													    data = res.data;
+														layer.open({
+															title:'提现信息'
+															,type: 1
+															,shadeClose: true
+															,area: admin.screen() < 2 ? ['80%', '300px'] : ['500px', 'auto']
+															,content: laytpl($('#member_userinfo_cztx_viewCash').html()).render(data)
+														});
+														form.render(null, 'cash-table-element');
+                                                        form.render(null, 'member_userinfo_cztx_viewCash_table');
+                                                        form.render(null, 'member_userinfo_cztx_viewCash_radio');
+													}
+												});
+
+												return true;
+											});	
+											//监听提现处理
+											form.on('submit(goDealWith)', function(data){
+												admin.req({
+													url: layui.setter.URL_ADMIN+'/Business/dealWith/'+data.field.id
+												   ,type: 'post'
+												   ,data: {
+													   state: data.field.state.trim()
+													   ,info: data.field.info.trim()
+												   }
+												   ,done: function(res){
+													   if(res.code == 0){
+														   layer.close(layer.index);
+														   layer.msg(res.msg);
+														   $('.layui-this').click();
+													   }
+												   }
+												});
+											});											
+										}
+									})										
+							}else if(action=='yxjl'){
+								$('#member_userinfo_betlog_timestart').attr('value',  GetDateStr(0));
+								active['reloadUserinfoBetInfo'].call(this,{username:that.username,fromTime:GetDateStr(0)});
+								//开始日期
+								var insStart = laydate.render({
+									elem: '#member_userinfo_betlog_timestart'
+									,done: function(value, date){
+										//更新结束日期的最小日期
+										insEnd.config.min = lay.extend({}, date, {
+											month: date.month - 1
+										});
+									}
+								});
+
+								//结束日期
+								var insEnd = laydate.render({
+									elem: '#member_userinfo_betlog_timeend'
+									,done: function(value, date){
+										//更新开始日期的最大日期
+										insStart.config.max = lay.extend({}, date, {
+											month: date.month - 1
+										});
+									}
+								});		
+								form.on('submit(member_usreinfo_listBetsLogForm)', function(data){
+									data.field.username = that.username;
+									active['reloadUserinfoBetInfo'].call(this,data.field);
+									return false;
+								});								
+							}
+						 })
+							//会员信息 子选项卡
+						  element.on('tab(member_userinf_tab_son)', function(obj){
+								var action = $(this).attr('lay-id');
+								$('#member_userinfo_addbankcard').fadeOut();
+								$('#member_user_tab_ul').css('width',admin.screen() < 2 ? '80%': window.innerWidth*1*0.9+"px");
+								if(action=='bankcard'){
+									 table.render({
+									  elem: '#member_userinfo_tab_bankcard'
+									  ,where: {uid:that.uid}
+									  ,url: layui.setter.URL_ADMIN+'/member/getbankcard'
+									  ,cols: [[
+									   {field:'id', title: 'ID'}
+									   ,{field:'userAccount', title: '用户名'}
+										,{field:'bankName', title: '银行名称'}
+										,{field:'account', title: '银行账号'}
+										,{field:'username',title: '开户姓名'}
+										,{field:'countname', title: '开户行'}
+										,{field:'is_default', title: '默认', templet: function(d){if(d.is_default==1) return "<font color='red'>是</font>";else return '否'; }}
+										,{field:'bat', width:130, title: '操作', toolbar: '#member_userinfo_bankcard_bar'}
+									  ]],page: {
+											layout: ['count', 'prev', 'page', 'next', 'skip']
+										}
+									});
+									var liwidth = admin.screen() < 2 ? '70%' : (window.innerWidth*1*0.9-150)+"px";
+									$('#member_user_tab_ul').css('width',liwidth);
+									$('#member_userinfo_addbankcard').fadeIn();
+								   table.on('tool(member_userinfo_tab_bankcard)', function(obj){
+										var data = obj.data;
+										if(obj.event === 'delete'){	
+										var confirmlay =  layer.confirm('确定删除吗？', {
+											btn: ['确定','取消'] //按钮
+										  }, function(){
+											var iii = layer.msg('loading');	
+											 var data = obj.data;
+											 admin.req({
+												url: layui.setter.URL_ADMIN+'/member/deletememberbank'
+												,data: {id:data.id}
+												,type: 'post'
+												,done: function(res){
+													layer.close(iii)	
+													obj.del();		
+													layer.msg(res.msg, {icon: 1});
+													setTimeout(function(){	
+														layer.close(confirmlay);
+													},1000);	
+												}
+											});
+											return false;
+										  }, function(){
+											
+										  });										
+										}	
+										else if(obj.event === 'edit'){
+											obj.data.userBank = {};
+											obj.data.userBank = data;
+											admin.req({
+												url: layui.setter.URL_ADMIN+'/member/getuserbank'
+												,type: 'post'
+												,data: {uid:that.uid}
+												,done: function(res){
+													obj.data.banks = res.data.banks;
+													useraddbank(obj,that,obj);
+												}
+											});											
+										}										
+								   })
+								   $('#member_userinfo_addbankcard').on('click',function(){
+											admin.req({
+											url: layui.setter.URL_ADMIN+'/member/getuserbank'
+											,type: 'post'
+											,data: {uid:that.uid}
+											,done: function(res){
+												useraddbank(res,that,thatdata);
+											}
+										});								
+								   })
+								}else if(action=='logininfo'){
+									active['reloadLoginLog'].call(this,{uid:that.uid});
+									    //获取当前日期,默认7天前
+									$('#member_login_search_starttime').attr('value', GetDateStr(-7));
+									//开始日期
+									var insStart = laydate.render({
+									  elem: '#member_login_search_starttime'
+									  ,done: function(value, date){
+										//更新结束日期的最小日期
+										insEnd.config.min = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+										
+										//自动弹出结束日期的选择器
+									   insEnd.config.elem[0].focus();
+									  }
+									});
+									
+									//结束日期
+									var insEnd = laydate.render({
+									  elem: '#member_login_search_endtime'
+									  ,done: function(value, date){
+										//更新开始日期的最大日期
+										insStart.config.max = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+									  }
+									}); 
+									form.on('submit(member_login_index_searching)', function(data){
+										data.field.uid = that.uid;
+										active['reloadLoginLog'].call(this,data.field);
+									})	
+									table.on('tool(member_login_index_list)', function(obj){
+										  var data = obj.data;
+											layer.open({
+											  type: 1
+											  ,title:'同IP登陆'
+											  ,shadeClose: true
+											  ,area: admin.screen() < 2 ? ['80%', '300px'] : ['600px', '500px']
+											  ,content: $('#member_userinfo_login_sameip_list').html()
+											  ,success:function(layero,index){
+												 table.render({
+												  elem: '#member_userinfo_sameip_list'
+												  ,where: {ip:data.loginIP}
+												  ,url: layui.setter.URL_ADMIN+'/member/getloginlogsameip'
+												  ,limit:8
+												  ,cols: [[
+												    {field:'username', title: '用户名'}
+												   ,{field:'loginTime', title: '最后登陆时间', templet: function(d){return admin.formatDate(d.loginTime); }}
+													,{field:'loginIP', title: '登陆IP'}
+													,{field:'total', title: '次数'}
+												  ]],page: {
+														layout: ['count', 'prev', 'page', 'next', 'skip']
+													}
+												});	
+											  }
+											});											  
+									})	  
+								}else if(action=='activity'){
+									active['reloadActivityLog'].call(this,{uid:that.uid});
+									    //获取当前日期,默认7天前
+									$('#member_activity_search_starttime').attr('value', GetDateStr(-7));
+									//开始日期
+									var insStart = laydate.render({
+									  elem: '#member_activity_search_starttime'
+									  ,done: function(value, date){
+										//更新结束日期的最小日期
+										insEnd.config.min = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+										
+										//自动弹出结束日期的选择器
+									   insEnd.config.elem[0].focus();
+									  }
+									});
+									
+									//结束日期
+									var insEnd = laydate.render({
+									  elem: '#member_activity_search_endtime'
+									  ,done: function(value, date){
+										//更新开始日期的最大日期
+										insStart.config.max = lay.extend({}, date, {
+										  month: date.month - 1
+										});
+									  }
+									}); 									
+									form.on('submit(member_activity_index_searching)', function(data){
+										data.field.uid = that.uid;
+										active['reloadActivityLog'].call(this,data.field);
+									})	
+									
+								}
+						  });						
+					  }
+					});
+				}
+			});			
+				
+		}
+	})		
+	
+	//设置处理
+	function settingProcess(data,settype,thatdata){
+		if(settype=='count'){//统计
+			admin.req({
+				url: layui.setter.URL_ADMIN+'/member/useramount'
+				,data: {uid:data.uid}
+				,type: 'post'
+				,done: function(res){
+					res.data.username = data.username;
+					layer.open({
+					  type: 1
+					  ,title:'统计'
+					  ,shadeClose: true
+					  ,area: admin.screen() < 2 ? ['80%', '300px'] : ['800px', 'auto']
+					  ,content: laytpl($('#member_index_setting_count').html()).render(res.data)
+					});
+				}
+			});				
+		}
+		else if(settype=='dow'){
+			layer.confirm('是否踢该会员下线?', function(index){
+				admin.req({
+					url: layui.setter.URL_ADMIN+'/member/kickdown'
+					,data: {username:data.username,id:data.uid}
+					,type: 'post'
+					,done: function(res){
+						if(res.code>0){
+							layer.msg(res.msg, {icon: 5});
+						}else{
+							layer.msg(res.msg, {icon: 1});
+							// active['reloaDataMemberlist'].call();//重载列表,暂时不管页数
+                            table.reload('reloaDataMemberlist');
+							setTimeout(function(){	
+								layer.closeAll();
+							},2000);		
+						}
+					}
+				});
+			  layer.close(index);
+			});			
+		}else if(settype=='change'){
+				var userRealLevel;
+				if(data.grade>0) userRealLevel = data.grade;
+				else userRealLevel = data.grade2; 
+				admin.req({
+					url: layui.setter.URL_ADMIN+'/system/getmemberlevel'
+					,type: 'post'
+					,data: {uid:data.uid}
+					,done: function(res){
+						layer.open({
+						  type: 1
+						  ,title:'变更等级'
+						  ,shadeClose: true
+						  ,scrollbar: false 
+						  ,area: admin.screen() < 2 ? ['80%', '300px'] : ['400px', 'auto']
+						  ,content: laytpl($('#member_index_changeParent').html()).render({level:res.data,type:data.type,userRealLevel:userRealLevel})
+						  ,success:function(layero,index){
+							form.render(null,'member_index_changeParent_from');
+							form.on('submit(member_index_changeParent_from_submit)', function(data2){
+								data2.field.uid = data.uid;
+								data2.field.username = data.username;
+								admin.req({
+									url: layui.setter.URL_ADMIN+'/member/changelevel'
+									,data: data2.field
+									,type: 'post'
+									,done: function(res){
+										if(res.code>0){
+											layer.msg(res.msg, {icon: 5});
+										}else{
+											thatdata.update({grade:data2.field.userlevel});
+											layer.msg(res.msg, {icon: 1});
+											setTimeout(function(){	
+												layer.closeAll();
+											},500);		
+										}
+									}
+								});
+							})								
+						  }
+						});
+					}
+				});
+		}else if(settype=='bank'){
+				var that = data;
+				admin.req({
+					url: layui.setter.URL_ADMIN+'/member/getuserbank'
+					,type: 'post'
+					,data: {uid:data.uid}
+					,done: function(res){
+						useraddbank(res,that,thatdata);
+					}
+				});
+		}else if(settype=='freeze'){
+			var showmsg = '';
+			if(data.enable==1) showmsg = '是否冻结该账号?';
+			else showmsg = '是否解冻该账号?'; 
+			layer.confirm(showmsg, function(index){
+				admin.req({
+					url: layui.setter.URL_ADMIN+'/member/freezemember'
+					,data: {username:data.username,uid:data.uid}
+					,type: 'post'
+					,done: function(res){
+						if(res.code>0){
+							layer.msg(res.msg, {icon: 5});
+						}else{
+							layer.msg(res.msg, {icon: 1});
+							active['reloaDataMemberlist'].call();//重载列表,暂时不管页数
+							setTimeout(function(){	
+								layer.closeAll();
+							},2000);		
+						}
+					}
+				});
+			  layer.close(index);
+			});			
+		}else if(settype=='money' || settype=='bath' || settype=='toup'){
+				var that = data,layertitle,apiurl;
+				if(settype=='money'){
+					that.actionTitle='赠送彩金';
+					that.actionTips='请输入赠送金额';
+					layertitle = '赠送彩金';
+					apiurl = layui.setter.URL_ADMIN+'/system/caijinaction';
+				}else if(settype=='bath'){
+					that.actionTitle='洗码金额';
+					that.actionTips='负数为扣除洗码';	
+					layertitle = '手工洗码';	
+					apiurl = layui.setter.URL_ADMIN+'/system/ximaaction';
+				}else{
+					that.actionTitle='充值金额';
+					that.actionTips='负数为扣款';
+					layertitle = '手工充值';	
+					apiurl = layui.setter.URL_ADMIN+'/system/rechargeaction';					
+				}
+				layer.open({
+				  type: 1
+				  ,title:layertitle
+				  ,shadeClose: true
+				  ,scrollbar: false 
+				  ,area: admin.screen() < 2 ? ['80%', '300px'] : ['400px', 'auto']
+				  ,content: laytpl($('#member_index_activitymoney').html()).render(that)
+				  ,success:function(layero,index){
+					form.render('radio','member_index_activitymoney_from');
+					form.on('submit(member_index_activitymoney_submit)', function(data){
+						admin.req({
+							url: apiurl
+							,data: data.field
+							,type: 'post'
+							,done: function(res){
+								if(res.code>0){
+									layer.msg(res.msg, {icon: 5});
+								}else{
+									var newamount = thatdata.data.rechargeAmount*1+data.field.amount*1;
+									if(settype!='bath'){
+										thatdata.update({rechargeAmount:newamount.toFixed(2)});
+									}
+									layer.msg(res.msg, {icon: 1});
+									setTimeout(function(){	
+										layer.closeAll();
+									},500);		
+								}
+							}
+						});
+					})							
+				  }
+				});
+		}
+	}
+	
+	function useraddbank(res,that,thatdata){
+		var useraddbank = layer.open({
+		  type: 1
+		  ,title:'添加银行'
+		  ,shadeClose: true
+		  ,scrollbar: false 
+		  ,area: admin.screen() < 2 ? ['80%', '300px'] : ['400px', 'auto']
+		  ,content: laytpl($('#member_index_addbank').html()).render(res.data)
+		  ,success:function(layero,index){
+			if(res.data.userBank.bankId>0) layer.title('编辑银行', useraddbank) 
+			form.render('select','member_index_addbank_from');
+			form.render('radio','member_index_addbank_from');
+			form.on('submit(member_index_addbank_submit)', function(data){
+				data.field.uid = that.uid;
+				admin.req({
+					url: layui.setter.URL_ADMIN+'/member/userupdatebank'
+					,data: data.field
+					,type: 'post'
+					,done: function(res){
+						if(res.code>0){
+							layer.msg(res.msg, {icon: 5});
+						}else{
+							layer.msg(res.msg, {icon: 1});	
+							data.field.bankName = $('#member_index_addbank_from_bankselect').find("option:selected").text();
+							if(data.field.is_default==1) data.field.is_default = "<font color='red'>是</font>";
+							else  data.field.is_default =  '否';
+							thatdata.update(data.field);
+							setTimeout(function(){	
+								layer.close(useraddbank);
+							},1000);							
+						}
+					}
+				});
+			})							
+		  }
+		});	
+
+		$(document).on('click', '.closeBtnOne', function(){
+			layer.close(useraddbank);
+		});			
+	}
+    $('.member_index_operator_search .layui-btn').on('click', function(){
+      var type = $(this).data('type');
+	  if(type === 'addUser'){//添加用户弹出层
+			var idx=layer.open({
+				title: '添加会员',
+				type: 1
+				,shadeClose: true
+				,offset: '200px'
+				,area: admin.screen() < 2 ? ['80%', '300px'] : ['400px', 'auto']
+				,content: $('#member_index_addnewuser').html()
+				,success: function(layero, index){
+					form.render('select','member_index_addnewuser_from');
+					//监听提交按钮
+					form.on('submit(member_index_addnewuser_submit)', function(data){
+						member_index_addnewuser_fun(data);
+					})	
+					//监听类型切换
+					form.on('select(member_index_addnewuser_select)', function(data){
+						if(data.value==1){
+							$('#member_index_dailifandian').attr('placeholder','0.1-'+fanDianMax+'%');
+							if(agentMode==1) {
+								$('#agentModeOneTips').show();
+								$('#showAgentModeOneTips').on('click',function(){
+									  admin.popup({
+										title: '降赔率模式返点设置说明'
+										,shade: 0
+										,anim: -1
+										,area: ['410px', '250px']
+										,id: 'layadmin-layer-skin-test'
+										,skin: 'layui-anim layui-anim-upbit'
+										,content: '<div class="col-md-8 col-sm-12 col-xs-12">1、金字塔降倍率的返点赔率不同，返点越高赔率越低。<br />2、代理可获得的佣金等于下级返点的值，如下级返点4，代理可获得下级中奖金额的4%，即下级中奖100元，代理可获得4元。<br />3、下级返点值设得越高，下级的赔率就越低，建议给下级设置的返点不要过高<br /><br /></div>'
+									  })								
+								})
+							}
+							$('#member_index_useragentDIV').fadeIn();	
+							layer.style(idx, {
+							  width: '400px',
+							  height: '475px'
+							});							
+						}
+						else {
+							layer.style(idx, {
+							  width: '400px',
+							  height: '355px'
+							});		
+							$('#member_index_useragentDIV').fadeOut();						
+						}
+					});					
+				}	
+			})	  
+	  }
+    });
+	
+	function member_index_addnewuser_fun(data){
+		var iii = layer.msg('loading');
+		var data = data.field;
+  		admin.req({
+			url: layui.setter.URL_ADMIN+'/member/added'
+			,data: data
+			,type: 'post'
+			,done: function(res){
+				layer.close(iii)
+				if(res.code>0){
+					layer.msg(res.msg, {icon: 5});
+				}else{
+					layer.closeAll();
+					var iii2 = layer.msg(res.msg, {icon: 1});
+					active['reloaDataMemberlist'].call();//添加成功，重载列表
+					setTimeout(function(){	
+						layer.close(iii2);
+					},1000);		
+				}
+			}
+		});
+	}
+	
+	 form.verify({
+		pass: [
+		  /^[\S]{6,12}$/
+		  ,'密码必须6到12位，且不能出现空格'
+		]
+		,repass: function(value){
+		  if(value !== $('#newpass').val()){
+			return '两次密码输入不一致';
+		  }
+		},fanDian: function(value){
+		  if(value&& (value<0.1 || value>fanDianMax)){
+			return '返点设置不正确！';
+		  }
+		}
+	  });	
+	  
+	//监听搜索提交按钮
+	form.on('submit(member_index_searching)', function(data){
+		var data = data.field;
+		 $('#member_index_norechargeUser').attr('style','cursor: pointer;');
+		 $('#member_index_rechargeUser').attr('style','cursor: pointer;');
+		 active['reloaDataMemberlist'].call(this,data);
+	})
+
+		//返回，清空所有条件
+	form.on('submit(member_index_searching_return)', function(data){
+		 $('.layui-input').val('');
+		 $('#member_index_norechargeUser').attr('style','cursor: pointer;');
+		 $('#member_index_rechargeUser').attr('style','cursor: pointer;');
+		 active['reloaDataMemberlist'].call(this);
+	})	
+	
+	//充值与未充值
+	$('#member_index_rechargeUser').on('click',function(){
+		$('#member_index_norechargeUser').attr('style','cursor: pointer;');
+		$(this).attr('style','color:red;cursor: pointer;'); 
+		 active['reloaDataMemberlist'].call(this,{rechargeMember:1});
+	});
+	$('#member_index_norechargeUser').on('click',function(){
+		$('#member_index_rechargeUser').attr('style','cursor: pointer;');
+		$(this).attr('style','color:red;cursor: pointer;');
+		active['reloaDataMemberlist'].call(this,{rechargeMember:2});
+	});
+	//获取前后几天日期
+	function GetDateStr(AddDayCount) { 
+		var dd = new Date(); 
+		dd.setDate(dd.getDate()+AddDayCount);//获取AddDayCount天后的日期 
+		var y = dd.getFullYear(); 
+		var m = dd.getMonth()+1;//获取当前月份的日期 
+		var d = dd.getDate(); 
+		if(m<10) m = '0'+m;
+		if(d<10) d = '0'+d;
+		return y+"-"+m+"-"+d; 
+	}						
+	form.verify({
+		required: [/[\S]+/, '必填项不能为空'],
+		phone: [/(^$)|^1\d{10}$/, '请输入正确的手机号'],
+		email: [/(^$)|^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/, '邮箱格式不正确'],
+		url: [/(^$)|(^#)|(^http(s*):\/\/[^\s]+\.[^\s]+)/, '链接格式不正确'],
+		number: [/(^$)|^(-|\+)?\d+(\.?[0-9]+)?$/, '只能填写数字'],
+		date: [/(^$)|^(\d{4})[-\/](\d{1}|0\d{1}|1[0-2])([-\/](\d{1}|0\d{1}|[1-2][0-9]|3[0-1]))*$/, '日期格式不正确'],
+		identity: [/(^$)|(^\d{15}$)|(^\d{17}(x|X|\d)$)/, '请输入正确的身份证号']
+	});						
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	}); 
+    $(document).on('click', '.closeBtnNew', function(){
+		 layer.close(layer.index);
+	});	
+  });
+  </script>

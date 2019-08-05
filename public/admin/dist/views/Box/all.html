@@ -1,0 +1,179 @@
+<title>整站发件箱</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div style="float: left">整站发件箱</div>
+                    </div>
+                    <div class="layui-card-body " >
+                        <div class="layui-inline" id="allDel" style="float:left;">
+                            <button class="layui-btn layui-btn-sm layui-btn-danger">删除选中</button>
+                        </div>
+                        <div class="layui-inline layui-form" lay-filter="component-form-element" style="float:right;">
+                            <span>会员名：</span>
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="会员名" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间 ：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-all-start" name="fromTime" autocomplete="off" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-all-end" name="toTime" autocomplete="off" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit lay-filter="allForm">查询</button>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" type="reset">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="BoxAllList" lay-filter="BoxAllList"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //    获取图片路径
+    layui.use(['admin','table','laydate','form','layer'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,layer = layui.layer;
+
+        //载入表格数据
+        table.render({
+            elem: '#BoxAllList'
+            ,url: layui.setter.URL_ADMIN+'/Box/all'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {type:'checkbox'},
+                {field:'mid',align:'center', title: '编号', width: 100},
+                {field:'from_username',align:'center', title: '发送者', width: 130},
+                {field:'title',align:'center', title: '主题', width: 266},
+                {field:'content',align:'center', title: '内容'}
+                ,{field:'time',align:'center', title: '添加时间',width: 200,templet: function(d){return admin.formatDate(d.time); }},
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+                form.render(null, 'component-form-element');
+            }
+        });
+
+        //批量删除
+        $('#allDel').on('click',function () {
+            var checkStatus=table.checkStatus('BoxAllList'),
+                data=checkStatus.data;
+            var mid = "";
+            for(_mid in data){
+                mid += data[_mid]['mid']+","
+            }
+            mid = mid.substring(0,mid.length-1);
+            if(mid != ""){
+            layer.confirm('确定删除所选项吗？', {
+                btn: ['确定删除','取消'] //按钮
+            }, function(){
+                $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: layui.setter.URL_ADMIN+"/Box/alldeleteAll",//url
+                    data: {
+                        mid:mid,
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {time: 1000});
+                            table.reload('BoxAllList',{});
+                        }else {
+                            layer.msg(data.msg, {time: 1000});
+                        }
+                    }
+                })
+            }, function(){
+                //layer.msg('已取消操作', {time: 1000});
+            });
+            }else {
+                layer.msg('您没有选中任何选项', {time: 1000});
+            }
+        });
+
+        //获取当前日期
+//        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+//        $('#test-laydate-receive-start').attr('value', startDate);
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-all-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+//            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-all-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(allForm)', function(data){
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this,username, fromTime, toTime);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username,fromTime, toTime){
+                //执行重载
+                table.reload('BoxAllList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username:username,
+                        fromTime: fromTime,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+
+
+    });
+
+
+</script>
+

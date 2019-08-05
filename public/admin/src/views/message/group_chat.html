@@ -1,0 +1,234 @@
+
+<title>群组聊天管理</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">
+          <div style="float:left;">群组聊天管理</div>
+        </div>
+        <div class="layui-card-body">
+          <div class="layui-form">
+            <div class=" layui-form" style="margin-bottom: 10px;">
+
+
+              <div style="float:left;" style="margin-bottom: 10px;">
+                <div class="layui-form layui-inline" >
+                  <label class="layui-inline layui-form  layui-form-label marginTop10"> 类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：</label>
+                  <div class="layui-input-inline" lay-filter="group_type" style="width: 120px;">
+                    <select name="group_type"  lay-filter="group_type_filter" id="group_type_filter">
+                    </select>
+                  </div>
+                  <input type="hidden" value="" id="group_type_values" />
+                </div>
+              </div>
+              <div class="layui-inline" style="margin-bottom: 10px;">
+                <label class="layui-form-label" style="width:40px;"> ID：</label>
+                <div class="layui-input-inline" style="width: 85px;">
+                  <input class="layui-input" id="chat-index-sent_uid" name="sent_uid" autocomplete="off" placeholder="发送用户ID">
+                </div>
+              </div>
+              <div class="layui-inline" style="margin-bottom: 10px;">
+                <label class="layui-form-label" style="width:80px;"> 发送用户：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="chat-index-sent_username" name="sent_username" autocomplete="off" placeholder="发送用户名">
+                </div>
+              </div>
+              <div class="layui-inline" style="margin-bottom: 10px;">
+                <label class="layui-form-label" style="width:100px;"> 发送手机号：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="chat-index-sent_phone" name="sent_phone" autocomplete="off" placeholder="发送手机号">
+                </div>
+              </div>
+
+              <div class="layui-inline" style="margin-bottom: 10px;">
+                <label class="layui-form-label">发布时间：</label>
+                <div class="layui-input-inline" style="width: 140px;margin-bottom: 10px;">
+                  <input type="text" name="fromtime" class="layui-input" id="group_chat_search_starttime" placeholder="开始日期">
+                </div>
+                -
+                <div class="layui-input-inline" style="width: 120px;margin-bottom: 10px;">
+                  <input type="text" name="totime" class="layui-input" id="group_chat_search_endtime" placeholder="结束日期">
+                </div>
+              </div>
+
+              <div class="layui-inline" style="margin-bottom: 10px;" >
+                <button class="layui-btn"  lay-submit="" lay-filter="group_chat_index_searching" style="float:float;">搜索</button>
+              </div>
+            </div>
+          </div>
+          <a class="layui-btn layui-btn-danger" lay-submit="" lay-filter="group_chat_delete_all" style="margin-bottom: 10px;">删除</a>
+          <table class="layui-hide" id="group_chat_index_list" lay-data="{id:'groupchatidlist'}"  lay-filter="group_chat_index_list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/html" id="group_chat_operation">
+  <a class="layui-btn layui-btn-sm" lay-event="group_chat_delete_action">删除</a>
+</script>
+<script>
+    layui.use(['admin', 'table','laydate','layer','form','laytpl','layedit','upload'], function(){
+        var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, upload = layui.upload;
+
+        var type = {};
+        type[8]= "群组文本消息";
+        type[9]= "群组图片消息";
+        type[10]= "群组红包消息";
+        type[11]= "群组@类型消息";
+        type[16]= "群组消息撤回";
+        type[23]= "群组抢红包消息";
+        type[24]= "群组名片消息";
+
+
+        //开始日期
+        form.render('select');
+        var insStart = laydate.render({
+            elem: '#group_chat_search_starttime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+
+                //自动弹出结束日期的选择器
+                insEnd.config.elem[0].focus();
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#group_chat_search_endtime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+        var group_chat_aaa = function (data) {
+            table.render({
+                id: 'groupchatidlist'
+                ,elem: '#group_chat_index_list'
+                ,url: '/interface/groupChatList' //数据接口
+                ,where: {data:data}
+                ,page: true //开启分页
+                ,limit:10
+                ,method: 'post'
+                ,cols: [[ //表头
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field: 'id', title: 'ID', fixed: 'left'}
+                    ,{field: 'username', title: '用户名'}
+                    ,{field: 'phone', title: '手机号'}
+                    ,{field: 'group_name', title: '手机号'}
+                    ,{field: 'from', title: '消息来源'}
+                    ,{field: 'content', title: '内容'}
+                    ,{field: 'type', title: '消息类型',templet:function (d) {
+                            return type[d.type] ? type[d.type] : "未知消息类型";
+                        }}
+                    ,{field: 'create_time', title: '发布时间',templet: function(d){return admin.formatDate(d.create_time); }}
+                    ,{field:'type',title:'查看',width:100,templet:$('#group_chat_operation')}
+                ]]
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    var group_chat_aaa_res = {};
+                    $.each(res.where, function (keys, val) {
+                        group_chat_aaa_res.key = keys;
+                        group_chat_aaa_res.value = val;
+                        layui.data('group_chat_aaa_res', group_chat_aaa_res);
+                    });
+
+                }
+            });
+
+
+        }
+
+        var group_chat_reload = function (data) {
+            table.reload('groupchatidlist',{
+                url:'/interface/groupChatList'
+                ,where: data
+            })
+        }
+
+
+
+        var group_chat_del = function(data){
+            admin.req({
+                url: layui.setter.URL_ADMIN+'/interface/groupChatDelete'
+                ,data: {id:data.id}
+                ,type: 'post'
+                ,success: function(res){
+                    if(res.code==0){
+                        layer.msg(res.message, {icon: 1});
+                        if(data.isflush==1){
+                            setTimeout(group_chat_reload(layui.data('group_chat_aaa_res')),2000);
+                        }
+                    }else{
+                        layer.msg(res.message, {icon: 2});
+                    }
+                }
+                ,error:function(r){
+                    layer.msg(r.message, {icon: 2});
+                }
+            });
+        }
+
+        var group_type = function (data) {
+            admin.req({
+                url: layui.setter.URL_ADMIN+'/interface/getGroupType'
+                ,data: {data:data}
+                ,type: 'post'
+                ,done: function(res){
+                    if(res.code==0){
+                        var str  ="<option value='0'>请选择</option>"
+                        $('#group_type_filter').append(str);
+                        $.each(res.data, function(i, item){
+                            var str = "<option value="+i+">"+item+"</option>";
+                            $('#group_type_filter').append(str);
+                        });
+                        form.render('select');
+                    }
+                }
+            });
+
+        }
+
+        group_type();
+        group_chat_aaa();
+        //监听搜索提交按钮
+        form.on('submit(group_chat_index_searching)', function(data){
+            var data = data.field;
+            group_chat_aaa(data);
+        })
+
+        table.on('tool(group_chat_index_list)', function(obj) {
+            var data = obj.data;
+            if(obj.event ==='group_chat_delete_action' ){
+                layer.confirm('确定执行删除操作吗?', {
+                    btn: ['确定','取消'] //按钮
+                }, function() {
+                    group_chat_del({id: data.id, isflush: 1});
+                });
+            }
+        });
+
+        form.on('submit(group_chat_delete_all)', function(){
+            layer.confirm('确定执行删除操作吗?', {
+                btn: ['确定','取消'] //按钮
+            }, function() {
+                var checkStatus = table.checkStatus('groupchatidlist'); //listids 即为基础参数 id 对应的值
+                var str = '';
+                $.each(checkStatus.data, function (i, item) {
+                    str += item.id + '|';
+                });
+                group_chat_del({id: str, isflush: 1});
+            });
+        })
+
+    });
+</script>

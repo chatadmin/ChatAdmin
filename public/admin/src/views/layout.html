@@ -1,0 +1,281 @@
+<style>
+  #DGG_app .layui-msg-box { position:relative; }
+  #DGG_app .layui-msg-box a { color:#FFF; }
+  #DGG_app .layui-msg-box span { background:#FFF;color:#BBB; }
+  #DGG_app .layui-msg-box span.layui-msg-ignore { width:78px;height:28px;line-height:28px;position:absolute;top:31px;left:0;background:#FFF;border:1px solid #1e9fff;color:#888;display:none;font-size:12px; }
+</style>
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <!-- 头部区域 -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item layadmin-flexible" lay-unselect>
+        <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+          <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+        </a>
+      </li>
+      <li class="layui-nav-item layui-this layui-hide-xs layui-hide-sm layui-show-md-inline-block">
+        <a lay-href="" title="">
+          首页
+        </a>
+      </li>
+      <li class="layui-nav-item" lay-unselect>
+        <a href="javascript:;" layadmin-event="refresh" title="刷新">
+          <i class="layui-icon layui-icon-refresh-3"></i>
+        </a>
+      </li>
+      <li class="layui-nav-item" lay-unselect>
+        <button class="layui-btn" id="edit-password">
+          修改密码
+        </button>
+        <!--<button class="layui-btn" id="destory-session">
+          清除缓存
+        </button>-->
+      </li>
+    </ul>
+    <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right ">
+
+      <li class="layui-nav-item" lay-unselect>
+        <script type="text/html" template lay-url="/interface/userinfo"
+                lay-done="layui.element.render('nav', 'layadmin-layout-right');">
+          <a href="javascript:;">
+            <cite>{{ d.data.uname }}</cite>
+          </a>
+          <dl class="layui-nav-child">
+
+            <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+          </dl>
+        </script>
+      </li>
+
+    <!--  <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
+      </li>-->
+    </ul>
+  </div>
+
+  <!-- 侧边菜单 -->
+  <div class="layui-side layui-side-menu">
+    <div class="layui-side-scroll">
+
+      <script type="text/html" template lay-url="json/menu.js" lay-done="layui.element.render('nav', 'layadmin-system-side-menu');" id="TPL_layout">
+
+        <div class="layui-logo" lay-href="">
+          <span>{{ layui.setter.name || 'layuiAdmin' }}</span>
+        </div>
+
+        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+          {{#
+          var path =  layui.router().path
+          ,pathURL = layui.admin.correctRouter(path.join('/'))
+          ,dataName = layui.setter.response.dataName;
+
+          layui.each(d[dataName], function(index, item){
+          var hasChildren = typeof item.list === 'object' && item.list.length > 0
+          ,classSelected = function(){
+          var match = path[0] == item.name || (index == 0 && !path[0])
+          || (item.jump && pathURL == layui.admin.correctRouter(item.jump)) || item.spread;
+          if(match){
+          return hasChildren ? 'layui-nav-itemed' : 'layui-this';
+          }
+          return '';
+          }
+          ,url = (item.jump && typeof item.jump === 'string') ? item.jump : item.name;
+          }}
+          <li data-name="{{ item.name || '' }}" data-jump="{{ item.jump || '' }}" class="layui-nav-item {{ classSelected() }}">
+            <a href="javascript:;" {{ hasChildren ? '' : 'lay-href="'+ url +'"' }} lay-tips="{{ item.title }}" lay-direction="2">
+            <i class="layui-icon {{ item.icon }}"></i>
+            <cite>{{ item.title }}</cite>
+            </a>
+            {{# if(hasChildren){ }}
+            <dl class="layui-nav-child">
+              {{# layui.each(item.list, function(index2, item2){
+              var hasChildren2 = typeof item2.list == 'object' && item2.list.length > 0
+              ,classSelected2 = function(){
+              var match = (path[0] == item.name && path[1] == item2.name)
+              || (item2.jump && pathURL == layui.admin.correctRouter(item2.jump)) || item2.spread;
+              if(match){
+              return hasChildren2 ? 'layui-nav-itemed' : 'layui-this';
+              }
+              return '';
+              }
+              ,url2 = (item2.jump && typeof item2.jump === 'string')
+              ? item2.jump
+              : [item.name, item2.name, ''].join('/'), url2 = url2.substring(0,url2.length-1);
+              }}
+              <dd  data-name="{{ item2.name || '' }}"  data-jump="{{ item2.jump || '' }}"
+                   {{ classSelected2() ? ('class="'+ classSelected2() +'"') : '' }}>
+              <a href="javascript:;" {{ hasChildren2 ? '' : 'lay-href="'+ url2 +'"' }}>{{ item2.title }}</a>
+              {{# if(hasChildren2){ }}
+              <dl class="layui-nav-child">
+                {{# layui.each(item2.list, function(index3, item3){
+                var match = (path[0] == item.name && path[1] == item2.name && path[2] == item3.name)
+                || (item3.jump && pathURL == layui.admin.correctRouter(item3.jump))
+                ,url3 = (item3.jump && typeof item3.jump === 'string')
+                ? item3.jump
+                : [item.name, item2.name, item3.name].join('/')
+                }}
+                <dd data-name="{{ item3.name || '' }}"  data-jump="{{ item3.jump || '' }}"
+                    {{ match ? 'class="layui-this"' : '' }}>
+                <a href="javascript:;" lay-href="{{ url3 }}" {{ item3.iframe ? 'lay-iframe="true"' : '' }}>{{ item3.title }}</a>
+                </dd>
+                {{# }); }}
+              </dl>
+              {{# } }}
+              </dd>
+              {{# }); }}
+            </dl>
+            {{# } }}
+          </li>
+          {{# }); }}
+        </ul>
+      </script>
+    </div>
+  </div>
+
+
+  <!-- 页面标签 -->
+  <script type="text/html" template lay-done="layui.element.render('nav', 'layadmin-pagetabs-nav')">
+    {{# if(layui.setter.pageTabs){ }}
+    <div class="layadmin-pagetabs" id="LAY_app_tabs">
+      <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-down">
+        <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:;"></a>
+            <dl class="layui-nav-child layui-anim-fadein">
+              <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+              <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+              <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+            </dl>
+          </li>
+        </ul>
+      </div>
+      <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+        <ul class="layui-tab-title" id="LAY_app_tabsheader">
+          <li lay-id="/"><i lay-href="" class="layui-icon layui-icon-home"></i></li>
+        </ul>
+      </div>
+    </div>
+    {{# } }}
+  </script>
+
+  <script type="text/html" id="password_edit_tmp" lay-filter="password_edit_tmp">
+    <div class="layui-fluid">
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12  layui-form">
+          <form enctype="multipart/form-data">
+            <div class="layui-form-item">
+              <label class="layui-form-label">账号</label>
+              <div class="layui-input-block">
+                <input type="text" id="index-username" name="username" autocomplete="off"  placeholder="账号" disabled class="layui-input"  style="width: 80%">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">密码</label>
+              <div class="layui-input-block">
+                <input type="text" id="index-pwd" name="password" autocomplete="off" placeholder="密码" class="layui-input"  style="width: 80%">
+
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">确认密码</label>
+              <div class="layui-input-block">
+                <input type="text" id="index-confpwd" name="confword" autocomplete="off" placeholder="确认密码" class="layui-input"  style="width: 80%">
+              </div>
+            </div>
+
+            <style>
+              .file{cursor: pointer;float: left;  width: 102px;height: 40px;  padding: 10px 5px;  border: 1px dashed #e2e2e2;  background-color: #fff;  text-align: center;  cursor: pointer;  color: #999;  display: inline-block;}
+              .file input{cursor: pointer;display: block;width: 102px;height: 100%;z-index: 9;position:absolute;top: 0;margin-left: 0;opacity: 0}
+              .file img{cursor: pointer;height: 45px;position:relative;top: 0;margin-left: 0;margin-top: -72px;width: 102px;}
+            </style>
+
+          </form>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button id="pwd-form" lay-submit lay-filter="pwd-form"  class="layui-btn layui-btn-normal">立即提交</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <!-- 主体内容 -->
+  <div class="layui-body" id="LAY_app_body">
+    <div class="layadmin-tabsbody-item layui-show"></div>
+  </div>
+
+  <!-- 辅助元素，一般用于移动设备下遮罩 -->
+  <div class="layadmin-body-shade" layadmin-event="shade"></div>
+
+</div>
+<script>
+  layui.use(['admin','laytpl','layer'], function(){
+    var $ = layui.$, admin = layui.admin, laytpl = layui.laytpl, layer = layui.layer;
+    var data = '';
+    $('#edit-password').click(function () {
+      admin.req({
+        'type': 'get',
+        url: layui.setter.URL_ADMIN + '/interface/userinfo',
+        success: function (res) {
+          var _data = res.data;
+          layer.open({
+            title: '修改密码'
+            , type: 1
+            , shadeClose: true
+            , area: ['500px', '300px']
+            ,content: $('#password_edit_tmp').html()
+          });
+          if (_data) {
+            $('#index-username').val(_data.uname)
+          }
+          $('#pwd-form').click(function () {
+            var pwd = $('#index-pwd').val();
+            var pawconf = $('#index-confpwd').val();
+            if (pwd) {
+              if (pawconf) {
+                admin.req({
+                  url: layui.setter.URL_ADMIN + '/interface/editPassword',
+                  data: {'pwd':pwd,'pwdconf':pawconf},
+                  type: 'post',
+                  success:function (res) {
+                    if (res.code == 0) {
+                      layer.msg(res.message, {time: 1000}, function () {
+                        layer.closeAll();
+                      });
+                    } else  {
+                      layer.msg(res.message, {time: 1000}, function () {
+                        layer.closeAll();
+                      });
+                    }
+                  }
+                })
+              } else  {
+                layer.msg('缺认密码不能为空');
+              }
+            } else  {
+              layer.msg('密码不能为空');
+            }
+          })
+        }
+      })
+
+    })
+    /*$('#destory-session').click(function () {
+      admin.req({
+        'type': 'post',
+        url: layui.setter.URL_ADMIN + '/User/sessionDestory',
+        success: function (res) {
+          layer.msg(res.msg)
+        }
+      })
+    })*/
+    $(document).on('click', '.closeLayerBtn', function(){
+      layer.closeAll();
+    });
+  });
+</script>

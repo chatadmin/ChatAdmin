@@ -1,0 +1,129 @@
+<title>查看报表</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div>盈亏报表</div>
+                    </div>
+                    <div class="layui-card-body">
+                    	<div class="layui-inline orderListGoBackBtn" style="visibility:hidden;">
+                    		<button class="layui-btn layui-btn-primary">返回</button>
+                    	</div>
+                        <div class="layui-inline layui-form" lay-filter="component-form-element" style="float:right;">
+                            <div class="layui-inline">
+                                <span>查询单月</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-orderList-month" autocomplete="off" name="fromTime" value="2018-01">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit lay-filter="OrderForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+					<div style="clear:both;"></div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="OrderIndexList" lay-filter="OrderIndexList"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form;
+        form.render(null, 'component-form-element');
+        //获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-index-start').attr('value', startDate);
+
+        //载入表格数据
+        table.render({
+            elem: '#OrderIndexList'
+            ,url: layui.setter.URL_ADMIN+'/CountData/orderList'
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'time',align:'center', title: '日期',templet: function(d){
+                    return '<a class="dataTime" time="'+d.time+'" style="color: #00a0e9;cursor: pointer">'+ d.time +'</a>'
+                }},
+                {field:'rechargeAmount',align:'center', title: '存款金额'},
+                {field:'betAmount',align:'center', title: '投注金额',templet: function(d){
+                    return '<span style="color: red">'+d.betAmount+'</span>';
+                }},
+                {field:'cashAmount',align:'center', title: '提现金额',templet: function(d){
+                    return '<span style="color: red">'+d.cashAmount+'</span>';
+                }},
+                {field:'zjAmount',align:'center', title: '中奖金额',templet: function(d){
+                    return '<span style="color: red">'+d.zjAmount+'</span>';
+                }},
+                {field:'loss',align:'center', title: '充值盈亏',templet: function(d){
+                    return '<span style="color: red">'+d.loss+'</span>';
+                }},
+                {field:'win',align:'center', title: '投注盈亏',templet: function(d){
+                    return '<span style="color: red">'+d.win+'</span>';
+                }}
+                ]]
+            ,done: function(res){
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+
+                $('.dataTime').click(function () {
+                   var times = $(this).attr('time');
+                   //console.log(times.length);
+                   if(times.length == 7){
+                       active['reloadList'].call(this,times);
+                       $('.orderListGoBackBtn').css('visibility', 'visible');
+                       $('.orderListGoBackBtn').click(function(){
+                    	   $(this).css('visibility', 'hidden');
+                    	   active['reloadList'].call(this,'');
+                       });
+                   }else {
+                       location.hash = '/Business/betsLog/fromTime='+times+'/type=1';
+                   }
+                });
+            }
+        });
+
+
+        laydate.render({
+            elem: '#test-laydate-orderList-month'
+            ,type: 'month'
+        });
+
+        //监听列表查询
+        form.on('submit(OrderForm)', function(data){
+            var fromTime = data.field.fromTime.trim();
+            active['reloadList'].call(this,fromTime);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(fromTime){
+                //执行重载
+                table.reload('OrderIndexList', {
+                    page: false
+                    ,where: {
+                        fromTime: fromTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+
+
+    });
+
+
+</script>
+

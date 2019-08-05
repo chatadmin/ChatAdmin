@@ -1,0 +1,157 @@
+<title>优惠记录</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">优惠记录</div>
+                    <div class="layui-card-body">
+                        <div class="layui-inline layui-form" lay-filter="component-form-element">
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="会员名" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-RechargeLogs-start" autocomplete="off" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-RechargeLogs-end" autocomplete="off" name="toTime" placeholder="结束日期">
+                                </div>
+                                <span>优惠类型：</span>
+                            </div>
+
+                            <div class="layui-inline layui-form" lay-filter="component-form-element">
+                                <select name="type" lay-verify="">
+                                    <option value="">所有</option>
+                                    <option value="4">用户注册赠送</option>
+                                    <option value="5">砸金蛋赠送</option>
+                                    <option value="6">每日反水活动</option>
+                                    <option value="7">后台赠送彩金</option>
+                                </select>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit lay-filter="listRechargeLogForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="BusinessRechargeLogList" lay-filter="BusinessRechargeLogList"></table>
+                    </div>
+					<div style="color: red;padding: 10px 15px"><span>本次统计优惠总额：</span> <span id="RechargeLog-Total" style="font-size: 18px">0.00</span> 元 </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form','laytpl'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,laytpl= layui.laytpl;
+
+
+        //获取当前日期
+        var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+        //防止开始日期被重置为空
+        $('#test-laydate-receive-start').attr('value', startDate);
+
+        //载入表格数据
+		var iii = layer.msg('loading');
+        table.render({
+            elem: '#BusinessRechargeLogList'
+            ,url: layui.setter.URL_ADMIN+'/BusinessWater/active_log?fromTime='+startDate
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'uid',align:'center', title: 'UserID', width: 100},
+                {field:'username',align:'center', title: '用户名', width: 150},
+                {field:'uname',align:'center', title: '姓名', width: 150},
+                {field:'state',align:'center', title: '优惠类型',templet: function(d){
+                    if(d.state == 4){return '用户注册赠送';}else if(d.state == 5){return '砸金蛋赠送';}else if(d.state == 6){return '每日反水活动';}else if(d.state == 7){return '后台赠送彩金';}
+                }},
+                {field:'rechargeId',align:'center', title: '单号', width: 120},
+                {field:'amount',align:'center', title: '金额', width: 120},
+                {field:'info',align:'center', title: '备注'},
+                {field:'rechargeTime',align:'center', title: '时间',templet: function(d){return admin.formatDate(d.rechargeTime); }},
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+				layer.close(iii)
+                if(res.data>0 && res.state == 0){
+                    $('.layui-table-main .layui-table>tbody').append('<tr><td><div class="layui-table-cell">本页总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.p_total+'</div></td></tr><tr><td><div class="layui-table-cell">全部总计</div></td><td colspan="9"><div class="layui-table-cell">'+res.a_total+'</div></td></tr>');
+                }
+                var _amount = res.rAmount;
+                $('#RechargeLog-Total').html(_amount);
+                form.render(null, 'component-form-element');
+            }
+        });
+
+
+
+
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-RechargeLogs-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+            ,value: startDate 	//赋值当前日期
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-RechargeLogs-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //监听列表查询
+        form.on('submit(listRechargeLogForm)', function(data){
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,type = data.field.type.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime,type);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime,type){
+                //执行重载
+                table.reload('BusinessRechargeLogList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        type: type,
+                        toTime: toTime
+                    }
+                    ,loading:true
+                });
+            }
+        };
+    });
+
+
+</script>
+

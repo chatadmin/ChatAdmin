@@ -1,0 +1,191 @@
+<title>发消息</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">发消息</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;" lay-filter="component-form-element">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">收件人</label>
+                    <div class="layui-input-block enable">
+                        <input type="radio" name="touser"  lay-filter="erweima" value="all" title="群发所有" checked>
+                        <input type="radio" name="touser"   lay-filter="erweima" value="member" title="部分会员"  >
+                    </div>
+                </div>
+                <div class="layui-form-item" id="all">
+                    <label class="layui-form-label">登录时间</label>
+                    <div class="layui-input-block enable">
+                        <input type="radio" name="limit" value="0" title="全部" checked>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="limit" value="1" title="一周内" >&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="limit" value="2" title="一月内" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="limit" value="3" title="三月内" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="limit" value="4" title="半年内" >
+                    </div>
+                </div>
+                <div class="layui-form-item" id="member" style="display: none">
+                    <label class="layui-form-label">搜索会员</label>
+                    <div class="layui-input-block  ">
+                        <div class="layui-inline">
+                            <input type="text" id="search-val" placeholder="请输入会员名" class="layui-input">
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" id="search">搜索</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" id="clean-btn">清空</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item" id="Member-list" STYLE="display: none">
+                    <label class="layui-form-label">会员列表 </label>
+                    <div class="layui-input-block" id="Member-list-child">
+                        <div class="layui-inline">
+                            <input type="checkbox" value="1" name="like1[write]" lay-skin="primary" title="用户1" >
+                        </div>
+                        <div class="layui-inline">
+                            <input type="checkbox" value="2" name="like1[write]" lay-skin="primary" title="用户2" >
+                        </div>
+                        <div class="layui-inline">
+                            <input type="checkbox" value="3" name="like1[write]" lay-skin="primary" title="用户3" >
+                        </div>
+
+                    </div>
+                    <div class="layui-input-block" >
+                        <input type="checkbox" id="Choose" lay-skin="primary" lay-filter="allChoose"  title="全选">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">消息主题</label>
+                    <div class="layui-input-block" style="width: 10%;">
+                        <input type="text" name="title" id="addbox-title" class="layui-input" style="width: 400px;">
+                    </div>
+                </div>
+                <div class="layui-form-item"  style="width: 30%">
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-input-block" >
+                        <textarea class="layui-textarea" id="content" style="width: 500px;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="addbox" lay-submit lay-filter="addbox"  class="layui-btn layui-btn-normal">发送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //搜索隐藏显示
+    layui.use(['form','jquery'], function(){
+        var $ = layui.jquery, form = layui.form;
+        form.render('radio');
+        $('#Choose').removeAttr('checked');
+        form.render('checkbox');
+
+
+        form.on('radio(erweima)', function (data) {
+            if (data.value == "all"){
+                $("#all").css("display","block");
+                $("#member").css("display","none");
+            }else  if (data.value == 'member'){
+                $("#all").css("display","none");
+                $("#member").css("display","block");
+            }
+        });
+
+        //搜索
+        $("#search").on("click",function () {
+            var user = $('#search-val').val();
+
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: layui.setter.URL_ADMIN+"/Box/searchUser",//url
+                data: {
+                    user:user
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 0) {
+                        var _dom = "";
+                        var res = data.data;
+                        if(res.length != 0){
+                            $('#Member-list').css('display','block');
+                        }
+                        for(_obj in res){
+                            _dom += '<div class="layui-inline"> <input type="checkbox" value="'+res[_obj]["uid"]+'" name="like1[write]" lay-skin="primary" title="'+res[_obj]["username"]+'" > </div>'
+                        }
+                        $('#Member-list-child').html('');
+                        $('#Member-list-child').append(_dom);
+                        form.render('checkbox');
+//                        layer.msg(data.msg, {time: 1000});
+
+                        //清空
+                        $('#clean-btn').on('click',function () {
+                            $('#Member-list-child').html('');
+                            $('#Member-list').css('display','none');
+                            $('#search-val').val('')
+                        });
+                    }else {
+                        layer.msg(data.msg, {time: 1000});
+                    }
+                }
+            })
+        });
+
+
+        //全选
+        form.on('checkbox(allChoose)', function(data){
+            var child = $('input[name="like1[write]"]');
+            child.each(function(index, item){
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+        //消息提交发送
+        $("#addbox").on("click",function () {
+            var touser = $("input[name='touser']:checked").val();//会员选择 全部 部分
+            var limit = $("input[name='limit']:checked").val();//全部会员时间段值
+            var title = $("#addbox-title").val();//消息主题
+            var content = $("#content").val();//消息内容
+            var users = "";
+            var write = $('input[name="like1[write]"]:checked');
+            for(var i=0 ;i < write.length ; i++){
+                users += write.eq(i).val()+",";
+            }
+            users = users.substring(0,users.length-1);
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: layui.setter.URL_ADMIN+"/Box/dowrite",//url
+                data: {
+                    users:users,
+                    touser:touser,
+                    title: title,
+                    content:content,
+                    limit:limit
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {time: 2000});
+                        $('#Member-list-child').html('');
+                        $('#Member-list').css('display','none');
+                        $('#search-val').val('');
+                        $('input[name="title"]').val('');
+                        $('input[type="radio"]').eq(0).attr('checked',true);
+                        $('#content').val('');
+                        form.render('checkbox');
+                        form.render('radio');
+                    }else {
+                        layer.msg(data.msg, {time: 1000});
+                    }
+                }
+            })
+        });
+
+
+    });
+
+</script>
+

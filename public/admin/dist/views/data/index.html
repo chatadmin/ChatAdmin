@@ -1,0 +1,385 @@
+
+<title>开奖数据</title>
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">主页</a>
+      <a><cite>彩票管理</cite></a>
+      <a><cite>开奖数据</cite></a>
+    </div>
+  </div>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+	          <div class="layui-tab layui-tab-brief"  lay-filter="data_type_tab_div">
+				<ul class="layui-tab-title" id="data_type_tab" lay-filter="data_type_tab">
+				</ul>
+	            <div class="layui-tab-content" style="padding:10px 0;">
+				  <div class="layui-card-body">
+				  	<div class="data_time_operate_btn" style="float:left;">
+				  		<button class="layui-btn data_index_search" data-type="data_index_search_no">未开奖</button>						
+						<button class="layui-btn data_index_search" data-type="data_index_search_yes">已开奖</button>
+				  	</div>
+					<div class="data_time_operate_btn" style="float:right;display:table;">	
+		            期数：	
+		            <div class="layui-inline">
+		            	<input type="text" name="actionNo" id="data_index_actionNo" autocomplete="off" class="layui-input">
+		            </div>				
+					  <button class="layui-btn" data-type="oneDayBefore">前一天</button>
+					  <button class="layui-btn layui-btn-warm" data-type="today">今天</button>
+					  <button class="layui-btn" data-type="oneDayAfter">后一天</button>
+					  日期：
+						<div class="layui-inline">
+							<input type="text" name="date" id="data_index_date" autocomplete="off" class="layui-input">
+						</div>	
+						<button class="layui-btn" data-type="data_index_search">查询</button>
+					</div>
+					<div style="clear:both;margin-bottom:10px;"></div>
+					<table class="layui-hide" id="data_type_data_time" lay-filter="data_type_data_time"></table>
+	                <script type="text/html" id="data_time_operate">
+						{{# if(d.data != null){ }}
+						  <a class="layui-btn layui-btn-danger layui-btn-sm layui-btn-normal layui-btn-xs" lay-event="Datakaijiang">开奖</a>	
+						{{# }else{ }}	  
+							{{# if(d.operate_action == 'add'){ }}
+						  <a class="layui-btn layui-btn-sm layui-btn-normal layui-btn-xs" lay-event="DataaddData">添加</a>
+							{{# }else{ }}	
+								{{# if(d.operate_action == 'edit'){ }}
+						<a class="layui-btn layui-btn-warm layui-btn-sm layui-btn-normal layui-btn-xs" lay-event="DataeditData">修改</a>{{# } }}					
+							{{# } }}
+						{{# } }}
+						<a class="layui-btn layui-btn-danger layui-btn-sm layui-btn-normal layui-btn-xs" lay-event="DataReback">退款</a>					
+				  	</script>					
+				  </div>
+	          </div>
+	        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+    <script type="text/html" id="data_add_code">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-card layui-form">
+				<div class="layui-card-body layui-row layui-col-space10" >  
+					<div class="layui-form-item">
+					  <label class="layui-form-label">期号：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="number" autocomplete="off" class="layui-input data_index_number" readonly value="{{ d.number }}">
+						<input type="hidden" name="type" autocomplete="off" class="layui-input data_index_type" value="{{ d.type }}">
+						<input type="hidden" name="type" autocomplete="off" class="layui-input data_index_alias" value="{{ d.alias }}">
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">开奖时间：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="time" autocomplete="off" class="layui-input data_index_time"  readonly value="{{ d.actionTime }}">
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">开奖号码：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="data" autocomplete="off" class="layui-input data_index_data" value="{{ d.actionData ||'' }}">
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">温馨提示：</label>
+					  <div class="layui-input-block">
+						请确认【期号】和【开奖号码】正确！<br/>号码前面不用加0，格式如: 1,2,3,4,5
+					  </div>
+					</div>						
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn layui-btn-normal data_time_adddata" lay-submit lay-filter="data_time_adddata">立即提交</button>
+							<button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+						</div>
+					</div>				
+				</div>  
+			</div>  
+		</div>   
+	</div> 
+  </script> 
+  <script type="text/html" id="data_backed_code">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-card layui-form">
+				<div class="layui-card-body layui-row layui-col-space10" >  
+					<div class="layui-form-item">
+					  <label class="layui-form-label">期号：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="number" autocomplete="off" class="layui-input data_back_index_number" readonly value="{{ d.number }}">
+						<input type="hidden" name="type" autocomplete="off" class="layui-input data_back_index_type" value="{{ d.type }}">
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">开奖时间：</label>
+					  <div class="layui-input-block">
+						<input type="text" name="time" autocomplete="off" class="layui-input data_back_index_time"  readonly value="{{ d.actionTime }}">
+					  </div>
+					</div>
+					<div class="layui-form-item">
+					  <label class="layui-form-label">温馨提示：</label>
+					  <div class="layui-input-block">
+						对未开奖用户进行退款处理，<br/>退款金额为投注金额的100%
+					  </div>
+					</div>						
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn layui-btn-normal data_time_backed" lay-submit lay-filter="data_time_backed">立即提交</button>
+							<button type="reset" class="layui-btn layui-btn-primary closeBtn">取消</button>
+						</div>
+					</div>				
+				</div>  
+			</div>  
+		</div>   
+	</div> 
+  </script>   
+  <script>
+  layui.use(['admin', 'table', 'laydate', 'form', 'laytpl'], function(){
+    var $ = layui.$, admin = layui.admin, table = layui.table, laydate = layui.laydate, form = layui.form, laytpl = layui.laytpl,element = layui.element,router = layui.router();
+	var nowDate = new Date(), startDate = nowDate.getFullYear()+'-'+((nowDate.getMonth()+1)<10?'0'+(nowDate.getMonth()+1):nowDate.getMonth()+1)+'-'+(nowDate.getDate()<10?'0'+nowDate.getDate():nowDate.getDate());
+    //日期选择器
+    laydate.render({
+      elem: '#data_index_date' ,value: startDate 
+    });
+	admin.req({
+		url: layui.setter.URL_ADMIN+'/lotterys/type'
+		,data:{typec:999}//显示全部
+	   ,done: function(res){
+		   var options = '';
+		   for(val in res.data){
+			   options += '<li class="changeStateDataType" lay-id="'+res.data[val].id+'" data-state="'+res.data[val].id+'">'+res.data[val].title+'</li>';
+		   }
+		   $('#data_type_tab').html(options);
+			element.render('tab');	
+			$('.changeStateDataType').on('click', function(){
+				$('.data_index_search').removeClass('layui-btn-warm');
+				var type = $(this).data('state');
+				active['reloaDataTypeTime'].call(this,type,0);//默认显示K3
+			});
+			$('#data_type_tab').find('li:first').click();
+
+	   }
+	});		
+    var active = {
+		reloaDataTypeTime:function(type,date,searchtype){
+			var iii = layer.msg('loading'),newdata,actionNo;
+			if(date==-1)
+				newdata = addDate($('#data_index_date').val(),-1);
+			else if(date==+1){
+				newdata = addDate($('#data_index_date').val(),1);
+			}else if(date=='search'){
+				newdata = $('#data_index_date').val();
+				actionNo = $('#data_index_actionNo').val();
+			}
+			else {	
+				newdata=0;
+				actionNo=0;
+				}
+			table.render({
+			  elem: '#data_type_data_time'
+			  ,url: layui.setter.URL_ADMIN+'/data/getdatatime'
+			  ,where:{
+				access_token: layui.data('layuiAdmin').access_token
+				,type:type
+				,date:newdata
+				,actionNo:actionNo
+				,search_type:searchtype
+			  }
+			  ,cols: [[
+				{field:'typeInfo', title: '彩种',width:110}
+				,{field:'actionNo', title: '场次',width:60}
+				,{field:'number', title: '期数',width:120}
+				//,{field:'actionDate', title: '日期',width:100}
+				,{field:'actionData', title: '开奖数据',width:150}
+				,{field:'actionInfo', title: '状态',width:80}
+				,{field:'actionTime', title: '开奖时间',width:160}
+				,{field:'facount', title: '方案总数'}
+				,{field:'useracount', title: '参与人数'}
+				,{field:'betAmount', title: '投注金额'}
+				,{field:'zjAmount', title: '中奖金额'}
+				,{field:'fanDianAmount', title: '返点金额'}
+				,{width:120, align:'center', title: '操作', toolbar: '#data_time_operate', fixed: 'right', width:110}
+			  ]]
+			  ,page: {
+				  layout: ['count', 'prev', 'page', 'next', 'skip']
+			  }
+			  ,loading:true
+			  ,id:'lottery_played_data'
+			  ,done: function(res){
+					layer.close(iii);
+					if(newdata) $('#data_index_date').val(newdata);
+					else $('#data_index_date').val(startDate);
+			   }
+			});			
+		}
+	};
+	
+	$('.data_time_operate_btn .layui-btn').on('click',function(){   
+		var stype = $(this).data('type'),type=$('#data_type_tab .layui-this').data('state');
+		$('.data_index_search').removeClass('layui-btn-warm');
+		if(stype==='oneDayBefore'){
+			active['reloaDataTypeTime'].call(this,type, -1);
+		}else if(stype==='oneDayAfter'){
+			active['reloaDataTypeTime'].call(this,type, +1);
+		}else if(stype==='today'){
+			active['reloaDataTypeTime'].call(this,type, 0);
+		}else if(stype==='data_index_search_no'){
+			active['reloaDataTypeTime'].call(this,type, 0,1);
+			$(this).addClass('layui-btn-warm');
+		}else if(stype==='data_index_search_yes'){
+			active['reloaDataTypeTime'].call(this,type, 0,2);
+			$(this).addClass('layui-btn-warm');
+		}else{
+			active['reloaDataTypeTime'].call(this,type, 'search');
+		}
+    });
+     function addDate(date,days){ 
+       var d=new Date(date); 
+       d.setDate(d.getDate()+days); 
+       var m=d.getMonth()+1; 
+	   if(m<10) m='0'+m;
+	   var df=d.getDate();
+	   if(df<10) df='0'+df;
+       return d.getFullYear()+'-'+m+'-'+df; 
+     } 
+
+  //监听工具条
+    table.on('tool(data_type_data_time)', function(obj){
+      var data = obj.data;
+	 // console.log(data);
+     if(obj.event === 'DataReback'){
+        	layer.open({
+					title: '对未开奖期数进行投注退款',
+					type: 1
+					,shadeClose: true
+					,area: admin.screen() < 2 ? ['80%', '300px'] : ['480px', 'auto']
+					,content: laytpl($('#data_backed_code').html()).render(obj.data) 
+					,success: function(layero, index){
+					$('.data_time_backed').on('click', function(){
+							var number=$('.data_back_index_number').val();
+							var type=$('.data_back_index_type').val();	
+							var iii = layer.msg('loading'),tjurl;						
+							admin.req({
+								url: layui.setter.URL_ADMIN+'/data/backed'
+								,data: {number:number,type:type}
+								,type: 'post'
+								,done: function(res){
+									layer.close(iii)
+									if(res.code>0){
+										layer.msg(res.msg, {icon: 5});
+									}else{
+										obj.update({
+											facount: 0,useracount:'0',betAmount:'',zjAmount:'',fanDianAmount:''
+										});				
+										layer.msg(res.msg, {icon: 1});
+										setTimeout(function(){	
+											layer.closeAll();
+										},1000);		
+									}
+								}
+							});
+						});
+					}
+			});
+      }else if(obj.event === 'DataeditData'){
+		  	layer.open({
+					title: '修改开奖号码',
+					type: 1
+					,shadeClose: true
+					,area: admin.screen() < 2 ? ['80%', '300px'] : ['480px', 'auto']
+					,content: laytpl($('#data_add_code').html()).render(obj.data) 
+					,success: function(layero, index){
+						$('.data_time_adddata').on('click', function(){
+							data_time_adddata($(this),obj,2);
+						})
+					}
+			});
+      }
+	  else if(obj.event === 'DataaddData'){
+			var that = $(this);
+		  	layer.open({
+					title: '添加开奖号码',
+					type: 1
+					,shadeClose: true
+					,area: admin.screen() < 2 ? ['80%', '300px'] : ['480px', 'auto']
+					,content: laytpl($('#data_add_code').html()).render(obj.data) 
+					,success: function(layero, index){
+						$('.data_time_adddata').on('click', function(){
+							data_time_adddata(that,obj,1);
+						})
+					}
+			});
+      }else if(obj.event === 'Datakaijiang'){
+		  layer.confirm('重新对没有开奖的投注开奖', {
+			btn: ['确定','取消'] //按钮
+		  }, function(){
+			var iii = layer.msg('loading');	
+			 var data = obj.data;
+			 admin.req({
+				url: layui.setter.URL_ADMIN+'/data/kj'
+				,data: {type:data.type,number:data.number,time:data.actionTime,data:data.actionData}
+				,type: 'post'
+				,done: function(res){
+					layer.close(iii)			
+					layer.msg(res.msg, {icon: 1});
+					setTimeout(function(){	
+						layer.closeAll();
+					},1000);	
+				}
+			});
+			return false;
+		  }, function(){
+			
+		  });		
+	  }
+    }); 
+
+	function data_time_adddata(that,obj,url){
+		var number=$('.data_index_number').val();
+		var time=$('.data_index_time').val();
+		var type=$('.data_index_type').val();
+		var alias=$('.data_index_alias').val();
+		var data=$('.data_index_data').val();
+		var iii = layer.msg('loading'),tjurl;
+		if(url==1) tjurl = layui.setter.URL_ADMIN+'/data/added';
+		else  tjurl = layui.setter.URL_ADMIN+'/data/updatedataed';
+  		admin.req({
+			url: tjurl
+			,data: {number:number,time:time,type:type,data:data,alias:alias}
+			,type: 'post'
+			,done: function(res){
+				layer.close(iii)
+				if(res.code>0){
+					layer.msg(res.msg, {icon: 5});
+				}else{
+					var actionInfo;
+					if(res.data=='out_time') {
+						actionInfo = '已开奖';
+						that.text("开奖");
+						that.attr("lay-event","Datakaijiang");
+						that.addClass("layui-btn-normal");
+					}else{
+					    actionInfo = '已预开奖';
+                    }
+                    obj.update({
+                        actionData: res.dataNumber,actionInfo:actionInfo,data:data
+                    });
+					layer.msg(res.msg, {icon: 1});
+					setTimeout(function(){
+						layer.closeAll();
+						that.text("修改");
+					    that.attr("lay-event", "DataeditData");
+					    that.addClass("layui-btn-warm");
+					},1000);
+				}
+			}
+		});
+		return false;
+	}
+
+
+    $(document).on('click', '.closeBtn', function(){
+		layer.closeAll();
+	});
+  });
+  </script>

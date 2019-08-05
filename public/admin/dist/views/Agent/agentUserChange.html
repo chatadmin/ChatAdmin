@@ -1,0 +1,154 @@
+<title>代理下级会员转移</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px">代理下级会员转移</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;" lay-filter="component-form-element">
+
+                <div class="layui-form-item" id="member">
+                    <label class="layui-form-label">搜索会员</label>
+                    <div class="layui-input-block  ">
+                        <div class="layui-inline">
+                            <input type="text" id="search-change" placeholder="请输入会员名" class="layui-input">
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" id="search-btn">搜索会员</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" id="cleans-btn">清空搜索</button>
+                        </div>
+                        <div class="layui-inline"> 填写会员为代理时，显示代理下会员 </div>
+                    </div>
+                </div>
+                <div class="layui-form-item" >
+                    <label class="layui-form-label">转移到</label>
+                    <div class="layui-input-block  ">
+                        <div class="layui-inline">
+                            <input type="text" placeholder="请输入会员名" id="users-dl" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="change-btn" lay-submit lay-filter="change-btn"  class="layui-btn">转移</button>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" id="Member-change-list" style="display: none">
+                    <label class="layui-form-label">勾选要转移的会员</label>
+                    <div class="layui-input-block" id="Member-change-list-child">
+
+
+
+                    </div>
+                    <div class="layui-input-block" >
+                        <input type="checkbox" lay-skin="primary" lay-filter="allChoose"  title="全选">
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //搜索隐藏显示
+    layui.use(['form','jquery'], function(){
+        var $ = layui.jquery, form = layui.form;
+        form.render('checkbox');
+
+        //搜索
+        $("#search-btn").on("click",function () {
+            console.log('123');
+            var user = $('#search-change').val();
+            if(user){
+                $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: layui.setter.URL_ADMIN+"/Agent/searchUser",//url
+                    data: {
+                        user:user
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            var _dom = "";
+                            var res = data.data;
+                            if(res.length != 0){
+                                $('#Member-change-list').css('display','block');
+                            }
+                            for(var i in res.data){
+                                _dom += '<div class="layui-inline"> <input type="checkbox" value="'+res.data[i]["uid"]+'" name="like" lay-skin="primary" title="'+res.data[i]["username"]+'" > </div>'
+                            }
+                            $('#Member-change-list-child').html('');
+                            $('#Member-change-list-child').append(_dom);
+                            form.render('checkbox');
+
+                            //清空
+                            $('#cleans-btn').on('click',function () {
+                                $('#Member-change-list-child').html('');
+                                $('#Member-change-list').css('display','none');
+                            });
+                        }else {
+                            layer.msg(data.msg, {time: 1000});
+                        }
+                    }
+                })
+            }else {
+                layer.msg('会员名不能为空', {time: 1000});
+            }
+
+        });
+
+
+        //全选
+        form.on('checkbox(allChoose)', function(data){
+            var child = $('input[name="like"]');
+            child.each(function(index, item){
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+        //消息提交发送
+        $("#change-btn").on("click",function () {
+            var touser = $("#users-dl").val();//会员选择 全部 部分
+            var users = "";
+            var write = $('input[name="like"]:checked');
+            for(var i=0 ;i < write.length ; i++){
+                users += write.eq(i).val()+",";
+            }
+            users = users.substring(0,users.length-1);
+            if(users){
+                $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: layui.setter.URL_ADMIN+"/Agent/dochange",//url
+                    data: {
+                        users:users,
+                        touser:touser
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg, {time: 2000});
+                            $('#Member-change-list').css('display','none');
+                            $('#search-change').val('');
+                            $('#users-dl').val('');
+                            form.render('checkbox');
+                            $("#search-btn").on('click');
+                        }else {
+                            layer.msg(data.msg, {time: 1000});
+                        }
+                    }
+                })
+            }else {
+                layer.msg('请先搜索会员，然后勾选需要转移的会员', {time: 2000});
+            }
+
+        });
+
+
+    });
+
+</script>
+

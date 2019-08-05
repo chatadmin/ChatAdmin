@@ -1,0 +1,211 @@
+
+<title>个人红包列表</title>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">
+          <div style="float:left;">个人红包列表</div>
+        </div>
+        <div class="layui-card-body">
+          <div class="layui-form">
+            <div class=" layui-form" style="margin-bottom: 10px;">
+
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:90px;"> 用户ID：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="single-bonus-index-id" name="send_uid" autocomplete="off" placeholder="用户ID">
+                </div>
+              </div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:90px;"> 发红包用户：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="single-bonus-username" name="username" autocomplete="off" placeholder="用户名">
+                </div>
+              </div>
+              <div class="layui-inline">
+                <label class="layui-form-label" style="width:90px;"> 手机号：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input class="layui-input" id="single-bonus-phone" name="phone" autocomplete="off" placeholder="手机号">
+                </div>
+              </div>
+
+<!--              <div class="layui-inline">
+                <label class="layui-form-label">红包区间：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input type="text" name="minMoney" class="layui-input"  placeholder="最小金额">
+                </div>
+                -
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input type="text" name="maxMoney" class="layui-input"  placeholder="最大金额">
+                </div>
+              </div>-->
+
+              <div class="layui-inline">
+                <label class="layui-form-label">创建时间：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input type="text" name="fromtime" class="layui-input" id="single_bonus_search_starttime" placeholder="开始日期">
+                </div>
+                -
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input type="text" name="totime" class="layui-input" id="single_bonus_search_endtime" placeholder="结束日期">
+                </div>
+              </div>
+
+              <div class="layui-inline">
+                <label class="layui-form-label"> 红包状态：</label>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <select id="single_bonus_state_type" name="status">
+                    <option value="0">请选择</option>
+                    <option value="1">未领取</option>
+                    <option value="2">已领取</option>
+                    <option value="3">已退还</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="layui-inline">
+                <button class="layui-btn"  lay-submit="" lay-filter="single_bonus_index_searching" style="float:float;">搜索</button>
+              </div>
+            <br/>
+              <div class="layui-inline" style="margin-top: 20px;">
+                <button class="layui-btn"  lay-submit="" lay-filter="single_bonus_back_button" style="float:float;">退还</button>
+              </div>
+            </div>
+          </div>
+          <table class="layui-hide" id="single_bonus_index_list" lay-data="{id:'singlebonusidlist'}"  lay-filter="single_bonus_index_list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/html" id="single_bonus_back">
+  {{# if(d.status == 1){  }}
+  <a class="layui-btn layui-btn-sm" lay-event="single_bonus_back_action">退还</a>
+  {{#  }  }}
+</script>
+
+<script>
+    layui.use(['admin', 'table','laydate','layer','form','laytpl','layedit','upload'], function(){
+        var $ = layui.$, admin = layui.admin,table = layui.table,laydate = layui.laydate,laytpl = layui.laytpl, form = layui.form, upload = layui.upload;
+
+
+        //开始日期
+        form.render('select');
+        var insStart = laydate.render({
+            elem: '#single_bonus_search_starttime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+
+                //自动弹出结束日期的选择器
+                insEnd.config.elem[0].focus();
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#single_bonus_search_endtime'
+            ,format: 'yyyy-MM-dd HH:mm:ss'
+            ,type:'datetime'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+        var single_bonus_aaa = function (data) {
+            table.render({
+                id: 'singlebonusidlist'
+                ,elem: '#single_bonus_index_list'
+                ,url: '/interface/singleBonusList' //数据接口
+                ,where: {data:data}
+                ,page: true //开启分页
+                ,limit:10
+                ,method: 'post'
+                ,cols: [[ //表头
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field: 'id', title: 'ID', fixed: 'left', unresize: true}
+                    ,{field: 'username', title: '发送人', unresize: true}
+                    ,{field: 'phone', title: '手机号', unresize: true}
+                    ,{field: 'user_vname', title: '接收人', unresize: true}
+                    ,{field: 'topic', title: '主题', unresize: true}
+                    ,{field: 'amount_red', title: '金额', unresize: true}
+                    ,{field: 'unique_value', title: '红包凭证', unresize: true}
+                    ,{field: 'create_time', title: '发放时间', unresize: true,templet: function(d){return admin.formatDate(d.create_time); }}
+                    ,{field: 'status',title:'操作',unresize:true,templet:$('#single_bonus_back')}
+                ]]
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    var single_bonus_aaa_res = {};
+                    $.each(res.where, function (keys, val) {
+                        single_bonus_aaa_res.key = keys;
+                        single_bonus_aaa_res.value = val;
+                        layui.data('single_bonus_aaa_res', single_bonus_aaa_res);
+                    });
+                }
+            });
+
+
+        }
+
+
+        single_bonus_aaa();
+        //监听搜索提交按钮
+        form.on('submit(single_bonus_index_searching)', function(data){
+            var data = data.field;
+            single_bonus_aaa(data);
+        })
+
+        var single_bonus_reload = function(data){
+            table.reload('singlebonusidlist', {
+                url: '/interface/singleBonusList'
+                ,where: data //设定异步数据接口的额外参数
+            })
+        }
+
+        var single_bonus_back = function(data) {
+            admin.req({
+                url: layui.setter.URL_ADMIN + '/interface/singleBonusBack'
+                , data: {id: data.id}
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code == 0) {
+                        layer.msg(res.message, {icon: 1});
+                        if (data.isflush == 1) {
+                            setTimeout(single_bonus_reload(layui.data('single_bonus_aaa_res')), 2000);
+                        }
+                    } else {
+                        layer.msg(res.message, {icon: 2});
+                    }
+                }
+                , error: function (r) {
+                    layer.msg(r.message, {icon: 2});
+                }
+            });
+        }
+
+        form.on('submit(single_bonus_back_button)', function(){
+            var checkStatus = table.checkStatus('singlebonusidlist'); //listids 即为基础参数 id 对应的值
+            var str='';
+            $.each(checkStatus.data,function(i,item){
+                str += item.id+'|';
+            });
+            single_bonus_back({id:str,isflush:1});
+        })
+
+
+
+        table.on('tool(single_bonus_index_list)', function (obj) {
+            var data = obj.data;
+            if(obj.event === 'single_bonus_back_action') {
+                single_bonus_back({id:data.id,isflush:1});
+            }
+        });
+    });
+</script>

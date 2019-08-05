@@ -1,0 +1,278 @@
+<title>中奖记录</title>
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-row ">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-inline">
+                        <div style="float: left"><span class="Prize-username" style="color:#FF5722"></span> 的下级用户中奖记录</div>
+                    </div>
+                    <div class="layui-card-header layui-inline" style="width: 100%">
+                        <div style="float: left;font-size: 20px;">普通投注</div>
+                        <div style="float: left;margin-left: 20px;cursor: pointer;" class="prizes" con="2">未中奖</div>
+                        <div style="float: left;margin-left: 20px;cursor: pointer;color: red" class="prizes" con="1">已中奖</div>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-inline layui-col-md-offset3 layui-form" lay-filter="component-form-element">
+                            <div class="layui-inline">
+                                <input type="text" name="actionNo" placeholder="期号" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <input type="text" name="id" placeholder="单号" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <input type="text" name="username" placeholder="用户名" autocomplete="off" class="layui-input" size="15">
+                            </div>
+                            <div class="layui-inline">
+                                <span>时间：从</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-Prize-start" autocomplete="off" name="fromTime" placeholder="开始日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <span>到</span>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="test-laydate-Prize-end" autocomplete="off" name="toTime" placeholder="结束日期">
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-form" lay-filter="component-form-element">
+                                <select id="PrizeList1" bet="1"  name="type" lay-verify="">
+
+                                </select>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="listPrizeForm">查找</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide layui-form layui-border-box layui-table-view" id="AgentListPrizeList" lay-filter="AgentListPrizeList"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="ListWinningUserCoinCash1">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <table class="layui-table layui-form" style="margin:0;" lay-filter="listWinning-table-element1">
+                    <tr>
+                        <td style="text-align: center">号码：</td><td>{{ d.number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">单号：</td><td>{{ d.wjorderId }}</td>
+                        <td style="text-align: center">投注数量：</td><td>{{ d.actionNum }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">发起人：</td><td>{{ d.username }}</td>
+                        <td style="text-align: center">模式：</td><td>{{ d.mode }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">倍数：</td><td>{{ d.bonusProp }}</td>
+                        <td style="text-align: center">中奖注数：</td><td>{{ d.multiple }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">彩种：	</td><td>{{ d.species }}</td>
+                        <td style="text-align: center">奖金－返点：	</td><td>{{ d.bonusProp }}-{{ d.fanDian }}%</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">期号：	</td><td>{{ d.actionNo }}</td>
+                        <td style="text-align: center">玩法：</td><td>{{ d.play }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">开奖号：</td><td>{{ d.lotteryNo }}</td>
+                        <td style="text-align: center">投注时间：</td><td>{{ d.actionTime }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">订单状态：</td><td>{{ d.status }}</td>
+                        <td style="text-align: center">来源：</td>
+                        {{# if( d.betType == 0 ){ }}
+                        <td>web</td>
+                        {{# }else if( d.betType == 1 ){ }}
+                        <td>手机</td>
+                        {{# }else if( d.betType == 2 ){ }}
+                        <td>未知</td>
+                        {{# } }}
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">投注：</td><td>{{ d.betCont }}元</td>
+                        <td style="text-align: center">中奖：</td><td>{{ d.zjbonus }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">上级返点：</td><td>{{ d.fanDianAmount }}%</td>
+                        <td style="text-align: center">个人盈亏：</td><td>{{ d.profit }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="WinningUserCoinCash1"></script>
+<script>
+
+    //    获取图片路径
+    layui.use(['jquery','admin','table','laydate','form','laytpl'], function(){
+        var $ = layui.jquery, admin = layui.admin , table =layui.table,laydate = layui.laydate,form = layui.form,laytpl= layui.laytpl;
+        var router = layui.router();
+        var username = router.search.username;
+        $('.Prize-username').html(username);
+
+        var fromTimes = router.search.fromTime;
+        var toTimes = router.search.toTime;
+        $('#test-laydate-Prize-start').val(fromTimes);
+        $('#test-laydate-Prize-end').val(toTimes);
+        var ii = layer.msg('loading');
+        //载入表格数据
+        table.render({
+            elem: '#AgentListPrizeList'
+            ,url: layui.setter.URL_ADMIN+'/Agent/bet_log?uid='+router.search.uid+'&status=1&fromTime='+fromTimes+'&toTime='+toTimes
+            ,where:{
+                access_token: layui.data('layuiAdmin').access_token
+            }
+            ,cols: [[
+                {field:'wjorderId',align:'center', title: '单号', width: 200,templet: function(d){
+                    return '<a href="javascript:;" class="winning-chakan" con="'+ d.id +'"  style="color: #1694e9">'+ d.wjorderId +'</a>' ;
+                }},
+                {field:'username',align:'center', title: '用户名', width: 150},
+                {field:'actionTime',align:'center', title: '投注时间',templet: function(d){return admin.formatDate(d.actionTime); }},
+                {field:'species',align:'center', title: '彩种', width: 150},
+                {field:'play',align:'center', title: '玩法', width: 100},
+                {field:'actionNo',align:'center', title: '期号', width: 120},
+                {field:'bonusProp',align:'center', title: '倍数', width: 70},
+                {field:'actionNum',align:'center', title: '注数', width: 70},
+                {field:'betnumber',align:'center', title: '投注号码', width: 100},
+                {field:'betmoney',align:'center', title: '投注金额', width: 120},
+                {field:'zjmoney',align:'center', title: '中奖金额', width: 120},
+                {field:'fanDianAmount',align:'center', title: '返点', width: 120}
+            ]]
+            ,page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+            }
+            ,done: function(res){
+                layer.close(ii);
+                var speciess = res.species;
+                var _species = "";
+                if($('#PrizeList1').attr('bet') == 1){
+                    _species += '<option value="">全部彩种</option>';
+                    for(var i in speciess){
+                        _species += ' <option value="'+ speciess[i]["id"] +'">'+ speciess[i]["title"] +'</option>'
+                    }
+                    $('#PrizeList1').html(_species);
+                    $('#PrizeList1').attr('bet','2')
+                }
+                form.render('select');
+
+
+                $('.winning-chakan').click(function () {
+                    var id = $(this).attr('con');
+                    $.post(layui.setter.URL_ADMIN+"/Agent/betInfo?id="+id,function(res){
+                        var ress = JSON.parse(res);
+                        var data = ress.data;
+                        data.actionTime = admin.formatDate(data.actionTime);
+                        var getTpl = ListWinningUserCoinCash1.innerHTML
+                            ,view = document.getElementById('WinningUserCoinCash1');
+                        laytpl(getTpl).render(data, function(html){
+                            view.innerHTML = html;
+                        });
+                        layer.open({
+                            title:'投注信息'
+                            ,type: 1
+                            ,shadeClose: true
+                            ,area: admin.screen() < 2 ? ['80%', '800px'] : ['800px', 'auto']
+                            ,content: $('#WinningUserCoinCash1').html()
+                        });
+                        form.render(null, 'listWinning-table-element1');
+                    });
+                });
+
+            }
+        });
+
+
+
+        //开始日期
+        var insStart = laydate.render({
+            elem: '#test-laydate-Prize-start'
+            ,done: function(value, date){
+                //更新结束日期的最小日期
+                insEnd.config.min = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+
+        //结束日期
+        var insEnd = laydate.render({
+            elem: '#test-laydate-Prize-end'
+            ,done: function(value, date){
+                //更新开始日期的最大日期
+                insStart.config.max = lay.extend({}, date, {
+                    month: date.month - 1
+                });
+            }
+        });
+        var iii = '';
+        //监听列表查询
+        form.on('submit(listPrizeForm)', function(data){
+            iii = layer.msg('loading');
+            var username = data.field.username.trim()
+                ,fromTime = data.field.fromTime.trim()
+                ,actionNo = data.field.actionNo.trim()
+                ,id = data.field.id.trim()
+                ,type = data.field.type.trim()
+                ,toTime = data.field.toTime.trim();
+            active['reloadList'].call(this, username, fromTime, toTime , actionNo , id , type);
+            return false;
+        });
+
+        //执行列表重载(查询)
+        var active = {
+            reloadList: function(username, fromTime, toTime , actionNo , id , type){
+                //执行重载
+                $('.prize').css('color','');
+                table.reload('AgentListPrizeList', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: username,
+                        fromTime: fromTime,
+                        toTime: toTime,
+                        actionNo: actionNo,
+                        id: id,
+                        type: type,
+                        status:""
+                    }
+                    ,loading:true
+                });
+                layer.close(iii);
+            }
+        };
+
+        //按钮搜索
+        $('.prizes').click(function () {
+            //执行重载
+            iii = layer.msg('loading');
+            $('.prizes').css('color','');
+            var status = $(this).attr('con');
+            $(this).css('color','red');
+            table.reload('AgentListPrizeList', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    status: status,
+                }
+                ,loading:true
+            });
+            layer.close(iii);
+        })
+
+    });
+
+
+</script>
+

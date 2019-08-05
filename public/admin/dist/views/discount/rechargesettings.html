@@ -1,0 +1,131 @@
+<title>充值赠送</title>
+
+<div class="">
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">充值赠送活动设置</div>
+            <div class="layui-card-body layui-form" style="padding: 15px;" lay-filter="component-form-element" >
+                <div class="layui-form-item" style="border-bottom: 1px dashed rgba(0,0,0,0.24);padding: 10px 0;width: 790px">
+                    <div class="layui-input-block" style="margin:0;">
+                        <div class="layui-inline"><strong>首次充值赠送方案1</strong>：首充赠送</div>
+                        <div class="layui-inline">
+                            <input type="text" class="number layui-input" name="sczs" autocomplete="off" placeholder="" value="" >
+                        </div>
+                        <div class="layui-inline">%，无活动请留空 或者为0</div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="border-bottom: 1px dashed rgba(0,0,0,0.24);padding: 10px 0;width: 790px">
+                    <div class="layui-input-block" style="margin:0;">
+                        <strong>首次充值赠送方案2</strong>：
+                    </div>
+
+                    <div class="layui-input-block" id="layui-add-pa">
+                        <button class="layui-btn  layui-btn-sm" id="layui-setting-add">
+                            增加<i class="layui-icon">&#xe654;</i>
+                        </button>
+                    </div>
+                    <blockquote class="layui-elem-quote">如果同时设置2个方案，只执行一个方案，优先执行方案1</blockquote>
+                </div>
+
+                <div class="layui-form-item" style="border-bottom: 1px dashed rgba(0,0,0,0.24);padding: 10px 0;width: 790px">
+                    <div class="layui-input-block" style="margin:0;">
+                        <div class="layui-inline">每次充值赠送：</div>
+                        <div class="layui-inline">
+                            <input type="text" id="number1" name="czzs" autocomplete="off" placeholder="" value="" class="layui-input">
+                        </div>
+                        <div class="layui-inline">%，如果为0则关闭活动</div>
+                    </div>
+
+                </div>
+
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="RechargeSettingsForm" lay-submit lay-filter="RechargeSettingsForm" class="layui-btn layui-bg-blue">
+                            保存修改配置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+//    获取已存在的数据
+    layui.use(['admin','jquery'], function(){
+
+        var $ = layui.jquery, admin = layui.admin;
+        admin.req({
+            url: layui.setter.URL_ADMIN+'/Activity/get_info',
+            done: function(res){
+                var _data = res.data;
+                $("input[name='sczs']").val(_data.sczs);
+                $("input[name='czzs']").val(_data.czzs);
+                var da = _data.sczs2;
+                obj1 = JSON.parse(da);
+                var _dom = "";
+                for(var obj in obj1)
+                {
+                    _dom += '<div class="layui-input-block layui-czzs"> <div class="layui-inline">充值：</div> <div class="layui-inline">'+
+                    '<input type="text" name="sczs2[]" autocomplete="off" placeholder="" value="'+obj+'" class="layui-input">'+
+                    '</div> <div class="layui-inline">送</div> <div class="layui-inline">'+
+                    '<input type="text" name="sczs2_amount[]" autocomplete="off" placeholder="" value="'+obj1[obj]+'" class="layui-input">'+
+                    '</div> <div class="layui-inline">元</div> <div class="layui-inline"> <button  class="layui-del layui-btn layui-btn-danger"> 删除 </button> </div> </div>';
+
+                }
+                $('#layui-setting-add').parent('div').before(_dom);
+                $('.layui-del').on('click',function(){
+                    $(this).parents('.layui-czzs').remove();
+                });
+            }
+        })
+    });
+
+//    生成新的方案输入框
+    layui.use(['jquery',], function(){
+        var $= layui.jquery;
+        $(function(){
+            $('#layui-setting-add').click(function(){
+                var _czzs='<div class="layui-input-block layui-czzs"> <div class="layui-inline">充值：</div> <div class="layui-inline">'+
+                    '<input type="text" name="sczs2[]" autocomplete="off" placeholder="" class="layui-input">'+
+                    '</div> <div class="layui-inline">送</div> <div class="layui-inline">'+
+                    '<input type="text" name="sczs2_amount[]" autocomplete="off" placeholder="" class="layui-input">'+
+                    '</div> <div class="layui-inline">元</div> <div class="layui-inline"> <button  class="layui-del layui-btn layui-btn-danger"> 删除 </button> </div> </div>';
+
+                $(this).parent('div').before(_czzs);
+                $('.layui-del').on('click',function(){
+                    $(this).parents('.layui-czzs').remove();
+                });
+            });
+        });
+//        提交方案信息
+        layui.use(['form'], function(){
+            var $ = layui.$, form = layui.form;
+            form.on('submit(RechargeSettingsForm)', function(data){
+                if(data.field.sczs == ""){
+                    data.field.sczs = 0;
+                }
+            $.post(layui.setter.URL_ADMIN+"/Activity/czzs",data.field,function(res){
+                var _obj = JSON.parse(res);
+                if(_obj.code == 0){
+                    layer.msg(_obj.msg, {time: 2000});
+                }else{
+                    layer.msg(_obj.msg, {time: 2000});
+                }
+            });
+            })
+        });
+
+    });
+
+
+
+
+
+
+
+
+</script>
